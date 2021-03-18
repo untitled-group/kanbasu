@@ -14,13 +14,13 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: "2.0.x"
-      - run: flutter pub get
       - name: Prepare
         run: |
+          flutter pub get
           cp ./lib/config.example.dart ./lib/config.dart
           flutter pub run build_runner build
       - run: flutter test
-  build-and-deploy-flutter-app:
+  build-flutter-app:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -30,9 +30,11 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: "2.0.x"
-      - run: flutter pub get
+      - name: Install prereqs
+        run: sudo apt install clang cmake ninja-build pkg-config libgtk-3-dev libblkid-dev liblzma-dev libgcrypt20-dev
       - name: Prepare
         run: |
+          flutter pub get
           cp ./lib/config.example.dart ./lib/config.dart
           flutter pub run build_runner build
       - name: Build apk
@@ -41,4 +43,7 @@ jobs:
         run: |
           flutter config --enable-linux-desktop
           flutter build linux
-
+      - uses: actions/upload-artifact@v2
+        with:
+          name: android
+          path: build/app/outputs/flutter-apk/app-release.apk
