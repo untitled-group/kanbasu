@@ -8,7 +8,7 @@ void main() {
   sqfliteFfiInit();
 
   test('simple sqflite example', () async {
-    var db = await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
+    final db = await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
     expect(await db.getVersion(), 0);
     await db.close();
   });

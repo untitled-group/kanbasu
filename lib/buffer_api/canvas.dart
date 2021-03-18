@@ -15,7 +15,7 @@ Future<T?> toResponse<T>(
     final response = await sendRequest();
     return response.data;
   } on DioError catch (e) {
-    logger.w("${e.error} w/response ${e.response}");
+    logger.w('${e.error} w/response ${e.response}');
   }
   return null;
 }
@@ -25,6 +25,7 @@ class CanvasBufferClient {
   /// sqlite cache. If a REST API returns a paginated list, it will be parsed
   /// and returned as an iterator.
 
+  // static const String _kvprefix = 'kanbasu/api_cache/';
   final CanvasRestClient restClient;
   final Logger logger = Logger();
 

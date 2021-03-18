@@ -4,8 +4,8 @@ import 'package:retrofit/retrofit.dart';
 /// Extract one `rel` URL from `Link` header.
 Map<String, String>? getRelLink(String linkHeader, String rel) {
   final expectedRel = 'rel="$rel"';
-  for (final item in linkHeader.split(",")) {
-    final splitItem = item.split("; ");
+  for (final item in linkHeader.split(',')) {
+    final splitItem = item.split('; ');
     final urlStr = splitItem[0];
     final rel = splitItem[1];
     if (rel == expectedRel) {
@@ -25,8 +25,8 @@ Map<String, String>? getNextLink(String? linkHeader) {
   if (linkHeader == null) {
     return null;
   }
-  final next = getRelLink(linkHeader, "next");
-  final current = getRelLink(linkHeader, "current");
+  final next = getRelLink(linkHeader, 'next');
+  final current = getRelLink(linkHeader, 'current');
   if (next == null || current == null) {
     return null;
   }
@@ -46,13 +46,13 @@ class PaginatedList<T> {
 
   /// Returns a stream of all items from API endpoint.
   Stream<T> all() async* {
-    Map<String, String> nextQuery = {};
+    var nextQuery = <String, String>{};
     while (true) {
       final resp = await _sendRequest(queries: nextQuery);
       for (final item in resp.data) {
         yield item;
       }
-      final query = getNextLink(resp.response.headers.value("Link"));
+      final query = getNextLink(resp.response.headers.value('Link'));
       if (query == null) {
         break;
       }

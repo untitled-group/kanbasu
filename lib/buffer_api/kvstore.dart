@@ -9,7 +9,7 @@ class KvStore {
   /// [KvStore] stores key-value pairs. Currently, it is backed by sqlite, a
   /// B-Tree engine. [KvStore] supports put, get and range scan.
 
-  static const String _tableName = "json";
+  static const String _tableName = 'json';
   final logger = Logger();
   final Future<Database> _database;
 
@@ -23,7 +23,7 @@ class KvStore {
     databaseFactory = databaseFactoryFfi;
   }
 
-  static void _initDatabase(Database db, int version) async {
+  static Future<void> _initDatabase(Database db, int version) async {
     await db.execute('''
     CREATE TABLE $_tableName(
       key TEXT PRIMARY KEY,
@@ -37,7 +37,7 @@ class KvStore {
   static Future<KvStore> open(String name) async {
     final directory = await getApplicationSupportDirectory();
     final path = join(directory.path, '$name.db');
-    Logger().i("Database created at $path");
+    Logger().i('Database created at $path');
     final database = openDatabase(path, onCreate: _initDatabase, version: 1);
     return KvStore(database);
   }
@@ -45,7 +45,7 @@ class KvStore {
   /// Open a in-memory [KvStore].
   static Future<KvStore> openInMemory() async {
     final database =
-        openDatabase(":memory:", onCreate: _initDatabase, version: 1);
+        openDatabase(':memory:', onCreate: _initDatabase, version: 1);
     return KvStore(database);
   }
 
@@ -61,7 +61,7 @@ class KvStore {
 
   /// Get value of [key] from database. Returns null if not exist.
   Future<String?> getItem(String key) async {
-    final Database db = await _database;
+    final db = await _database;
     final List<Map<String, dynamic>> queryResult =
         await db.query(_tableName, where: 'key = ?', whereArgs: [key]);
     if (queryResult.isEmpty) {
@@ -78,19 +78,22 @@ class KvStore {
 
   /// Get all values with [prefix] from database. Returns null if not exist.
   Future<Map<String, String>> scan(String prefix) async {
-    final Database db = await _database;
+    final db = await _database;
     final List<Map<String, dynamic>> queryResult = await db
-        .query(_tableName, where: 'key like ?', whereArgs: ["$prefix%"]);
+        .query(_tableName, where: 'key like ?', whereArgs: ['$prefix%']);
     if (queryResult.isEmpty) {
       return {};
     }
-    return {for (var item in queryResult) item['key']: item['value']};
+    return {
+      for (var item in queryResult)
+        item['key'].toString(): item['value'].toString()
+    };
   }
 
   /// Remove keys with [prefix] from database.
   Future<int> rangeDelete(String prefix) async {
     final db = await _database;
     return await db
-        .delete(_tableName, where: 'key like ?', whereArgs: ["$prefix%"]);
+        .delete(_tableName, where: 'key like ?', whereArgs: ['$prefix%']);
   }
 }

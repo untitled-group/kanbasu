@@ -15,15 +15,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoApp(
-      title: "Kanbasu",
+      title: 'Kanbasu',
       home: MyHomePage(),
     );
   }
 }
 
-getCourses() async {
+Future<void> getCourses() async {
   final dio = Dio(BaseOptions(
-      headers: {HttpHeaders.authorizationHeader: "Bearer $CANVAS_API_KEY"}));
+      headers: {HttpHeaders.authorizationHeader: 'Bearer $CANVAS_API_KEY'}));
   final api = CanvasRestClient(dio, baseUrl: CANVAS_API_ENDPOINT);
   print(await api.getCourses());
 }
@@ -43,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
+        navigationBar: const CupertinoNavigationBar(
           middle: Text('Kanbasu'),
         ),
         child: Stack(
@@ -51,13 +51,13 @@ class _MyHomePageState extends State<MyHomePage> {
             Align(
                 alignment: FractionalOffset.center,
                 child: CupertinoButton.filled(
-                  key: Key('btn'),
-                  child: Text('$_counter'),
+                  key: const Key('btn'),
                   onPressed: () {
                     setState(() {
                       _counter++;
                     });
                   },
+                  child: Text('$_counter'),
                 )),
           ],
         ));
