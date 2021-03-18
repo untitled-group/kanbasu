@@ -1,5 +1,11 @@
 name: Kanbasu
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 jobs:
   test-flutter-app:
     runs-on: ubuntu-latest
@@ -7,7 +13,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@v1
         with:
-          flutter-version: "2.0.1"
+          flutter-version: "2.0.x"
       - run: flutter pub get
       - name: Prepare
         run: |
@@ -15,26 +21,18 @@ jobs:
           flutter pub run build_runner build
       - run: flutter test
   build-and-deploy-flutter-app:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      # - uses: actions/setup-java@v1
-      #   with:
-      #     java-version: "1.8"
+      - uses: actions/setup-java@v1
+        with:
+          java-version: "1.8"
       - uses: subosito/flutter-action@v1
         with:
-          flutter-version: "2.0.1"
+          flutter-version: "2.0.x"
       - run: flutter pub get
       - name: Prepare
         run: |
           cp ./lib/config.example.dart ./lib/config.dart
           flutter pub run build_runner build
-      # - run: flutter build apk
-      # - run: flutter build ios --release --no-codesign
-      - run: flutter build web
-      - name: Deploy to gh-pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/web/
-          cname: k.bugen.dev
+      - run: flutter build apk
