@@ -6,7 +6,7 @@ import 'package:kanbasu/models/course.dart';
 
 part 'canvas.g.dart';
 
-@RestApi(baseUrl: "https://oc.sjtu.edu.cn/api/v1")
+@RestApi(baseUrl: 'https://oc.sjtu.edu.cn/api/v1')
 abstract class CanvasRestClient {
   /// [CanvasRestClient] covers a subset of Canvas LMS Rest APIs.
 

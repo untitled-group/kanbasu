@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:dio/adapter.dart';
 
-final getCoursesResponse = """
+const getCoursesResponse = '''
 [
     {
         "id": 23333,
@@ -46,26 +46,26 @@ final getCoursesResponse = """
         "access_restricted_by_date": true
     }
 ]
-""";
+''';
 
-final getCoursesLink = """
+const getCoursesLink = '''
 <https://oc.sjtu.edu.cn/api/v1/courses?page=1&per_page=10>; rel="current",<https://oc.sjtu.edu.cn/api/v1/courses?page=2&per_page=10>; rel="next",<https://oc.sjtu.edu.cn/api/v1/courses?page=1&per_page=10>; rel="first",<https://oc.sjtu.edu.cn/api/v1/courses?page=2&per_page=10>; rel="last"
-""";
+''';
 
-final getCoursesResponse2 = """
+const getCoursesResponse2 = '''
 [
     {
         "id": 318720,
         "access_restricted_by_date": true
     }
 ]
-""";
+''';
 
-final getCoursesLink2 = """
+const getCoursesLink2 = '''
 <https://oc.sjtu.edu.cn/api/v1/courses?page=2&per_page=10>; rel="current",<https://oc.sjtu.edu.cn/api/v1/courses?page=1&per_page=10>; rel="prev",<https://oc.sjtu.edu.cn/api/v1/courses?page=1&per_page=10>; rel="first",<https://oc.sjtu.edu.cn/api/v1/courses?page=2&per_page=10>; rel="last"
-""";
+''';
 
-final getSingleCourse = """
+const getSingleCourse = '''
 {
     "id": 23333,
     "name": "概率统计",
@@ -102,36 +102,36 @@ final getSingleCourse = """
     "workflow_state": "available",
     "restrict_enrollments_to_course_dates": false
 }
-""";
+''';
 
 class MockAdapter extends HttpClientAdapter {
-  static const String mockHost = "mockserver";
-  static const String mockBase = "http://$mockHost";
-  DefaultHttpClientAdapter _adapter = DefaultHttpClientAdapter();
+  static const String mockHost = 'mockserver';
+  static const String mockBase = 'http://$mockHost';
+  final DefaultHttpClientAdapter _adapter = DefaultHttpClientAdapter();
 
   @override
   Future<ResponseBody> fetch(RequestOptions options,
       Stream<Uint8List>? requestStream, Future? cancelFuture) async {
-    Uri uri = options.uri;
+    final uri = options.uri;
     if (uri.host == mockHost) {
       switch (uri.path) {
-        case "/courses/23333":
+        case '/courses/23333':
           return ResponseBody.fromString(
             getSingleCourse,
             200,
             headers: {
               Headers.contentTypeHeader: [Headers.jsonContentType],
-              "Link": [getCoursesLink2]
+              'Link': [getCoursesLink2]
             },
           );
-        case "/courses":
-          if (uri.queryParameters["page"] == "2") {
+        case '/courses':
+          if (uri.queryParameters['page'] == '2') {
             return ResponseBody.fromString(
               getCoursesResponse2,
               200,
               headers: {
                 Headers.contentTypeHeader: [Headers.jsonContentType],
-                "Link": [getCoursesLink2]
+                'Link': [getCoursesLink2]
               },
             );
           } else {
@@ -140,12 +140,12 @@ class MockAdapter extends HttpClientAdapter {
               200,
               headers: {
                 Headers.contentTypeHeader: [Headers.jsonContentType],
-                "Link": [getCoursesLink]
+                'Link': [getCoursesLink]
               },
             );
           }
         default:
-          return ResponseBody.fromString("Mock HTTP 404 Error", 404);
+          return ResponseBody.fromString('Mock HTTP 404 Error', 404);
       }
     }
     return _adapter.fetch(options, requestStream, cancelFuture);
