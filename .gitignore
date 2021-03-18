@@ -47,3 +47,7 @@ app.*.map.json
 
 # Xcode develepment team
 /ios/Runner.xcodeproj/project.pbxproj
+
+*.chopper.dart
+*.g.dart
+config.dart
