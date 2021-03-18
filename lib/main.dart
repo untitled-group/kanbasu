@@ -4,8 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'config.dart';
 import 'rest_api/canvas.dart';
 import 'package:dio/dio.dart';
+import 'buffer_api/kvstore.dart';
 
 void main() {
+  KvStore.initFfi();
   return runApp(MyApp());
 }
 

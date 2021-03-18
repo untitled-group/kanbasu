@@ -29,16 +29,20 @@ dependencies:
   # REST Clients
   dio: ^4.0.0-prev1
   retrofit: ^2.0.0-beta1
-  logger: ^1.0.0-nullsafety.0
+  logger: ^1.0.0-nullsafety
+  path: any
+  path_provider: any
+  sqflite: ^2.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   retrofit_generator: ^2.0.0-beta1
   json_annotation: ^4.0.0
-  json_serializable: ^4.0.3
+  json_serializable: ^4.0.0
   test: ^1.16.5
   build_runner: any
+  sqflite_common_ffi: any
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
