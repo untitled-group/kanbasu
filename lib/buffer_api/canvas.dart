@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:kanbasu/buffer_api/kvstore.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:logger/logger.dart';
-
 import 'package:kanbasu/rest_api/canvas.dart';
 import 'package:kanbasu/models/course.dart';
 import 'paginated_list.dart';

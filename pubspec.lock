@@ -277,6 +277,13 @@ packages:
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
     version: "4.0.3"
+  lint:
+    dependency: "direct dev"
+    description:
+      name: lint
+      url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
+    source: hosted
+    version: "1.5.3"
   logger:
     dependency: "direct main"
     description:
