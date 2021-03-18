@@ -1,5 +1,6 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
-import "dart:async";
 import 'config.dart';
 import 'rest_api/canvas.dart';
 import 'package:dio/dio.dart';
@@ -19,9 +20,9 @@ class MyApp extends StatelessWidget {
 }
 
 getCourses() async {
-  final dio = Dio();
-  dio.options.headers["Authorization"] = "Bearer $CANVAS_API_KEY";
-  final api = CanvasRestClient(dio);
+  final dio = Dio(BaseOptions(
+      headers: {HttpHeaders.authorizationHeader: "Bearer $CANVAS_API_KEY"}));
+  final api = CanvasRestClient(dio, baseUrl: CANVAS_API_ENDPOINT);
   print(await api.getCourses());
 }
 

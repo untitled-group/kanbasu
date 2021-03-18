@@ -27,6 +27,5 @@ class Course {
 abstract class CanvasRestClient {
   factory CanvasRestClient(Dio dio, {String baseUrl}) = _CanvasRestClient;
   @GET('/courses')
-  Future<HttpResponse<List<Course>>> getCourses(
-      {@DioOptions() Options? options});
+  Future<HttpResponse<List<Course>>> getCourses();
 }
