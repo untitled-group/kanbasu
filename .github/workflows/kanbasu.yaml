@@ -1,0 +1,19 @@
+name: Kanbasu
+on: [push, pull_request]
+jobs:
+  test-flutter-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: "1.8"
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: "2.0.1"
+      - run: flutter pub get
+      - name: Prepare
+        run: |
+          cp ./lib/config.example.dart ./lib/config.dart
+          flutter pub run build_runner build
+      - run: flutter test
