@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.kanbasu">
+    package="com.untitledgroup.kanbasu">
    <application
         android:label="kanbasu"
         android:icon="@mipmap/ic_launcher">
