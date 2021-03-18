@@ -1,4 +1,4 @@
-package com.example.kanbasu
+package com.untitledgroup.kanbasu
 
 import io.flutter.embedding.android.FlutterActivity
 
