@@ -3,6 +3,7 @@ import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 
 import 'package:kanbasu/models/course.dart';
+import 'package:kanbasu/models/tab.dart';
 
 part 'canvas.g.dart';
 
@@ -20,4 +21,7 @@ abstract class CanvasRestClient {
   /// Returns information on a single course.
   @GET('/courses/{id}')
   Future<HttpResponse<Course>> getCourse(@Path() int id);
+
+  @GET('/courses/{id}/tabs')
+  Future<HttpResponse<List<Tab>>> getTabs(@Path() int id);
 }

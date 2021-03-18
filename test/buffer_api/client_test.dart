@@ -3,7 +3,7 @@ import 'package:kanbasu/buffer_api/kvstore.dart';
 import 'package:test/test.dart';
 import 'package:dio/dio.dart';
 import 'package:kanbasu/rest_api/canvas.dart';
-import '../mocks/course_mock.dart';
+import '../mocks/mock_adapter.dart';
 
 void main() {
   KvStore.initFfi();
@@ -87,6 +87,16 @@ void main() {
       expect(data[2].id, equals(318720));
       final data2 = await api.getCourse(23333).last;
       expect(data2.courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
+    });
+
+    test('should get tabs in offline mode', () async {
+      final onlineData = await api.getTabs(23333).toList();
+      expect(onlineData[0].length, equals(0));
+      expect(onlineData[1].length, equals(9));
+      api.enableOffline();
+      final data = await api.getTabs(23333).last;
+      expect(data.length, equals(9));
+      expect(data[0].id, equals('home'));
     });
   });
 }
