@@ -29,7 +29,7 @@ dependencies:
   # REST Clients
   dio: ^4.0.0-prev1
   retrofit: ^2.0.0-beta1
-  logger: any
+  logger: ^1.0.0-nullsafety.0
 
 dev_dependencies:
   flutter_test:

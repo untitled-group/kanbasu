@@ -1,31 +1,22 @@
 import 'dart:async';
-
-import 'package:json_annotation/json_annotation.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 
+import 'package:kanbasu/models/course.dart';
+
 part 'canvas.g.dart';
-
-@JsonSerializable()
-class Course {
-  final int? id;
-  final String? name;
-  final String? uuid;
-  @JsonKey(name: 'course_code')
-  final String? courseCode;
-  @JsonKey(name: 'enrollment_term_id')
-  final int? enrollmentTermId;
-
-  Course(
-      {this.id, this.name, this.uuid, this.courseCode, this.enrollmentTermId});
-
-  factory Course.fromJson(Map<String, dynamic> json) => _$CourseFromJson(json);
-  Map<String, dynamic> toJson() => _$CourseToJson(this);
-}
 
 @RestApi(baseUrl: "https://oc.sjtu.edu.cn/api/v1")
 abstract class CanvasRestClient {
+  /// [CanvasRestClient] covers a subset of Canvas LMS Rest APIs.
+
   factory CanvasRestClient(Dio dio, {String baseUrl}) = _CanvasRestClient;
+
+  /// Returns the paginated list of active courses for the current user.
   @GET('/courses')
-  Future<HttpResponse<List<Course>>> getCourses();
+  Future<HttpResponse<List<Course>>> getCourses(
+      {@Queries() Map<String, dynamic>? queries});
+
+  @GET('/courses/{id}')
+  Future<HttpResponse<Course>> getCourse(@Path() int id);
 }
