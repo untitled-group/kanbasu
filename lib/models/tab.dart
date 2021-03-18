@@ -9,7 +9,11 @@ class Tab {
   final String htmlUrl;
   @JsonKey(name: 'full_url')
   final String fullUrl;
+
+  /// 1 based
   final int position;
+
+  /// possible values are: public, members, admins, and none
   final String visibility;
   final String label;
   final String type;

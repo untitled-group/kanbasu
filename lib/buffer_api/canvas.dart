@@ -167,7 +167,7 @@ class CanvasBufferClient {
     }
   }
 
-  /// Returns information on a single course.
+  /// List available tabs for a course or group.
   Future<List<Tab>> getTabsF(int id) async {
     final prefix = 'tabs/course/$id/';
     if (!_offline) {
@@ -178,6 +178,7 @@ class CanvasBufferClient {
     }
   }
 
+  /// List available tabs for a course or group.
   Stream<List<Tab>> getTabs(int id) async* {
     final prefix = 'tabs/course/$id/';
     yield await scanPrefix(prefix, (e) => Tab.fromJson(e));
