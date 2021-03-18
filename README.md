@@ -35,5 +35,7 @@ flutter pub run build_runner build
   - Mobile: `flutter devices && flutter run -d device-id`
   - Desktop: Refer to [this article](https://flutter.dev/desktop) and `flutter run -d macos/windows`.
 - Write unit tests (only for backend APIs, no need for UI components)
-- Add changed files manually (Please don't add project-configuration-related files)
-- Push and submit PR
+- Add changed files manually (Please don't add project-configuration-related files) and commit
+- Lint (`flutter analyze`, `dart fix --dry-run && dart fix --apply`)
+- Add changed files and commit again
+- Push and submit PR, fill the PR title in format `module: what's changed`

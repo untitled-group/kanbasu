@@ -1,4 +1,3 @@
 include: package:pedantic/analysis_options.yaml
 exclude:
   - build/**
-  - "lib/**/*.g.dart"
