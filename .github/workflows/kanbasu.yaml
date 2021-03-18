@@ -19,7 +19,7 @@ jobs:
           flutter pub get
           cp ./lib/config.example.dart ./lib/config.dart
           flutter pub run build_runner build
-      - run: flutter analyze
+      - run: dart analyze
       - run: flutter test
   build-flutter-app:
     runs-on: ubuntu-latest
