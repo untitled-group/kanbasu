@@ -44,6 +44,7 @@ class PaginatedList<T> {
       _sendRequest;
   PaginatedList(this._sendRequest);
 
+  /// Returns a stream of all items from API endpoint.
   Stream<T> all() async* {
     Map<String, String> nextQuery = {};
     while (true) {

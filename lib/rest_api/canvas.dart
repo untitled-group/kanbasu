@@ -17,6 +17,7 @@ abstract class CanvasRestClient {
   Future<HttpResponse<List<Course>>> getCourses(
       {@Queries() Map<String, dynamic>? queries});
 
+  /// Returns information on a single course.
   @GET('/courses/{id}')
   Future<HttpResponse<Course>> getCourse(@Path() int id);
 }

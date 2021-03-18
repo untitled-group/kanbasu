@@ -35,6 +35,7 @@ class CanvasBufferClient {
     return PaginatedList<Course>(restClient.getCourses).all();
   }
 
+  /// Returns information on a single course.
   Future<Course?> getCourse(int id) {
     return toResponse(logger, () => restClient.getCourse(id));
   }
