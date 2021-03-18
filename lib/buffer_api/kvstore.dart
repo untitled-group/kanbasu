@@ -45,8 +45,14 @@ class KvStore {
   /// Open a in-memory [KvStore].
   static Future<KvStore> openInMemory() async {
     final database =
-        openDatabase(':memory:', onCreate: _initDatabase, version: 1);
+        openDatabase(inMemoryDatabasePath, onCreate: _initDatabase, version: 1);
     return KvStore(database);
+  }
+
+  /// Close the database
+  Future<void> close() async {
+    final db = await _database;
+    return db.close();
   }
 
   /// Set [key] to [value] in database.

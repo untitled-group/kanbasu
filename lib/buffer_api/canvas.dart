@@ -78,7 +78,8 @@ class CanvasBufferClient {
     }
     await kvStore.rangeDelete('$_prefix/$prefix');
     for (final item in items) {
-      await kvStore.setItem(id(item), jsonEncode(transform(item)));
+      await kvStore.setItem(
+          '$_prefix/$prefix${id(item)}', jsonEncode(transform(item)));
     }
     return items;
   }
@@ -113,6 +114,13 @@ class CanvasBufferClient {
     }
     await kvStore.setItem('$_prefix/$key', jsonEncode(transform(item)));
     return item;
+  }
+
+  Future<void> close() async {
+    final kvStore = _kvStore;
+    if (kvStore != null) {
+      await kvStore.close();
+    }
   }
 
   /// Returns a stream of active courses for the current user.
