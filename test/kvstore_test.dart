@@ -10,10 +10,6 @@ void main() {
       await KvStore.openInMemory();
     });
 
-    test('should create on-disk kvstore', () async {
-      await KvStore.open("test");
-    });
-
     test('should support get and put', () async {
       final db = await KvStore.openInMemory();
       await db.setItem("test-key", "2333333");
