@@ -11,7 +11,7 @@ void main() {
       final api = CanvasRestClient(dio, baseUrl: MockAdapter.mockBase);
       final response = await api.getCourses();
       expect(response.data[0].courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
-      expect(response.data[1].courseCode, equals(null));
+      expect(response.data[1].courseCode, isNull);
       expect(response.data[1].id, equals(233333));
     });
 

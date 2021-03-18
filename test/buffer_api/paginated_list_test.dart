@@ -5,7 +5,7 @@ import '../mocks/course_mock.dart';
 void main() {
   group('PaginatedList', () {
     test('should parse link header', () {
-      expect(getNextLink(null), equals(null));
+      expect(getNextLink(null), isNull);
       expect(
           getNextLink(getCoursesLink), equals({'page': '2', 'per_page': '10'}));
     });

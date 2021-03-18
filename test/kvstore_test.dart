@@ -25,7 +25,7 @@ void main() {
       await db.setItem('test-key', '2333333');
       expect(await db.getItem('test-key'), equals('2333333'));
       expect(await db.deleteItem('test-key'), equals(1));
-      expect(await db.getItem('test-key'), equals(null));
+      expect(await db.getItem('test-key'), isNull);
       expect(await db.deleteItem('test-key'), equals(0));
     });
 
