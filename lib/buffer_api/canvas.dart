@@ -72,13 +72,16 @@ class CanvasBufferClient {
   ///
   /// All objects are [transform]ed to [String], then stored to database as
   /// [prefix]/[id].
-  Future<List<T>> putPrefix<T>(String prefix, List<T> items,
-      String Function(T) id, ToJson<T> toJson) async {
+  Future<List<T>> putPrefix<T>(
+      String prefix, List<T> items, String Function(T) id, ToJson<T> toJson,
+      {bool purge = false}) async {
     final kvStore = _kvStore;
     if (kvStore == null) {
       return items;
     }
-    await kvStore.rangeDelete('$_prefix/$prefix');
+    if (purge) {
+      await kvStore.rangeDelete('$_prefix/$prefix');
+    }
     for (final item in items) {
       await kvStore.setItem(
           '$_prefix/$prefix${id(item)}', json.encode(toJson(item)));
