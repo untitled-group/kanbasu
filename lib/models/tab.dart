@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -11,7 +8,7 @@ part 'tab.g.dart';
 abstract class Tab implements Built<Tab, TabBuilder> {
   Tab._();
 
-  factory Tab([updates(TabBuilder b)]) = _$Tab;
+  factory Tab([Function(TabBuilder b) updates]) = _$Tab;
 
   @BuiltValueField(wireName: 'id')
   String get id;

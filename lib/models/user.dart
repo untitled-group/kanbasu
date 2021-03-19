@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'serializers.dart';
@@ -12,7 +9,7 @@ abstract class User implements Built<User, UserBuilder> {
 
   User._();
 
-  factory User([updates(UserBuilder b)]) = _$User;
+  factory User([Function(UserBuilder b) updates]) = _$User;
 
   /// The ID of the user.
   @BuiltValueField(wireName: 'id')

@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'serializers.dart';
@@ -10,7 +7,7 @@ part 'lock_info.g.dart';
 abstract class LockInfo implements Built<LockInfo, LockInfoBuilder> {
   LockInfo._();
 
-  factory LockInfo([updates(LockInfoBuilder b)]) = _$LockInfo;
+  factory LockInfo([Function(LockInfoBuilder b) updates]) = _$LockInfo;
 
   @BuiltValueField(wireName: 'lock_at')
   String get lockAt;

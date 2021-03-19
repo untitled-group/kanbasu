@@ -1,8 +1,3 @@
-library course;
-
-import 'dart:convert';
-
-import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'serializers.dart';
@@ -12,7 +7,7 @@ part 'course.g.dart';
 abstract class Course implements Built<Course, CourseBuilder> {
   Course._();
 
-  factory Course([updates(CourseBuilder b)]) = _$Course;
+  factory Course([Function(CourseBuilder b) updates]) = _$Course;
 
   @BuiltValueField(wireName: 'id')
   int get id;

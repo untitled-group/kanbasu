@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -19,7 +16,8 @@ abstract class ActivityItem
 
   ActivityItem._();
 
-  factory ActivityItem([updates(ActivityItemBuilder b)]) = _$ActivityItem;
+  factory ActivityItem([Function(ActivityItemBuilder b) updates]) =
+      _$ActivityItem;
 
   @BuiltValueField(wireName: 'created_at')
   String get createdAt;
