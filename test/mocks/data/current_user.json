@@ -1,0 +1,12 @@
+{
+    "id": 23334,
+    "name": "Somebody",
+    "sortable_name": "51800000000-Somebody",
+    "short_name": "Somebody",
+    "avatar_url": "https://oc.sjtu.edu.cn/images/thumbnails/2362073/z4JHSgTl50xSwepgss3oIqme3gD2U5XGOzNTDpx5",
+    "locale": null,
+    "permissions": {
+        "can_update_name": false,
+        "can_update_avatar": true
+    }
+}

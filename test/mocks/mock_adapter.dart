@@ -5,6 +5,7 @@ import 'package:dio/adapter.dart';
 
 import 'tab_mock.dart';
 import 'course_mock.dart';
+import 'user_mock.dart';
 
 ResponseBody jsonResponse(content, {String? link}) {
   if (link == null) {
@@ -31,15 +32,21 @@ class MockAdapter extends HttpClientAdapter {
     if (uri.host == mockHost) {
       switch (uri.path) {
         case '/courses/23333':
-          return jsonResponse(getSingleCourse);
+          return jsonResponse(singleCourse);
         case '/courses':
           if (uri.queryParameters['page'] == '2') {
-            return jsonResponse(getCoursesResponse2, link: getCoursesLink2);
+            return jsonResponse(courseResponse2, link: getCoursesLink2);
           } else {
-            return jsonResponse(getCoursesResponse, link: getCoursesLink);
+            return jsonResponse(courseResponse, link: getCoursesLink);
           }
         case '/courses/23333/tabs':
-          return jsonResponse(getTabResponse);
+          return jsonResponse(tabResponse);
+        case '/users/self':
+          return jsonResponse(currentUserResponse);
+        case '/users/23334':
+          return jsonResponse(currentUserResponse);
+        case '/users/self/activity_stream':
+          return jsonResponse(activityStreamResponse);
         default:
           return ResponseBody.fromString('Mock HTTP 404 Error', 404);
       }

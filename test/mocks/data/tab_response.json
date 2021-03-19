@@ -1,0 +1,85 @@
+[
+    {
+        "id": "home",
+        "html_url": "/courses/23333",
+        "full_url": "https://oc.sjtu.edu.cn/courses/23333",
+        "position": 1,
+        "visibility": "public",
+        "label": "主页",
+        "type": "internal"
+    },
+    {
+        "id": "announcements",
+        "html_url": "/courses/23333/announcements",
+        "full_url": "https://oc.sjtu.edu.cn/courses/23333/announcements",
+        "position": 2,
+        "visibility": "public",
+        "label": "公告",
+        "type": "internal"
+    },
+    {
+        "id": "assignments",
+        "html_url": "/courses/23333/assignments",
+        "full_url": "https://oc.sjtu.edu.cn/courses/23333/assignments",
+        "position": 3,
+        "visibility": "public",
+        "label": "作业",
+        "type": "internal"
+    },
+    {
+        "id": "discussions",
+        "html_url": "/courses/23333/discussion_topics",
+        "full_url": "https://oc.sjtu.edu.cn/courses/23333/discussion_topics",
+        "position": 4,
+        "visibility": "public",
+        "label": "讨论",
+        "type": "internal"
+    },
+    {
+        "id": "grades",
+        "html_url": "/courses/23333/grades",
+        "full_url": "https://oc.sjtu.edu.cn/courses/23333/grades",
+        "position": 5,
+        "visibility": "public",
+        "label": "评分",
+        "type": "internal"
+    },
+    {
+        "id": "files",
+        "html_url": "/courses/23333/files",
+        "full_url": "https://oc.sjtu.edu.cn/courses/23333/files",
+        "position": 6,
+        "visibility": "public",
+        "label": "文件",
+        "type": "internal"
+    },
+    {
+        "id": "syllabus",
+        "html_url": "/courses/23333/assignments/syllabus",
+        "full_url": "https://oc.sjtu.edu.cn/courses/23333/assignments/syllabus",
+        "position": 7,
+        "visibility": "public",
+        "label": "大纲",
+        "type": "internal"
+    },
+    {
+        "id": "context_external_tool_162",
+        "html_url": "/courses/23333/external_tools/162",
+        "full_url": "https://oc.sjtu.edu.cn/courses/23333/external_tools/162",
+        "position": 8,
+        "visibility": "public",
+        "label": "课堂视频",
+        "type": "external",
+        "url": "https://oc.sjtu.edu.cn/api/v1/courses/23333/external_tools/sessionless_launch?id=162&launch_type=course_navigation"
+    },
+    {
+        "id": "context_external_tool_251",
+        "html_url": "/courses/23333/external_tools/251",
+        "full_url": "https://oc.sjtu.edu.cn/courses/23333/external_tools/251",
+        "position": 9,
+        "visibility": "public",
+        "label": "电子教参",
+        "type": "external",
+        "url": "https://oc.sjtu.edu.cn/api/v1/courses/23333/external_tools/sessionless_launch?id=251&launch_type=course_navigation"
+    }
+]

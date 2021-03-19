@@ -27,13 +27,13 @@ void main() {
     test('should get single course', () async {
       final response = await api.getCourse(23333).last;
       final response2 = await api.getCourseF(23333);
-      expect(response!.toJson(), equals(response2!.toJson()));
+      expect(response.toJson(), equals(response2!.toJson()));
       expect(response.courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
     });
 
     test('should return null when 404', () async {
-      final response = await api.getCourse(23334).last;
-      expect(response, isNull);
+      final response = await api.getCourse(23334).toList();
+      expect(response, isEmpty);
       final response2 = await api.getCourseF(23334);
       expect(response2, isNull);
     });
