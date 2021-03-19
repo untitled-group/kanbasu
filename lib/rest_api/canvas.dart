@@ -24,5 +24,6 @@ abstract class CanvasRestClient {
 
   /// List available tabs for a course or group.
   @GET('/courses/{id}/tabs')
-  Future<HttpResponse<List<Tab>>> getTabs(@Path() int id);
+  Future<HttpResponse<List<Tab>>> getTabs(@Path() int id,
+      {@Queries() Map<String, dynamic>? queries});
 }
