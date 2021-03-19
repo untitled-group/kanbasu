@@ -28,7 +28,7 @@ dependencies:
   flutter:
     sdk: flutter
   # REST Clients
-  logger: ^1.0.0-nullsafety
+  logger: ^1.0.0
   path: any
   path_provider: any
   retrofit: ^2.0.0-beta1

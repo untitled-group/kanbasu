@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:kanbasu/buffer_api/canvas.dart';
 import 'package:kanbasu/buffer_api/kvstore.dart';
 import 'package:test/test.dart';
@@ -97,6 +98,16 @@ void main() {
       final data = await api.getTabs(23333).last;
       expect(data.length, equals(9));
       expect(data[0].id, equals('home'));
+    });
+
+    test('should get activity stream', () async {
+      final data = await api.getCurrentUserActivityStreamF();
+      final dataJson = await data.toList();
+      api.enableOffline();
+      final offlineData = await api.getCurrentUserActivityStreamF();
+      final offlineDataJson = await offlineData.toList();
+      expect(dataJson.length, equals(offlineDataJson.length));
+      expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
     });
   });
 }

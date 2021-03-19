@@ -290,7 +290,7 @@ packages:
       name: logger
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
-    version: "1.0.0-nullsafety.0"
+    version: "1.0.0"
   logging:
     dependency: transitive
     description:
