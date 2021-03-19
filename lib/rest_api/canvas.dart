@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/tab.dart';
 import 'package:kanbasu/models/user.dart';
-import 'package:kanbasu/models/activity.dart';
+import 'package:kanbasu/models/activity_item.dart';
 
 part 'canvas.g.dart';
 
