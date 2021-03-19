@@ -69,6 +69,9 @@ class ActivityItem {
   final String htmlUrl;
 
   /// Only available when [type] is one of: [Submission].
+  ///
+  /// If you need to compare two activities are equal, add `explicitToJson`
+  /// flag on the following fields, to avoid object equal, or use `identical`.
   final User? user;
 
   /// Only available when [type] is one of: [Submission].
