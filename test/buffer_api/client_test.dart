@@ -100,11 +100,20 @@ void main() {
       expect(data[0].id, equals('home'));
     });
 
-    test('should get activity stream', () async {
+    test('should get activity stream in one-shot mode', () async {
       final data = await api.getCurrentUserActivityStreamF();
       final dataJson = await data.toList();
       api.enableOffline();
       final offlineData = await api.getCurrentUserActivityStreamF();
+      final offlineDataJson = await offlineData.toList();
+      expect(dataJson.length, equals(offlineDataJson.length));
+      expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
+    });
+
+    test('should get activity stream in stream mode', () async {
+      final data = await api.getCurrentUserActivityStream().last;
+      final dataJson = await data.toList();
+      final offlineData = await api.getCurrentUserActivityStream().first;
       final offlineDataJson = await offlineData.toList();
       expect(dataJson.length, equals(offlineDataJson.length));
       expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
