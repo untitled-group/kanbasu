@@ -6,6 +6,7 @@ import 'package:retrofit/retrofit.dart';
 import 'package:logger/logger.dart';
 import 'package:kanbasu/rest_api/canvas.dart';
 import 'package:kanbasu/models/course.dart';
+import 'package:kanbasu/models/tab.dart';
 import 'paginated_list.dart';
 
 /// `toResponse` transform an HTTP response to corresponding object.
@@ -163,6 +164,27 @@ class CanvasBufferClient {
           (e) => e.toJson());
     } else {
       return await getObject('courses/$id', (e) => Course.fromJson(e));
+    }
+  }
+
+  /// List available tabs for a course or group.
+  Future<List<Tab>> getTabsF(int id) async {
+    final prefix = 'tabs/course/$id/';
+    if (!_offline) {
+      return await putPrefix(prefix, (await _restClient.getTabs(id)).data,
+          (e) => e.id, (e) => e.toJson());
+    } else {
+      return await scanPrefix(prefix, (e) => Tab.fromJson(e));
+    }
+  }
+
+  /// List available tabs for a course or group.
+  Stream<List<Tab>> getTabs(int id) async* {
+    final prefix = 'tabs/course/$id/';
+    yield await scanPrefix(prefix, (e) => Tab.fromJson(e));
+    if (!_offline) {
+      yield await putPrefix(prefix, (await _restClient.getTabs(id)).data,
+          (e) => e.id, (e) => e.toJson());
     }
   }
 }
