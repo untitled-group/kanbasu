@@ -1,5 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import 'course.dart';
+import 'user.dart';
+import 'assignment.dart';
+
 part 'activity.g.dart';
 
 enum ActivityContextType {
@@ -64,6 +68,17 @@ class ActivityItem {
   @JsonKey(name: 'html_url')
   final String htmlUrl;
 
+  /// Only available when [type] is one of: [Submission].
+  final User? user;
+
+  /// Only available when [type] is one of: [Submission].
+  final Course? course;
+
+  /// Only available when [type] is one of: [Submission].
+  final Assignment? assignment;
+
+  // attachments, submission_comments
+
   ActivityItem(
       {required this.id,
       required this.createdAt,
@@ -75,7 +90,10 @@ class ActivityItem {
       required this.contextType,
       this.courseId,
       this.groupId,
-      required this.htmlUrl});
+      required this.htmlUrl,
+      this.user,
+      this.course,
+      this.assignment});
 
   factory ActivityItem.fromJson(Map<String, dynamic> json) =>
       _$ActivityItemFromJson(json);
