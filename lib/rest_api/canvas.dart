@@ -18,7 +18,8 @@ abstract class CanvasRestClient {
   /// Returns the paginated list of active courses for the current user.
   @GET('/courses')
   Future<HttpResponse<List<Course>>> getCourses(
-      {@Queries() Map<String, dynamic>? queries});
+      {@Queries() Map<String, dynamic>? queries,
+      @Query('state[]') String state = '["available"]'});
 
   /// Returns information on a single course.
   @GET('/courses/{id}')

@@ -12,21 +12,19 @@ abstract class Course implements Built<Course, CourseBuilder> {
   @BuiltValueField(wireName: 'id')
   int get id;
   @BuiltValueField(wireName: 'name')
-  String? get name;
-  @BuiltValueField(wireName: 'account_id')
-  int? get accountId;
+  String get name;
   @BuiltValueField(wireName: 'uuid')
-  String? get uuid;
+  String get uuid;
   @BuiltValueField(wireName: 'start_at')
-  DateTime? get startAt;
+  DateTime get startAt;
   @BuiltValueField(wireName: 'course_code')
-  String? get courseCode;
+  String get courseCode;
   @BuiltValueField(wireName: 'enrollment_term_id')
-  int? get enrollmentTermId;
+  int get enrollmentTermId;
   @BuiltValueField(wireName: 'end_at')
   DateTime? get endAt;
   @BuiltValueField(wireName: 'time_zone')
-  String? get timeZone;
+  String get timeZone;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(Course.serializer, this)!
