@@ -5,6 +5,8 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
+enum ScanOrder { asc, desc }
+
 class KvStore {
   /// [KvStore] stores key-value pairs. Currently, it is backed by sqlite, a
   /// B-Tree engine. [KvStore] supports put, get and range scan.
@@ -83,10 +85,24 @@ class KvStore {
   }
 
   /// Get all values with [prefix] from database. Returns null if not exist.
-  Future<Map<String, String>> scan(String prefix) async {
+  ///
+  /// [order] could be null, asc or desc
+  Future<Map<String, String>> scan(String prefix, {ScanOrder? order}) async {
     final db = await _database;
-    final List<Map<String, dynamic>> queryResult = await db
-        .query(_tableName, where: 'key like ?', whereArgs: ['$prefix%']);
+    final orderBy;
+    switch (order) {
+      case null:
+        orderBy = null;
+        break;
+      case ScanOrder.asc:
+        orderBy = 'key ASC';
+        break;
+      case ScanOrder.desc:
+        orderBy = 'key DESC';
+        break;
+    }
+    final List<Map<String, dynamic>> queryResult = await db.query(_tableName,
+        where: 'key like ?', whereArgs: ['$prefix%'], orderBy: orderBy);
     if (queryResult.isEmpty) {
       return {};
     }

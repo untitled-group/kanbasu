@@ -44,5 +44,17 @@ void main() {
       expect(
           await db.scan('testt/'), equals({'testt/1': '11', 'testt/2': '12'}));
     });
+
+    test('should support scan with order', () async {
+      final db = await KvStore.openInMemory();
+      await db.setItem('test/2', '2');
+      await db.setItem('test/1', '1');
+      await db.setItem('test/4', '4');
+      await db.setItem('test/3', '3');
+      expect(await db.scan('test/', order: ScanOrder.asc),
+          equals({'test/1': '1', 'test/2': '2', 'test/3': '3', 'test/4': '4'}));
+      expect(await db.scan('test/', order: ScanOrder.desc),
+          equals({'test/4': '4', 'test/3': '3', 'test/2': '2', 'test/1': '1'}));
+    });
   });
 }

@@ -4,6 +4,8 @@ import 'package:dio/dio.dart';
 
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/tab.dart';
+import 'package:kanbasu/models/user.dart';
+import 'package:kanbasu/models/activity.dart';
 
 part 'canvas.g.dart';
 
@@ -25,5 +27,15 @@ abstract class CanvasRestClient {
   /// List available tabs for a course or group.
   @GET('/courses/{id}/tabs')
   Future<HttpResponse<List<Tab>>> getTabs(@Path() int id,
+      {@Queries() Map<String, dynamic>? queries});
+
+  /// Get current user
+  @GET('/users/self')
+  Future<HttpResponse<User>> getCurrentUser(
+      {@Queries() Map<String, dynamic>? queries});
+
+  /// Returns the current user's global activity stream, paginated
+  @GET('/users/self/activity_stream')
+  Future<HttpResponse<List<ActivityItem>>> getCurrentUserActivityStream(
       {@Queries() Map<String, dynamic>? queries});
 }

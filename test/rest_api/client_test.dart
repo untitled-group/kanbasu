@@ -27,5 +27,14 @@ void main() {
       final response = await api.getTabs(23333);
       expect(response.data[0].id, equals('home'));
     });
+
+    test('should get user', () async {
+      final response = await api.getCurrentUser();
+      expect(response.data.name, equals('Somebody'));
+    });
+
+    test('should get user activity stream', () async {
+      await api.getCurrentUserActivityStream();
+    });
   });
 }
