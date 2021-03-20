@@ -17,14 +17,15 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
     // FIXME: a change of `model.canvas` won't make the widget rebuild
 
     return ListScaffold<ActivityItem, int>(
-        title: Text('Activities'),
-        itemBuilder: (item) {
-          return ActivityWidget(item);
-        },
-        fetch: (_cursor) async {
-          final activities =
-              (await model.canvas.getCurrentUserActivityStream()).data;
-          return ListPayload(items: activities, hasMore: false);
-        });
+      title: Text('Activities'),
+      itemBuilder: (item) {
+        return ActivityWidget(item);
+      },
+      fetch: (_cursor) async {
+        final activities =
+            (await model.canvas.getCurrentUserActivityStream()).data;
+        return ListPayload(items: activities, hasMore: false);
+      },
+    );
   }
 }

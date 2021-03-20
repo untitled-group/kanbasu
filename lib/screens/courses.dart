@@ -17,18 +17,19 @@ class _CoursesScreenState extends State<CoursesScreen> {
     // FIXME: a change of `model.canvas` won't make the widget rebuild
 
     return ListScaffold<Course, int>(
-        title: Text('Courses'),
-        itemBuilder: (item) {
-          return CourseWidget(item);
-        },
-        fetch: (_cursor) async {
-          final courses = (await model.canvas.getCourses())
-              .data
-              .map((c) => c.toCourse())
-              .whereType<Course>()
-              .toList();
+      title: Text('Courses'),
+      itemBuilder: (item) {
+        return CourseWidget(item);
+      },
+      fetch: (_cursor) async {
+        final courses = (await model.canvas.getCourses())
+            .data
+            .map((c) => c.toCourse())
+            .whereType<Course>()
+            .toList();
 
-          return ListPayload(items: courses, hasMore: false);
-        });
+        return ListPayload(items: courses, hasMore: false);
+      },
+    );
   }
 }
