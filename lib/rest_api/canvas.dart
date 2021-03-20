@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:kanbasu/models/maybe_course.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 
@@ -17,9 +18,8 @@ abstract class CanvasRestClient {
 
   /// Returns the paginated list of active courses for the current user.
   @GET('/courses')
-  Future<HttpResponse<List<Course>>> getCourses(
-      {@Queries() Map<String, dynamic>? queries,
-      @Query('state[]') String state = '["available"]'});
+  Future<HttpResponse<List<MaybeCourse>>> getCourses(
+      {@Queries() Map<String, dynamic>? queries});
 
   /// Returns information on a single course.
   @GET('/courses/{id}')
