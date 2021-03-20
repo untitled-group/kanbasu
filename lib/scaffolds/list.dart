@@ -25,18 +25,19 @@ class ListScaffold<T, K> extends StatefulWidget {
   });
 
   @override
-  _ListScaffoldState createState() => _ListScaffoldState();
+  _ListScaffoldState<T, K> // fuck the generics
+      createState() => _ListScaffoldState();
 }
 
 class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
-  List<T> items = [];
+  List<T> _items = [];
   bool _hasMore = false;
 
-  Future<void> _onRefresh() async {
+  Future<void> _doRefresh() async {
     final _payload = await widget.fetch();
     setState(() {
       _hasMore = _payload.hasMore;
-      items = _payload.items.toList();
+      _items = _payload.items.toList();
     });
   }
 
@@ -44,15 +45,15 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
     final list = Scrollbar(
       child: ListView.builder(
         itemBuilder: _buildItem,
-        itemCount: items.length * 2 + 1,
+        itemCount: _items.length * 2 + 1,
       ),
     );
 
-    return RefreshIndicator(onRefresh: _onRefresh, child: list);
+    return RefreshIndicator(onRefresh: _doRefresh, child: list);
   }
 
   Widget _buildItem(BuildContext context, int index) {
-    if (index == 2 * items.length) {
+    if (index == 2 * _items.length) {
       if (_hasMore) {
         return Container(); // TODO: loading widget
       } else {
@@ -64,8 +65,14 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
         color: Colors.grey,
       );
     } else {
-      return widget.itemBuilder(items[index ~/ 2]);
+      return widget.itemBuilder(_items[index ~/ 2]);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _doRefresh();
   }
 
   @override
