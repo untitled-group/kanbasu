@@ -19,9 +19,9 @@ void main() {
       final data = (await api.getCourses().last).toList();
       final dataF = await api.getCoursesF();
       expect(data, equals(dataF));
-      expect(data.length, equals(3));
+      expect(data.length, equals(2));
       expect(data[0].courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
-      expect(data[2].id, equals(318720));
+      expect(data[1].id, equals(318720));
     });
 
     test('should get single course', () async {
@@ -67,22 +67,22 @@ void main() {
       final dataF = await api.getCoursesF();
       final data = await api.getCourses().last;
       expect(data, equals(dataF));
-      expect(data.length, equals(3));
+      expect(data.length, equals(2));
       expect(data[0].courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
-      expect(data[2].id, equals(318720));
+      expect(data[1].id, equals(318720));
     });
 
     test('should get course in offline mode', () async {
       final onlineData = await api.getCourses().toList();
       expect(onlineData[0].length, equals(0));
-      expect(onlineData[1].length, equals(3));
+      expect(onlineData[1].length, equals(2));
       api.enableOffline();
       final dataF = await api.getCoursesF();
       final data = await api.getCourses().last;
       expect(data, equals(dataF));
-      expect(data.length, equals(3));
+      expect(data.length, equals(2));
       expect(data[0].courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
-      expect(data[2].id, equals(318720));
+      expect(data[1].id, equals(318720));
       final data2 = await api.getCourse(23333).last;
       expect(data2.courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
     });
