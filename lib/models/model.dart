@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:kanbasu/buffer_api/canvas.dart';
 import 'package:kanbasu/rest_api/canvas.dart';
 import 'package:kanbasu/utils/prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,8 +45,8 @@ class Model with ChangeNotifier {
     notifyListeners();
   }
 
-  late CanvasRestClient _canvas;
-  CanvasRestClient get canvas => _canvas;
+  late CanvasBufferClient _canvas;
+  CanvasBufferClient get canvas => _canvas;
 
   Future<void> updateCanvasClient() async {
     final prefs = await SharedPreferences.getInstance();
@@ -53,10 +54,14 @@ class Model with ChangeNotifier {
     final api_key = getApiKey(prefs);
     final api_endpoint = getApiEndpoint(prefs);
 
-    _canvas = CanvasRestClient(
-        Dio(BaseOptions(
-            headers: {HttpHeaders.authorizationHeader: 'Bearer $api_key'})),
-        baseUrl: '$api_endpoint');
+    final restCanvas = CanvasRestClient(
+      Dio(BaseOptions(
+        headers: {HttpHeaders.authorizationHeader: 'Bearer $api_key'},
+      )),
+      baseUrl: '$api_endpoint',
+    );
+
+    _canvas = CanvasBufferClient(restCanvas);
 
     notifyListeners();
   }

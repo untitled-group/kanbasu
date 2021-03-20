@@ -81,7 +81,8 @@ class _MeScreenState extends State<MeScreen> {
       title: Text('Me'),
       itemBuilder: (user) => UserWidget(user),
       fetch: (_cursor) async {
-        final user = (await model.canvas.getCurrentUser()).data;
+        final user = await model.canvas.getCurrentUserF() ??
+            (throw Exception('No user'));
         return ListPayload(items: [user], hasMore: false);
       },
       actionBuilder: () => IconButton(

@@ -21,10 +21,10 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
       itemBuilder: (item) {
         return ActivityWidget(item);
       },
-      fetch: (_cursor) async {
-        final activities =
-            (await model.canvas.getCurrentUserActivityStream()).data;
-        return ListPayload(items: activities, hasMore: false);
+      fetch: (cursor) async {
+        final stream = await model.canvas.getCurrentUserActivityStreamF();
+        final activities = await stream.skip(cursor ?? 0).take(5).toList();
+        return ListPayload(items: activities, hasMore: true);
       },
     );
   }

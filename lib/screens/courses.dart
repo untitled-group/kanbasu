@@ -22,12 +22,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
         return CourseWidget(item);
       },
       fetch: (_cursor) async {
-        final courses = (await model.canvas.getCourses())
-            .data
-            .map((c) => c.toCourse())
-            .whereType<Course>()
-            .toList();
-
+        final courses = await model.canvas.getCoursesF();
         return ListPayload(items: courses, hasMore: false);
       },
     );
