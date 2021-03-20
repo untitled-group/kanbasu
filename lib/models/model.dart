@@ -39,6 +39,10 @@ class Model with ChangeNotifier {
 
   int _activeTab = 0;
   int get activeTab => _activeTab;
+  set activeTab(int activeTab) {
+    _activeTab = activeTab;
+    notifyListeners();
+  }
 
   late CanvasRestClient _canvas;
   CanvasRestClient get canvas => _canvas;
@@ -54,16 +58,10 @@ class Model with ChangeNotifier {
             headers: {HttpHeaders.authorizationHeader: 'Bearer $api_key'})),
         baseUrl: '$api_endpoint');
 
-    // TODO: notify widgets to refresh
     notifyListeners();
   }
 
   Future<void> init() async {
     await updateCanvasClient();
-  }
-
-  void setActiveTab(int v) {
-    _activeTab = v;
-    notifyListeners();
   }
 }

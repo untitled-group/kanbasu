@@ -13,13 +13,15 @@ class ActivitiesScreen extends StatefulWidget {
 class _ActivitiesScreenState extends State<ActivitiesScreen> {
   @override
   Widget build(BuildContext context) {
+    final model = Provider.of<Model>(context);
+    // FIXME: a change of `model.canvas` won't make the widget rebuild
+
     return ListScaffold<ActivityItem, int>(
         title: Text('Activities'),
         itemBuilder: (item) {
           return ActivityWidget(item);
         },
         fetch: (_cursor) async {
-          final model = Provider.of<Model>(context, listen: false);
           final activities = await model.canvas.getCurrentUserActivityStream();
           return ListPayload(items: activities.data, hasMore: false);
         });

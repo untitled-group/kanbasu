@@ -35,7 +35,12 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
   List<T> _items = [];
   bool _hasMore = true;
 
-  Future<void> _doRefresh() async {
+  Future<void> _doRefresh({bool hard = false}) async {
+    if (hard) {
+      setState(() {
+        _items.clear();
+      });
+    }
     final _payload = await widget.fetch(null);
     setState(() {
       _hasMore = _payload.hasMore;
@@ -69,9 +74,9 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _doRefresh();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _doRefresh(hard: true);
   }
 
   @override

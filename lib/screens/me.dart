@@ -71,11 +71,13 @@ class _MeScreenState extends State<MeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final model = Provider.of<Model>(context);
+    // FIXME: a change of `model.canvas` won't make the widget rebuild
+
     return ListScaffold<String, int>(
       title: Text('Me'),
       itemBuilder: (item) => Text(item),
       fetch: (_cursor) async {
-        final model = Provider.of<Model>(context, listen: false);
         final user = (await model.canvas.getCurrentUser()).data;
         return ListPayload(items: [user.toString()], hasMore: false);
       },

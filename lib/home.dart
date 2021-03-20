@@ -54,7 +54,7 @@ class _HomeState extends State<Home> {
         currentIndex: model.activeTab,
         type: BottomNavigationBarType.fixed,
         onTap: (int index) {
-          model.setActiveTab(index);
+          model.activeTab = index;
         },
       ),
     );
