@@ -1,65 +1,36 @@
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
-import 'config.dart';
-import 'rest_api/canvas.dart';
-import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:kanbasu/models/model.dart';
+import 'package:provider/provider.dart';
+import 'home.dart';
 import 'buffer_api/kvstore.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   KvStore.initFfi();
-  return runApp(MyApp());
+
+  final model = Model();
+  await Future.wait([model.init()]);
+
+  return runApp(
+    ChangeNotifierProvider(create: (context) => model, child: MyApp()),
+  );
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
+    final theme = Provider.of<Model>(context).theme;
+
+    return MaterialApp(
       title: 'Kanbasu',
-      home: MyHomePage(),
+      theme: ThemeData(
+          primarySwatch: Colors.red,
+          primaryColor: theme.primary,
+          accentColor: theme.primary,
+          scaffoldBackgroundColor: theme.background,
+          buttonColor: theme.primary,
+          pageTransitionsTheme: PageTransitionsTheme(builders: {})),
+      home: Home(),
     );
-  }
-}
-
-Future<void> getCourses() async {
-  final dio = Dio(BaseOptions(
-      headers: {HttpHeaders.authorizationHeader: 'Bearer $CANVAS_API_KEY'}));
-  final api = CanvasRestClient(dio, baseUrl: CANVAS_API_ENDPOINT);
-  print(await api.getCourses());
-}
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, this.title}) : super(key: key);
-
-  final String? title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-        navigationBar: const CupertinoNavigationBar(
-          middle: Text('Kanbasu'),
-        ),
-        child: Stack(
-          children: [
-            Align(
-                alignment: FractionalOffset.center,
-                child: CupertinoButton.filled(
-                  key: const Key('btn'),
-                  onPressed: () {
-                    setState(() {
-                      _counter++;
-                    });
-                  },
-                  child: Text('$_counter'),
-                )),
-          ],
-        ));
   }
 }
