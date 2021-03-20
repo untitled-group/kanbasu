@@ -24,7 +24,7 @@ abstract class Course implements Built<Course, CourseBuilder> {
   @BuiltValueField(wireName: 'end_at')
   DateTime? get endAt;
   @BuiltValueField(wireName: 'time_zone')
-  String get timeZone;
+  String? get timeZone;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(Course.serializer, this)!

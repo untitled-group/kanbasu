@@ -48,7 +48,7 @@ void main() {
       final dio = Dio();
       dio.httpClientAdapter = MockAdapter();
       restClient = CanvasRestClient(dio, baseUrl: MockAdapter.mockBase);
-      kvStore = await KvStore.openInMemory();
+      kvStore = KvStore.openInMemory();
       api = CanvasBufferClient(restClient, kvStore);
     });
 
