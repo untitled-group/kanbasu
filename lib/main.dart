@@ -22,8 +22,14 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<Model>(context).theme;
+
     return MaterialApp(
       title: 'Kanbasu',
+      theme: ThemeData(
+          primaryColor: Colors.white,
+          accentColor: theme.primary,
+          scaffoldBackgroundColor: theme.background),
       home: Home(),
     );
   }

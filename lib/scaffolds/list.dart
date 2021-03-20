@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kanbasu/scaffolds/common.dart';
+import 'package:kanbasu/widgets/border.dart';
 import 'package:kanbasu/widgets/loading.dart';
 
 class ListPayload<T, K> {
@@ -61,10 +62,7 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
         return Container();
       }
     } else if (index % 2 == 1) {
-      return Container(
-        height: 1,
-        color: Colors.grey,
-      );
+      return ListBorder();
     } else {
       return widget.itemBuilder(_items[index ~/ 2]);
     }

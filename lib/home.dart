@@ -29,7 +29,7 @@ class _HomeState extends State<Home> {
       case 0:
         return ActivitiesScreen();
       case 1:
-        return ActivitiesScreen();
+        return Container();
     }
     throw Exception();
   }
@@ -37,6 +37,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final model = Provider.of<Model>(context);
+    final theme = model.theme;
     final navigationItems = _buildNavigationItems();
 
     return Scaffold(
@@ -47,6 +48,7 @@ class _HomeState extends State<Home> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: theme.primary,
         items: navigationItems,
         currentIndex: model.activeTab,
         type: BottomNavigationBarType.fixed,
