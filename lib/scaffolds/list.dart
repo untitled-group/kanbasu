@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kanbasu/scaffolds/common.dart';
+import 'package:kanbasu/widgets/loading.dart';
 
 class ListPayload<T, K> {
   Iterable<T> items;
@@ -15,7 +16,7 @@ class ListScaffold<T, K> extends StatefulWidget {
   final Widget title;
   final Widget Function()? actionBuilder;
   final Widget Function(T payload) itemBuilder;
-  final Future<ListPayload<T, K>> Function() fetch;
+  final Future<ListPayload<T, K>> Function(K? cursor) fetch;
 
   ListScaffold({
     required this.title,
@@ -31,10 +32,10 @@ class ListScaffold<T, K> extends StatefulWidget {
 
 class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
   List<T> _items = [];
-  bool _hasMore = false;
+  bool _hasMore = true;
 
   Future<void> _doRefresh() async {
-    final _payload = await widget.fetch();
+    final _payload = await widget.fetch(null);
     setState(() {
       _hasMore = _payload.hasMore;
       _items = _payload.items.toList();
@@ -55,7 +56,7 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
   Widget _buildItem(BuildContext context, int index) {
     if (index == 2 * _items.length) {
       if (_hasMore) {
-        return Container(); // TODO: loading widget
+        return LoadingWidget(isMore: _items.isNotEmpty);
       } else {
         return Container();
       }

@@ -17,10 +17,10 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
         itemBuilder: (item) {
           return Container(child: Text(item.title));
         },
-        fetch: () async {
+        fetch: (_cursor) async {
           final model = context.read<Model>();
           final activities = await model.canvas.getCurrentUserActivityStream();
-          return ListPayload(items: activities.data, hasMore: true);
+          return ListPayload(items: activities.data, hasMore: false);
         });
   }
 }
