@@ -7,6 +7,7 @@ import 'package:retrofit/retrofit.dart';
 import 'package:logger/logger.dart';
 import 'package:kanbasu/rest_api/canvas.dart';
 import 'package:kanbasu/models/course.dart';
+import 'package:kanbasu/models/maybe_course.dart';
 import 'package:kanbasu/models/tab.dart';
 import 'package:kanbasu/models/user.dart';
 import 'package:kanbasu/types.dart';
@@ -239,16 +240,28 @@ class CanvasBufferClient {
   // Add new REST APIs below
   // **************************************************************************
 
-  /// Returns a stream of active courses for the current user.
-  Stream<List<Course>> getCourses() {
-    return _getPaginatedListStream('courses/by_id/', (e) => Course.fromJson(e),
-        (e) => e.toJson(), _restClient.getCourses, (e) => e.id.toString());
+  List<Course> listToCourse(List<MaybeCourse> courseList) {
+    return courseList.map((e) => e.toCourse()).whereType<Course>().toList();
   }
 
   /// Returns a stream of active courses for the current user.
-  Future<List<Course>> getCoursesF() {
-    return _getPaginatedListFuture('courses/by_id/', (e) => Course.fromJson(e),
-        (e) => e.toJson(), _restClient.getCourses, (e) => e.id.toString());
+  Stream<List<Course>> getCourses() {
+    return _getPaginatedListStream<MaybeCourse>(
+        'courses/by_id/',
+        (e) => MaybeCourse.fromJson(e),
+        (e) => e.toJson(),
+        _restClient.getCourses,
+        (e) => e.id.toString()).map(listToCourse);
+  }
+
+  /// Returns a stream of active courses for the current user.
+  Future<List<Course>> getCoursesF() async {
+    return _getPaginatedListFuture<MaybeCourse>(
+        'courses/by_id/',
+        (e) => MaybeCourse.fromJson(e),
+        (e) => e.toJson(),
+        _restClient.getCourses,
+        (e) => e.id.toString()).then(listToCourse);
   }
 
   String _getCoursePrefix(id) => 'courses/by_id/$id';
