@@ -34,6 +34,8 @@ class MyApp extends StatelessWidget {
         ),
         appBarTheme: AppBarTheme(
           backgroundColor: theme.background,
+          foregroundColor: theme.text,
+          actionsIconTheme: IconThemeData(color: theme.text),
         ),
         pageTransitionsTheme: PageTransitionsTheme(builders: {}),
       ),

@@ -26,7 +26,10 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
 
         final cursor = _cursor ?? 0;
         final stream = await model.canvas.getCurrentUserActivityStreamF();
-        final activities = await stream.skip(cursor).take(N_LOAD).toList();
+        final activities = await stream
+            .skip(cursor)
+            .take(N_LOAD)
+            .toList(); // FIXME: inefficient
 
         return ListPayload(
             items: activities,
