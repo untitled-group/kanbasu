@@ -34,6 +34,7 @@ class ListScaffold<T, K> extends StatefulWidget {
 class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
   List<T> _items = [];
   bool _hasMore = true;
+  String? error;
 
   Future<void> _doRefresh({bool hard = false}) async {
     if (hard) {
@@ -41,22 +42,45 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
         _items.clear();
       });
     }
-    final _payload = await widget.fetch(null);
-    setState(() {
-      _hasMore = _payload.hasMore;
-      _items = _payload.items.toList();
-    });
+    error = null;
+
+    try {
+      final _payload = await widget.fetch(null);
+      setState(() {
+        _hasMore = _payload.hasMore;
+        _items = _payload.items.toList();
+      });
+    } catch (e) {
+      setState(() {
+        error = e.runtimeType.toString();
+      });
+      rethrow;
+    }
   }
 
   Widget _buildBody() {
-    final list = Scrollbar(
-      child: ListView.builder(
+    final Widget list;
+
+    if (error != null) {
+      list = ListView(
+        children: [
+          Text('''
+Error occured: `$error`.
+Check:
+  - the network connectivity,
+  - or if you provide a valid api key in "Me -> Settings".
+                ''')
+        ],
+      );
+    } else {
+      list = ListView.builder(
         itemBuilder: _buildItem,
         itemCount: _items.length * 2 + 1,
-      ),
-    );
+      );
+    }
 
-    return RefreshIndicator(onRefresh: _doRefresh, child: list);
+    return RefreshIndicator(
+        onRefresh: _doRefresh, child: Scrollbar(child: list));
   }
 
   Widget _buildItem(BuildContext context, int index) {
