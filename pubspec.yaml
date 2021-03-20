@@ -33,6 +33,7 @@ dependencies:
   logger: ^1.0.0
   path: any
   path_provider: any
+  provider: ^5.0.0
   retrofit: ^2.0.0-beta1
   sqflite: ^2.0.0
 
