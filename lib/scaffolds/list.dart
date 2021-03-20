@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:kanbasu/scaffolds/common.dart';
 
 class ListPayload<T, K> {
-  K cursor;
   Iterable<T> items;
   bool hasMore;
 
   ListPayload({
     required this.items,
-    required this.cursor,
     required this.hasMore,
   });
 }
@@ -17,7 +15,7 @@ class ListScaffold<T, K> extends StatefulWidget {
   final Widget title;
   final Widget Function()? actionBuilder;
   final Widget Function(T payload) itemBuilder;
-  final Future<ListPayload<T, K>> Function(K? cursor) fetch;
+  final Future<ListPayload<T, K>> Function() fetch;
 
   ListScaffold({
     required this.title,
@@ -35,7 +33,7 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
   bool _hasMore = false;
 
   Future<void> _onRefresh() async {
-    final _payload = await widget.fetch(null);
+    final _payload = await widget.fetch();
     setState(() {
       _hasMore = _payload.hasMore;
       items = _payload.items.toList();
@@ -46,6 +44,7 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
     final list = Scrollbar(
       child: ListView.builder(
         itemBuilder: _buildItem,
+        itemCount: items.length * 2 + 1,
       ),
     );
 
