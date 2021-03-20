@@ -34,26 +34,32 @@ class UserWidget extends StatelessWidget {
               ),
               Expanded(
                 child: SeparatedColumn(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    separatorBuilder: (context, index) => SizedBox(height: 1),
-                    children: [
-                      Text.rich(
-                        TextSpan(
-                            style: TextStyle(fontSize: 24, color: theme.text),
-                            children: [
-                              TextSpan(text: user.name),
-                              //* add more span here
-                            ]),
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  separatorBuilder: (context, index) => SizedBox(height: 1),
+                  children: [
+                    Text.rich(
+                      TextSpan(
+                        style: TextStyle(fontSize: 24, color: theme.text),
                         children: [
-                          Text(studentId,
-                              style: TextStyle(
-                                  fontSize: 14, color: theme.tertiaryText)),
+                          TextSpan(text: user.name),
+                          //* add more span here
                         ],
                       ),
-                    ]),
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          studentId,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: theme.tertiaryText,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

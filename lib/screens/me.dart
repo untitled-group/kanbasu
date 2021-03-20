@@ -22,46 +22,47 @@ class _MeScreenState extends State<MeScreen> {
         TextEditingController(text: getApiEndpoint(prefs));
 
     final result = await showDialog<bool>(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            scrollable: true,
-            title: Text('Settings'),
-            content: Form(
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: keyController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: 'API Key',
-                      icon: Icon(Icons.vpn_key),
-                    ),
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          scrollable: true,
+          title: Text('Settings'),
+          content: Form(
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: keyController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'API Key',
+                    icon: Icon(Icons.vpn_key),
                   ),
-                  TextFormField(
-                    controller: endpointController,
-                    decoration: InputDecoration(
-                      labelText: 'API Endpoint',
-                      icon: Icon(Icons.link),
-                    ),
+                ),
+                TextFormField(
+                  controller: endpointController,
+                  decoration: InputDecoration(
+                    labelText: 'API Endpoint',
+                    icon: Icon(Icons.link),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            actions: [
-              ButtonBar(
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context, true);
-                    },
-                    child: Text('Done'),
-                  )
-                ],
-              )
-            ],
-          );
-        });
+          ),
+          actions: [
+            ButtonBar(
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: Text('Done'),
+                )
+              ],
+            )
+          ],
+        );
+      },
+    );
 
     if (result == true) {
       await prefs.setString(PreferencesKeys.api_key, keyController.text);

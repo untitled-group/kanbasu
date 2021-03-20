@@ -20,13 +20,15 @@ class KErrorWidget extends StatelessWidget {
       child: SeparatedColumn(
         separatorBuilder: (context, index) => SizedBox(height: 10),
         children: [
-          Text.rich(TextSpan(
-            children: [
-              TextSpan(text: 'An error occured, some tips:\n\n'),
-              TextSpan(text: tips),
-            ],
-            style: TextStyle(fontSize: 16),
-          )),
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(text: 'An error occured, some tips:\n\n'),
+                TextSpan(text: tips),
+              ],
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
           Text(
             errorText,
             style: TextStyle(
