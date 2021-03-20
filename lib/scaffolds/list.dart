@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:kanbasu/scaffolds/common.dart';
 import 'package:kanbasu/widgets/border.dart';
+import 'package:kanbasu/widgets/error.dart';
 import 'package:kanbasu/widgets/loading.dart';
 
 class ListPayload<T, K> {
@@ -52,7 +54,11 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
       });
     } catch (e) {
       setState(() {
-        error = e.runtimeType.toString();
+        if (e is DioError) {
+          error = e.error.toString();
+        } else {
+          error = e.runtimeType.toString();
+        }
       });
       rethrow;
     }
@@ -64,12 +70,15 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
     if (error != null) {
       list = ListView(
         children: [
-          Text('''
-Error occured: `$error`.
+          KErrorWidget(
+            errorText: error!,
+            tips: '''
 Check:
   - the network connectivity,
   - or if you provide a valid api key in "Me -> Settings".
-                ''')
+                ''',
+            onTap: _doRefresh,
+          )
         ],
       );
     } else {
