@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:kanbasu/buffer_api/canvas.dart';
+import 'package:kanbasu/buffer_api/kvstore.dart';
 import 'package:kanbasu/rest_api/canvas.dart';
-import 'package:kanbasu/utils/prefs.dart';
+import 'package:kanbasu/utils/persistence.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Palette {
@@ -60,8 +61,9 @@ class Model with ChangeNotifier {
       )),
       baseUrl: '$api_endpoint',
     );
+    final kvs = KvStore.open(KvStoreIdentifiers.main);
 
-    _canvas = CanvasBufferClient(restCanvas);
+    _canvas = CanvasBufferClient(restCanvas, kvs);
 
     notifyListeners();
   }

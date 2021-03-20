@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/models/user.dart';
 import 'package:kanbasu/scaffolds/list.dart';
-import 'package:kanbasu/utils/prefs.dart';
+import 'package:kanbasu/utils/persistence.dart';
 import 'package:kanbasu/widgets/user.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

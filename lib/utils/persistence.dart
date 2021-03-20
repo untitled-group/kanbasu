@@ -16,3 +16,7 @@ String getApiKey(SharedPreferences prefs) =>
 String getApiEndpoint(SharedPreferences prefs) =>
     prefs.getString(PreferencesKeys.api_endpoint) ??
     PreferencesDefaults.api_endpoint;
+
+class KvStoreIdentifiers {
+  static const main = 'kanbasu_main_kvs';
+}
