@@ -6,11 +6,9 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kanbasu/main.dart';
 
 void main() {
   testWidgets('test nothing of widgets', (WidgetTester tester) async {
-    await tester.pumpWidget(MyApp());
     print('Well done');
   });
 }
