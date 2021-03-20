@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:kanbasu/buffer_api/kvstore.dart';
-import 'package:kanbasu/models/activity.dart';
+import 'package:kanbasu/models/activity_item.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:logger/logger.dart';
 import 'package:kanbasu/rest_api/canvas.dart';

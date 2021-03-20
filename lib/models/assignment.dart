@@ -1,15 +1,27 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:built_value/built_value.dart';
+import 'package:built_value/serializer.dart';
+import 'serializers.dart';
 
 part 'assignment.g.dart';
 
-@JsonSerializable()
-class Assignment {
-  final int id;
-  final String description;
+abstract class Assignment implements Built<Assignment, AssignmentBuilder> {
+  Assignment._();
 
-  Assignment({required this.id, required this.description});
+  factory Assignment([Function(AssignmentBuilder b) updates]) = _$Assignment;
 
-  factory Assignment.fromJson(Map<String, dynamic> json) =>
-      _$AssignmentFromJson(json);
-  Map<String, dynamic> toJson() => _$AssignmentToJson(this);
+  @BuiltValueField(wireName: 'id')
+  int get id;
+  @BuiltValueField(wireName: 'description')
+  String get description;
+
+  Map<String, dynamic> toJson() {
+    return serializers.serializeWith(Assignment.serializer, this)!
+        as Map<String, dynamic>;
+  }
+
+  static Assignment fromJson(Map<String, dynamic> object) {
+    return serializers.deserializeWith(Assignment.serializer, object)!;
+  }
+
+  static Serializer<Assignment> get serializer => _$assignmentSerializer;
 }

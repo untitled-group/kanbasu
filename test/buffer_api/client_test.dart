@@ -18,17 +18,16 @@ void main() {
     test('should get course list', () async {
       final data = (await api.getCourses().last).toList();
       final dataF = await api.getCoursesF();
-      expect(data.map((e) => e.toJson()), equals(dataF.map((e) => e.toJson())));
+      expect(data, equals(dataF));
       expect(data.length, equals(3));
       expect(data[0].courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
-      expect(data[1].courseCode, isNull);
       expect(data[2].id, equals(318720));
     });
 
     test('should get single course', () async {
       final response = await api.getCourse(23333).last;
       final response2 = await api.getCourseF(23333);
-      expect(response.toJson(), equals(response2!.toJson()));
+      expect(response, equals(response2!));
       expect(response.courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
     });
 
@@ -49,7 +48,7 @@ void main() {
       final dio = Dio();
       dio.httpClientAdapter = MockAdapter();
       restClient = CanvasRestClient(dio, baseUrl: MockAdapter.mockBase);
-      kvStore = await KvStore.openInMemory();
+      kvStore = KvStore.openInMemory();
       api = CanvasBufferClient(restClient, kvStore);
     });
 
@@ -67,10 +66,9 @@ void main() {
       await api.getCoursesF();
       final dataF = await api.getCoursesF();
       final data = await api.getCourses().last;
-      expect(data.map((e) => e.toJson()), equals(dataF.map((e) => e.toJson())));
+      expect(data, equals(dataF));
       expect(data.length, equals(3));
       expect(data[0].courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
-      expect(data[1].courseCode, isNull);
       expect(data[2].id, equals(318720));
     });
 
@@ -81,10 +79,9 @@ void main() {
       api.enableOffline();
       final dataF = await api.getCoursesF();
       final data = await api.getCourses().last;
-      expect(data.map((e) => e.toJson()), equals(dataF.map((e) => e.toJson())));
+      expect(data, equals(dataF));
       expect(data.length, equals(3));
       expect(data[0].courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
-      expect(data[1].courseCode, isNull);
       expect(data[2].id, equals(318720));
       final data2 = await api.getCourse(23333).last;
       expect(data2.courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));

@@ -36,16 +36,18 @@ class KvStore {
   }
 
   /// Open [KvStore] by [name]. The file is persisted
-  static Future<KvStore> open(String name) async {
-    final directory = await getApplicationSupportDirectory();
-    final path = join(directory.path, '$name.db');
-    Logger().i('Database created at $path');
-    final database = openDatabase(path, onCreate: _initDatabase, version: 1);
-    return KvStore(database);
+  static KvStore open(String name) {
+    final future = () async {
+      final directory = await getApplicationSupportDirectory();
+      final path = join(directory.path, '$name.db');
+      Logger().i('Database created at $path');
+      return openDatabase(path, onCreate: _initDatabase, version: 1);
+    };
+    return KvStore(future());
   }
 
   /// Open a in-memory [KvStore].
-  static Future<KvStore> openInMemory() async {
+  static KvStore openInMemory() {
     final database =
         openDatabase(inMemoryDatabasePath, onCreate: _initDatabase, version: 1);
     return KvStore(database);

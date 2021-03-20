@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/tab.dart';
 import 'package:kanbasu/models/user.dart';
-import 'package:kanbasu/models/activity.dart';
+import 'package:kanbasu/models/activity_item.dart';
 
 part 'canvas.g.dart';
 
@@ -18,7 +18,8 @@ abstract class CanvasRestClient {
   /// Returns the paginated list of active courses for the current user.
   @GET('/courses')
   Future<HttpResponse<List<Course>>> getCourses(
-      {@Queries() Map<String, dynamic>? queries});
+      {@Queries() Map<String, dynamic>? queries,
+      @Query('state[]') String state = '["available"]'});
 
   /// Returns information on a single course.
   @GET('/courses/{id}')

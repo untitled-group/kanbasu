@@ -1,32 +1,46 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:built_value/built_value.dart';
+import 'package:built_value/serializer.dart';
+
+import 'serializers.dart';
 
 part 'tab.g.dart';
 
-@JsonSerializable()
-class Tab {
-  final String id;
-  @JsonKey(name: 'html_url')
-  final String htmlUrl;
-  @JsonKey(name: 'full_url')
-  final String fullUrl;
+abstract class Tab implements Built<Tab, TabBuilder> {
+  Tab._();
+
+  factory Tab([Function(TabBuilder b) updates]) = _$Tab;
+
+  @BuiltValueField(wireName: 'id')
+  String get id;
+
+  @BuiltValueField(wireName: 'html_url')
+  String get htmlUrl;
+
+  @BuiltValueField(wireName: 'full_url')
+  String get fullUrl;
 
   /// 1 based
-  final int position;
+  @BuiltValueField(wireName: 'position')
+  int get position;
 
   /// possible values are: public, members, admins, and none
-  final String visibility;
-  final String label;
-  final String type;
+  @BuiltValueField(wireName: 'visibility')
+  String get visibility;
 
-  Tab(
-      {required this.id,
-      required this.htmlUrl,
-      required this.fullUrl,
-      required this.position,
-      required this.visibility,
-      required this.label,
-      required this.type});
+  @BuiltValueField(wireName: 'label')
+  String get label;
 
-  factory Tab.fromJson(Map<String, dynamic> json) => _$TabFromJson(json);
-  Map<String, dynamic> toJson() => _$TabToJson(this);
+  @BuiltValueField(wireName: 'type')
+  String get type;
+
+  Map<String, dynamic> toJson() {
+    return serializers.serializeWith(Tab.serializer, this)!
+        as Map<String, dynamic>;
+  }
+
+  static Tab fromJson(Map<String, dynamic> object) {
+    return serializers.deserializeWith(Tab.serializer, object)!;
+  }
+
+  static Serializer<Tab> get serializer => _$tabSerializer;
 }

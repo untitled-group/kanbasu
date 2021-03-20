@@ -1,33 +1,39 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:built_value/built_value.dart';
+import 'package:built_value/serializer.dart';
+import 'serializers.dart';
 
 part 'course.g.dart';
 
-@JsonSerializable()
-class Course {
-  final int id;
-  final String? name;
-  final String? uuid;
-  @JsonKey(name: 'course_code')
-  final String? courseCode;
-  @JsonKey(name: 'enrollment_term_id')
-  final int? enrollmentTermId;
-  @JsonKey(name: 'start_at')
-  final DateTime? startAt;
-  @JsonKey(name: 'end_at')
-  final DateTime? endAt;
-  @JsonKey(name: 'access_restricted_by_date')
-  final bool? accessRestrictedByDate;
+abstract class Course implements Built<Course, CourseBuilder> {
+  Course._();
 
-  Course(
-      {required this.id,
-      this.name,
-      this.uuid,
-      this.courseCode,
-      this.enrollmentTermId,
-      this.startAt,
-      this.endAt,
-      this.accessRestrictedByDate});
+  factory Course([Function(CourseBuilder b) updates]) = _$Course;
 
-  factory Course.fromJson(Map<String, dynamic> json) => _$CourseFromJson(json);
-  Map<String, dynamic> toJson() => _$CourseToJson(this);
+  @BuiltValueField(wireName: 'id')
+  int get id;
+  @BuiltValueField(wireName: 'name')
+  String get name;
+  @BuiltValueField(wireName: 'uuid')
+  String get uuid;
+  @BuiltValueField(wireName: 'start_at')
+  DateTime get startAt;
+  @BuiltValueField(wireName: 'course_code')
+  String get courseCode;
+  @BuiltValueField(wireName: 'enrollment_term_id')
+  int get enrollmentTermId;
+  @BuiltValueField(wireName: 'end_at')
+  DateTime? get endAt;
+  @BuiltValueField(wireName: 'time_zone')
+  String? get timeZone;
+
+  Map<String, dynamic> toJson() {
+    return serializers.serializeWith(Course.serializer, this)!
+        as Map<String, dynamic>;
+  }
+
+  static Course fromJson(Map<String, dynamic> object) {
+    return serializers.deserializeWith(Course.serializer, object)!;
+  }
+
+  static Serializer<Course> get serializer => _$courseSerializer;
 }
