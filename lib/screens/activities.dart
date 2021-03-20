@@ -19,7 +19,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
           return ActivityWidget(item);
         },
         fetch: (_cursor) async {
-          final model = context.read<Model>();
+          final model = Provider.of<Model>(context, listen: false);
           final activities = await model.canvas.getCurrentUserActivityStream();
           return ListPayload(items: activities.data, hasMore: false);
         });

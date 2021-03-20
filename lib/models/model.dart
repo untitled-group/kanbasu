@@ -2,8 +2,9 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import '../rest_api/canvas.dart';
-import '../config.dart';
+import 'package:kanbasu/rest_api/canvas.dart';
+import 'package:kanbasu/utils/prefs.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Palette {
   final Color primary;
@@ -27,7 +28,7 @@ class Palette {
 
 class Model with ChangeNotifier {
   final theme = Palette(
-    primary: Color(0xffE5242E),
+    primary: Colors.red.shade700,
     text: Colors.black,
     secondaryText: Colors.grey.shade800,
     tertiaryText: Colors.grey.shade600,
@@ -39,11 +40,27 @@ class Model with ChangeNotifier {
   int _activeTab = 0;
   int get activeTab => _activeTab;
 
-  late final CanvasRestClient canvas = CanvasRestClient(
-      Dio(BaseOptions(headers: {
-        HttpHeaders.authorizationHeader: 'Bearer $CANVAS_API_KEY'
-      })),
-      baseUrl: CANVAS_API_ENDPOINT);
+  late CanvasRestClient _canvas;
+  CanvasRestClient get canvas => _canvas;
+
+  Future<void> updateCanvasClient() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final api_key = getApiKey(prefs);
+    final api_endpoint = getApiEndpoint(prefs);
+
+    _canvas = CanvasRestClient(
+        Dio(BaseOptions(
+            headers: {HttpHeaders.authorizationHeader: 'Bearer $api_key'})),
+        baseUrl: '$api_endpoint');
+
+    // TODO: notify widgets to refresh
+    notifyListeners();
+  }
+
+  Future<void> init() async {
+    await updateCanvasClient();
+  }
 
   void setActiveTab(int v) {
     _activeTab = v;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kanbasu/screens/activities.dart';
+import 'package:kanbasu/screens/me.dart';
 import 'package:provider/provider.dart';
 
 import 'models/model.dart';
@@ -29,7 +30,7 @@ class _HomeState extends State<Home> {
       case 0:
         return ActivitiesScreen();
       case 1:
-        return Container();
+        return MeScreen();
     }
     throw Exception();
   }

@@ -76,6 +76,9 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
 
   @override
   Widget build(BuildContext context) {
-    return CommonScaffold(title: widget.title, body: _buildBody());
+    return CommonScaffold(
+        title: widget.title,
+        body: _buildBody(),
+        action: widget.actionBuilder?.call());
   }
 }
