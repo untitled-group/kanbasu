@@ -4,14 +4,17 @@ import 'package:kanbasu/scaffolds/common.dart';
 import 'package:kanbasu/widgets/border.dart';
 import 'package:kanbasu/widgets/error.dart';
 import 'package:kanbasu/widgets/loading.dart';
+import 'package:logger/logger.dart';
 
 class ListPayload<T, K> {
   Iterable<T> items;
   bool hasMore;
+  K? nextCursor;
 
   ListPayload({
     required this.items,
     required this.hasMore,
+    this.nextCursor,
   });
 }
 
@@ -36,42 +39,107 @@ class ListScaffold<T, K> extends StatefulWidget {
 class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
   List<T> _items = [];
   bool _hasMore = true;
-  String? error;
+  bool _nowLoading = false;
+  K? _nextCursor;
+  String? _error;
 
-  Future<void> _doRefresh({bool hard = false}) async {
-    if (hard) {
-      setState(() {
-        _items.clear();
-      });
+  final ScrollController _controller = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(onScroll);
+  }
+
+  double get _scrollDistance =>
+      _controller.position.maxScrollExtent - _controller.offset;
+
+  void onScroll() {
+    // Logger().d(_scrollDistance);
+    if (_scrollDistance < 300 &&
+        !_controller.position.outOfRange &&
+        !_nowLoading &&
+        _hasMore) {
+      // Logger().d('should load more');
+      _loadMore();
     }
-    error = null;
+  }
+
+  Future<void> _loadMore() async {
+    setState(() {
+      _nowLoading = true;
+    });
 
     try {
-      final _payload = await widget.fetch(null);
+      final payload = await widget.fetch(_nextCursor);
       setState(() {
-        _hasMore = _payload.hasMore;
-        _items = _payload.items.toList();
+        _items.addAll(payload.items);
+        _hasMore = payload.hasMore;
+        _nextCursor = payload.nextCursor;
       });
     } catch (e) {
       setState(() {
         if (e is DioError) {
-          error = e.error.toString();
+          _error = e.error.toString();
         } else {
-          error = e.runtimeType.toString();
+          _error = e.runtimeType.toString();
         }
       });
       rethrow;
+    } finally {
+      setState(() {
+        _nowLoading = false;
+      });
+    }
+  }
+
+  Future<void> _doRefresh({bool hard = false}) async {
+    setState(() {
+      if (hard) {
+        _items.clear();
+      }
+      _hasMore = true;
+      _nowLoading = true;
+      _nextCursor = null;
+      _error = null;
+    });
+
+    try {
+      final payload = await widget.fetch(null);
+      setState(() {
+        _items = payload.items.toList();
+        _hasMore = payload.hasMore;
+        _nextCursor = payload.nextCursor;
+      });
+    } catch (e) {
+      setState(() {
+        if (e is DioError) {
+          _error = e.error.toString();
+        } else {
+          _error = e.runtimeType.toString();
+        }
+      });
+      rethrow;
+    } finally {
+      setState(() {
+        _nowLoading = false;
+      });
+    }
+
+    // avoid failing to load more due to insufficient data
+    while (_scrollDistance == 0 && !_nowLoading && _hasMore) {
+      await _loadMore();
     }
   }
 
   Widget _buildBody() {
     final Widget list;
 
-    if (error != null) {
+    if (_error != null) {
       list = ListView(
         children: [
           KErrorWidget(
-            errorText: error!,
+            errorText: _error!,
             tips: '''
 Check:
   - the network connectivity,
@@ -83,6 +151,7 @@ Check:
       );
     } else {
       list = ListView.builder(
+        controller: _controller,
         itemBuilder: _buildItem,
         itemCount: _items.length * 2 + 1,
       );
