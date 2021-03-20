@@ -17,7 +17,6 @@ jobs:
       - name: Prepare
         run: |
           flutter pub get
-          cp ./lib/config.example.dart ./lib/config.dart
           flutter pub run build_runner build
       - run: dart analyze
       - run: flutter test
@@ -36,7 +35,6 @@ jobs:
       - name: Prepare
         run: |
           flutter pub get
-          cp ./lib/config.example.dart ./lib/config.dart
           flutter pub run build_runner build
       - name: Build apk
         run: flutter build apk
