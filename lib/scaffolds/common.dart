@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:kanbasu/models/model.dart';
-import 'package:provider/provider.dart';
 
 class CommonScaffold extends StatelessWidget {
   final Widget title;

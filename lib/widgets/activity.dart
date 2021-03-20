@@ -12,6 +12,7 @@ class ActivityWidget extends StatelessWidget {
 
   Widget _buildItems(BuildContext context) {
     final theme = Provider.of<Model>(context).theme;
+    final isDone = item.readState || item.workflowState == 'graded';
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -45,9 +46,9 @@ class ActivityWidget extends StatelessWidget {
                       Text.rich(
                         TextSpan(
                             style: TextStyle(
-                              fontSize: 17,
-                              color: theme.text,
-                            ),
+                                fontSize: 17,
+                                color: theme.text,
+                                fontWeight: isDone ? null : FontWeight.bold),
                             children: [
                               TextSpan(text: item.title.trim()),
                               //* add more span here
@@ -63,7 +64,7 @@ class ActivityWidget extends StatelessWidget {
                             width: 5,
                           ),
                           Icon(
-                            item.readState ? Icons.done : null,
+                            isDone ? Icons.done : null,
                             color: theme.primary,
                             size: 15,
                           )
