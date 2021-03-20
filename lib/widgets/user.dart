@@ -23,9 +23,8 @@ class UserWidget extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              FadeInImage.assetNetwork(
-                placeholder: '',
-                image: user.avatarUrl,
+              Image.network(
+                user.avatarUrl,
                 width: 80,
                 height: 80,
               ),
