@@ -2,20 +2,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/widgets/border.dart';
+import 'package:kanbasu/widgets/loading.dart';
 import 'common.dart';
 
 class StreamListScaffold<T> extends HookWidget {
   final Widget title;
   final Widget Function()? actionBuilder;
   final Widget Function(T payload) itemBuilder;
-  final Future<void> Function() refresh;
   final Stream<T> itemStream;
 
   StreamListScaffold({
     required this.title,
     required this.itemBuilder,
     required this.itemStream,
-    required this.refresh,
     this.actionBuilder,
   });
 
@@ -28,7 +27,6 @@ class StreamListScaffold<T> extends HookWidget {
             useFuture(itemStream.toList(), initialData: List<T>.empty());
 
         final Widget list;
-
         final items = itemsSnapshot.data!;
 
         final buildItem = (BuildContext context, int index) {
@@ -46,7 +44,11 @@ class StreamListScaffold<T> extends HookWidget {
           itemCount: items.length * 2 + 1,
         );
 
-        return Scrollbar(child: list);
+        if (items.isNotEmpty) {
+          return Scrollbar(child: list);
+        } else {
+          return LoadingWidget(isMore: true);
+        }
       }),
       action: actionBuilder?.call(),
     );

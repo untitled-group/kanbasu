@@ -148,6 +148,8 @@ class CanvasBufferClient {
         await for (final item in PaginatedList<T>(listPaginated).all()) {
           await putObject('$prefix${getId(item)}', item, toJson);
           yield item;
+          print('yield');
+          await Future.delayed(Duration(seconds: 1));
         }
       };
       yield stream();
