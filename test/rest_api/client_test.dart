@@ -35,5 +35,10 @@ void main() {
     test('should get user activity stream', () async {
       await api.getCurrentUserActivityStream();
     });
+
+    test('should get modules', () async {
+      final modules = await api.getModules(23333);
+      expect(modules.data[0].name, equals('课程介绍'));
+    });
   });
 }

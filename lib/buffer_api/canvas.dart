@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:kanbasu/buffer_api/kvstore.dart';
 import 'package:kanbasu/models/activity_item.dart';
+import 'package:kanbasu/models/module.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:logger/logger.dart';
 import 'package:kanbasu/rest_api/canvas.dart';
@@ -334,5 +335,25 @@ class CanvasBufferClient {
             _restClient.getCurrentUserActivityStream(queries: queries),
         (e) => e.id.toString(),
         order: ScanOrder.desc);
+  }
+
+  /// List available modules for a course.
+  Future<List<Module>> getModulesF(int id) {
+    return _getPaginatedListFuture(
+        _getTabPrefix(id),
+        (e) => Module.fromJson(e),
+        (e) => e.toJson(),
+        ({queries}) => _restClient.getModules(id, queries: queries),
+        (e) => e.id.toString());
+  }
+
+  /// List available modules for a course.
+  Stream<List<Module>> getModules(int id) {
+    return _getPaginatedListStream(
+        _getTabPrefix(id),
+        (e) => Module.fromJson(e),
+        (e) => e.toJson(),
+        ({queries}) => _restClient.getModules(id, queries: queries),
+        (e) => e.id.toString());
   }
 }

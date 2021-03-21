@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'package:kanbasu/models/maybe_course.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 
+import 'package:kanbasu/models/maybe_course.dart';
+import 'package:kanbasu/models/module.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/tab.dart';
 import 'package:kanbasu/models/user.dart';
@@ -28,6 +29,11 @@ abstract class CanvasRestClient {
   /// List available tabs for a course or group.
   @GET('/courses/{id}/tabs')
   Future<HttpResponse<List<Tab>>> getTabs(@Path() int id,
+      {@Queries() Map<String, dynamic>? queries});
+
+  /// List available modules for a course or group.
+  @GET('/courses/{id}/modules')
+  Future<HttpResponse<List<Module>>> getModules(@Path() int id,
       {@Queries() Map<String, dynamic>? queries});
 
   /// Get current user
