@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:provider/provider.dart';
-import 'package:timeago/timeago.dart' as timeago;
 import 'package:separated_column/separated_column.dart';
 
 class CourseWidget extends StatelessWidget {
