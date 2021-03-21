@@ -279,7 +279,7 @@ class CanvasBufferClient {
         (e) => e.toJson(), () => _restClient.getCourse(id));
   }
 
-  String _getTabPrefix(id) => 'tabs/course/by_id/$id/';
+  String _getTabPrefix(id) => 'courses/$id/tabs/';
 
   /// List available tabs for a course or group.
   Future<List<Tab>> getTabsF(int id) {
@@ -337,10 +337,12 @@ class CanvasBufferClient {
         order: ScanOrder.desc);
   }
 
+  String _getModulePrefix(id) => 'courses/$id/modules/by_id/';
+
   /// List available modules for a course.
   Future<List<Module>> getModulesF(int id) {
     return _getPaginatedListFuture(
-        _getTabPrefix(id),
+        _getModulePrefix(id),
         (e) => Module.fromJson(e),
         (e) => e.toJson(),
         ({queries}) => _restClient.getModules(id, queries: queries),
@@ -350,7 +352,7 @@ class CanvasBufferClient {
   /// List available modules for a course.
   Stream<List<Module>> getModules(int id) {
     return _getPaginatedListStream(
-        _getTabPrefix(id),
+        _getModulePrefix(id),
         (e) => Module.fromJson(e),
         (e) => e.toJson(),
         ({queries}) => _restClient.getModules(id, queries: queries),
