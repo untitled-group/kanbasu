@@ -471,6 +471,13 @@ packages:
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
     version: "2.0.0-beta1"
+  rxdart:
+    dependency: "direct main"
+    description:
+      name: rxdart
+      url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
+    source: hosted
+    version: "0.26.0"
   separated_column:
     dependency: "direct main"
     description:
