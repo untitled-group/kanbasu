@@ -18,5 +18,7 @@ String getApiEndpoint(SharedPreferences prefs) =>
     PreferencesDefaults.api_endpoint;
 
 class KvStoreIdentifiers {
-  static const main = 'kanbasu_main_kvs';
+  static String main(String key) {
+    return 'kanbasu_main_${key.hashCode.toRadixString(16)}';
+  }
 }

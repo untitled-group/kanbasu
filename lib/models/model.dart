@@ -61,7 +61,7 @@ class Model with ChangeNotifier {
       )),
       baseUrl: '$api_endpoint',
     );
-    final kvs = KvStore.open(KvStoreIdentifiers.main);
+    final kvs = KvStore.open(KvStoreIdentifiers.main(api_key));
 
     _canvas = CanvasBufferClient(restCanvas, kvs);
 
