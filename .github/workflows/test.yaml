@@ -19,5 +19,5 @@ jobs:
         run: |
           flutter pub get
           flutter pub run build_runner build
-      - run: dart analyze
+      - run: dart analyze --fatal-infos
       - run: flutter test
