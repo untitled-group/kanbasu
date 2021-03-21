@@ -2,173 +2,124 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:kanbasu/scaffolds/common.dart';
 import 'package:kanbasu/widgets/border.dart';
 import 'package:kanbasu/widgets/error.dart';
-import 'package:kanbasu/widgets/loading.dart';
-import 'package:logger/logger.dart';
-import 'package:rxdart/rxdart.dart';
 
-class BufferListPayload<T, K> {
-  Iterable<T> items;
-  bool hasMore;
-  K? nextCursor;
-
-  BufferListPayload({
-    required this.items,
-    required this.hasMore,
-    this.nextCursor,
-  });
-}
-
-class BufferListScaffold<T, K> extends StatefulWidget {
+class BufferListScaffold<T> extends StatefulWidget {
   final Widget title;
   final Widget Function()? actionBuilder;
   final Widget Function(T payload) itemBuilder;
-  final Stream<Stream<T>> ss;
+  final Stream<Stream<T>> Function() ssBuilder;
 
   BufferListScaffold({
     required this.title,
     required this.itemBuilder,
-    required this.ss,
+    required this.ssBuilder,
     this.actionBuilder,
   });
 
   @override
-  _BufferListScaffoldState<T, K> // fuck the generics
+  _BufferListScaffoldState<T> // fuck the generics
       createState() => _BufferListScaffoldState();
 }
 
-class _BufferListScaffoldState<T, K> extends State<BufferListScaffold<T, K>> {
+class _BufferListScaffoldState<T> extends State<BufferListScaffold<T>> {
   List<T> _items = [];
-  bool _hasMore = true;
-  bool _nowLoading = false;
+  bool _manuallyRefreshed = false;
   String? _error;
 
-  Stream<T>? _stream;
+  StreamSubscription<T>? _sub;
 
-  final ScrollController _controller = ScrollController();
+  final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
     super.initState();
-    _controller.addListener(onScroll);
-    _ssListen();
+    SchedulerBinding.instance!.addPostFrameCallback((_) {
+      _refreshTwice();
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
-    _controller.dispose();
   }
 
-  Future<void> _ssListen() async {
-    await for (final stream in widget.ss) {
-      setState(() {
-        _stream = stream.asBroadcastStream();
-      });
-      print('STREAM');
-      await _doRefresh(hard: true);
-      await Future.delayed(Duration(seconds: 3));
-    }
+  Future<void> _refreshTwice() async {
+    await _refreshIndicatorKey.currentState!
+        .show(); // refresh using the first stream
+    await Future.delayed(Duration(milliseconds: 200));
+    await _refreshIndicatorKey.currentState!
+        .show(); // refresh using the last stream
   }
 
-  Future<BufferListPayload<T, K>> _streamFetch() async {
-    const N_LOAD = 20;
-    print(_stream);
-    final items = (await _stream?.take(N_LOAD).toList()) ?? <T>[];
-    print('Get ${items.length}'); // FIXME: always get 0 from the second `take`
-    return BufferListPayload(
-      items: items,
-      hasMore: true,
-    );
-  }
+  Future<void> _subscribeToNewStream(Stream<T> stream) async {
+    await _sub?.cancel();
+    await _clear();
 
-  double get _scrollDistance {
-    double ret;
-    try {
-      ret = _controller.position.maxScrollExtent - _controller.offset;
-      print('$ret, $_nowLoading, $_hasMore');
-    } catch (e) {
-      print('Nope');
-      ret = 0;
-    }
-    return ret;
-  }
+    var itemsBuffer = <T>[];
+    var completer = Completer<void>();
 
-  void onScroll() {
-    if (_scrollDistance < 300 &&
-        !_controller.position.outOfRange &&
-        !_nowLoading &&
-        _hasMore) {
-      _loadMore();
-    }
-  }
-
-  Future<void> _loadMore() async {
-    setState(() {
-      _nowLoading = true;
-    });
-
-    try {
-      final payload = await _streamFetch();
-      // FIXME: empty if both streams are consumed,
-      //  we should reconstruct a stream on user's refreshing
-      setState(() {
-        _items.addAll(payload.items);
-        _hasMore = payload.hasMore;
-      });
-    } catch (e) {
-      setState(() {
-        if (e is DioError) {
-          _error = e.error.toString();
+    _sub = stream.listen(
+      (item) {
+        if (!completer.isCompleted) {
+          itemsBuffer.add(item);
+          if (itemsBuffer.length >= 15) {
+            setState(() {
+              _items = itemsBuffer;
+            });
+            completer.complete();
+          }
         } else {
-          _error = e.runtimeType.toString();
+          setState(() {
+            _items.add(item);
+          });
         }
-      });
-      rethrow;
-    } finally {
-      setState(() {
-        _nowLoading = false;
-      });
-    }
+      },
+      onDone: () {
+        setState(() {
+          if (!completer.isCompleted) {
+            setState(() {
+              _items = itemsBuffer;
+            });
+            completer.complete();
+          }
+        });
+      },
+      onError: (e) {
+        setState(() {
+          if (e is DioError) {
+            _error = e.error.toString();
+          } else {
+            _error = e.runtimeType.toString();
+          }
+        });
+      },
+    );
+
+    await completer.future;
   }
 
-  Future<void> _doRefresh({bool hard = false}) async {
+  Future<void> _clear({bool hard = false}) async {
     setState(() {
       if (hard) {
         _items.clear();
       }
-      _hasMore = true;
-      _nowLoading = true;
       _error = null;
     });
+  }
 
-    try {
-      final payload = await _streamFetch();
-      setState(() {
-        _items = payload.items.toList();
-        _hasMore = payload.hasMore;
-      });
-    } catch (e) {
-      setState(() {
-        if (e is DioError) {
-          _error = e.error.toString();
-        } else {
-          _error = e.runtimeType.toString();
-        }
-      });
-      rethrow;
-    } finally {
-      setState(() {
-        _nowLoading = false;
-      });
+  Future<void> _refresh() async {
+    final stream;
+    if (!_manuallyRefreshed) {
+      stream = await widget.ssBuilder().first;
+      _manuallyRefreshed = true;
+    } else {
+      stream = await widget.ssBuilder().last;
     }
-
-    // avoid failing to load more due to insufficient data
-    while (_scrollDistance == 0 && !_nowLoading && _hasMore) {
-      await _loadMore();
-    }
+    await _subscribeToNewStream(stream);
   }
 
   Widget _buildBody() {
@@ -184,29 +135,27 @@ Check:
   - the network connectivity,
   - or if you provide a valid api key in "Me -> Settings".
                 ''',
-            onTap: _doRefresh,
+            onTap: _clear,
           )
         ],
       );
     } else {
       list = ListView.builder(
-        controller: _controller,
         itemBuilder: _buildItem,
         itemCount: _items.length * 2 + 1,
       );
     }
 
     return RefreshIndicator(
-        onRefresh: _doRefresh, child: Scrollbar(child: list));
+      key: _refreshIndicatorKey,
+      onRefresh: _refresh,
+      child: Scrollbar(child: list),
+    );
   }
 
   Widget _buildItem(BuildContext context, int index) {
     if (index == 2 * _items.length) {
-      if (_hasMore) {
-        return LoadingWidget(isMore: _items.isNotEmpty);
-      } else {
-        return Container();
-      }
+      return Container();
     } else if (index % 2 == 1) {
       return ListBorder();
     } else {
@@ -217,7 +166,7 @@ Check:
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _doRefresh(hard: true);
+    _clear(hard: true);
   }
 
   @override
