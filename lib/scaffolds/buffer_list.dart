@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:kanbasu/scaffolds/common.dart';
 import 'package:kanbasu/widgets/border.dart';
-import 'package:kanbasu/widgets/error.dart';
 
 class BufferListScaffold<T> extends StatefulWidget {
   final Widget title;
@@ -28,7 +27,6 @@ class BufferListScaffold<T> extends StatefulWidget {
 class _BufferListScaffoldState<T> extends State<BufferListScaffold<T>> {
   List<T> _items = [];
   bool _manuallyRefreshed = false;
-  String? _error;
 
   StreamSubscription<T>? _sub;
 
@@ -37,22 +35,13 @@ class _BufferListScaffoldState<T> extends State<BufferListScaffold<T>> {
   @override
   void initState() {
     super.initState();
-    SchedulerBinding.instance!.addPostFrameCallback((_) {
-      _refreshTwice();
+    SchedulerBinding.instance!.addPostFrameCallback((_) async {
+      await _refreshIndicatorKey.currentState!
+          .show(); // refresh using the first stream
+      await Future.delayed(Duration(milliseconds: 200));
+      await _refreshIndicatorKey.currentState!
+          .show(); // refresh using the last stream
     });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  Future<void> _refreshTwice() async {
-    await _refreshIndicatorKey.currentState!
-        .show(); // refresh using the first stream
-    await Future.delayed(Duration(milliseconds: 200));
-    await _refreshIndicatorKey.currentState!
-        .show(); // refresh using the last stream
   }
 
   Future<void> _subscribeToNewStream(Stream<T> stream) async {
@@ -79,22 +68,28 @@ class _BufferListScaffoldState<T> extends State<BufferListScaffold<T>> {
         }
       },
       onDone: () {
+        // note that streams `onError` may be also `onDone`
         setState(() {
           if (!completer.isCompleted) {
-            setState(() {
-              _items = itemsBuffer;
-            });
+            if (itemsBuffer.isNotEmpty) {
+              setState(() {
+                _items = itemsBuffer;
+              });
+            }
             completer.complete();
           }
         });
       },
       onError: (e) {
         setState(() {
+          final String error;
           if (e is DioError) {
-            _error = e.error.toString();
+            error = e.error.toString();
           } else {
-            _error = e.runtimeType.toString();
+            error = e.runtimeType.toString();
           }
+          _showSnack(
+              'Error: $error.\nCheck the connection and your provided API key.');
         });
       },
     );
@@ -107,7 +102,6 @@ class _BufferListScaffoldState<T> extends State<BufferListScaffold<T>> {
       if (hard) {
         _items.clear();
       }
-      _error = null;
     });
   }
 
@@ -122,29 +116,18 @@ class _BufferListScaffoldState<T> extends State<BufferListScaffold<T>> {
     await _subscribeToNewStream(stream);
   }
 
+  void _showSnack(String text) =>
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(text),
+      ));
+
   Widget _buildBody() {
     final Widget list;
 
-    if (_error != null) {
-      list = ListView(
-        children: [
-          KErrorWidget(
-            errorText: _error!,
-            tips: '''
-Check:
-  - the network connectivity,
-  - or if you provide a valid api key in "Me -> Settings".
-                ''',
-            onTap: _clear,
-          )
-        ],
-      );
-    } else {
-      list = ListView.builder(
-        itemBuilder: _buildItem,
-        itemCount: _items.length * 2 + 1,
-      );
-    }
+    list = ListView.builder(
+      itemBuilder: _buildItem,
+      itemCount: _items.length * 2 + 1,
+    );
 
     return RefreshIndicator(
       key: _refreshIndicatorKey,
