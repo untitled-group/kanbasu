@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kanbasu/screens/activities.dart';
+import 'package:kanbasu/screens/courses.dart';
 import 'package:kanbasu/screens/me.dart';
 import 'package:provider/provider.dart';
 
@@ -13,16 +14,21 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<BottomNavigationBarItem> _buildNavigationItems() {
     final activities = BottomNavigationBarItem(
-        icon: Icon(Icons.message_outlined),
-        activeIcon: Icon(Icons.message),
+        icon: Icon(Icons.notifications_outlined),
+        activeIcon: Icon(Icons.notifications),
         label: 'Activities');
+
+    final courses = BottomNavigationBarItem(
+        icon: Icon(Icons.book_outlined),
+        activeIcon: Icon(Icons.book),
+        label: 'Courses');
 
     final me = BottomNavigationBarItem(
         icon: Icon(Icons.person_outline),
         activeIcon: Icon(Icons.person),
         label: 'Me');
 
-    return [activities, me];
+    return [activities, courses, me];
   }
 
   Widget _buildScreen(int index) {
@@ -30,6 +36,8 @@ class _HomeState extends State<Home> {
       case 0:
         return ActivitiesScreen();
       case 1:
+        return CoursesScreen();
+      case 2:
         return MeScreen();
     }
     throw Exception();

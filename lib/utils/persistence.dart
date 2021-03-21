@@ -16,3 +16,9 @@ String getApiKey(SharedPreferences prefs) =>
 String getApiEndpoint(SharedPreferences prefs) =>
     prefs.getString(PreferencesKeys.api_endpoint) ??
     PreferencesDefaults.api_endpoint;
+
+class KvStoreIdentifiers {
+  static String main(String key) {
+    return 'kanbasu_main_${key.hashCode.toRadixString(16)}';
+  }
+}

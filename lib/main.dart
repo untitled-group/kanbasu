@@ -24,12 +24,21 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Kanbasu',
       theme: ThemeData(
-          primarySwatch: Colors.red,
-          primaryColor: theme.primary,
-          accentColor: theme.primary,
-          scaffoldBackgroundColor: theme.background,
-          buttonColor: theme.primary,
-          pageTransitionsTheme: PageTransitionsTheme(builders: {})),
+        primarySwatch: Colors.red,
+        primaryColor: theme.primary,
+        accentColor: theme.primary,
+        scaffoldBackgroundColor: theme.background,
+        buttonColor: theme.primary,
+        primaryTextTheme: TextTheme(
+          headline6: TextStyle(color: theme.text),
+        ),
+        appBarTheme: AppBarTheme(
+          backgroundColor: theme.background,
+          foregroundColor: theme.text,
+          actionsIconTheme: IconThemeData(color: theme.text),
+        ),
+        pageTransitionsTheme: PageTransitionsTheme(builders: {}),
+      ),
       home: Home(),
     );
   }

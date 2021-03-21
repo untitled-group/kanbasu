@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:kanbasu/models/activity_item.dart';
+import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:separated_column/separated_column.dart';
 
-class ActivityWidget extends StatelessWidget {
-  final ActivityItem item;
+class CourseWidget extends StatelessWidget {
+  final Course item;
 
-  ActivityWidget(this.item);
+  CourseWidget(this.item);
 
   Widget _buildItems(BuildContext context) {
     final theme = Provider.of<Model>(context).theme;
-    final isDone = item.readState || item.workflowState == 'graded';
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -25,7 +24,7 @@ class ActivityWidget extends StatelessWidget {
               CircleAvatar(
                 backgroundColor: theme.primary,
                 foregroundColor: theme.background,
-                child: Text(item.type.substring(0, 3)),
+                child: Text(item.name.substring(0, 1)),
               ),
               SizedBox(
                 width: 10,
@@ -35,24 +34,14 @@ class ActivityWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   separatorBuilder: (context, index) => SizedBox(height: 1),
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.course?.name ?? item.courseId.toString(),
-                          style: TextStyle(fontSize: 14, color: theme.primary),
-                        )
-                      ],
-                    ),
                     Text.rich(
                       TextSpan(
                           style: TextStyle(
                             fontSize: 17,
                             color: theme.text,
-                            fontWeight: isDone ? null : FontWeight.bold,
                           ),
                           children: [
-                            TextSpan(text: item.title.trim()),
+                            TextSpan(text: item.name.trim()),
                             //* add more span here
                           ]),
                     ),
@@ -60,18 +49,13 @@ class ActivityWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          timeago.format(item.updatedAt),
+                          item.courseCode.trim(),
                           style: TextStyle(
                               fontSize: 14, color: theme.tertiaryText),
                         ),
                         SizedBox(
                           width: 5,
                         ),
-                        Icon(
-                          isDone ? Icons.done : null,
-                          color: theme.primary,
-                          size: 15,
-                        )
                       ],
                     ),
                   ],
