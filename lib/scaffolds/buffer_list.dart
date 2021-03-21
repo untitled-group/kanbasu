@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:kanbasu/scaffolds/common.dart';
 import 'package:kanbasu/widgets/border.dart';
+import 'package:kanbasu/widgets/snack.dart';
 
 class BufferListScaffold<T> extends StatefulWidget {
   final Widget title;
@@ -82,14 +82,7 @@ class _BufferListScaffoldState<T> extends State<BufferListScaffold<T>> {
       },
       onError: (e) {
         setState(() {
-          final String error;
-          if (e is DioError) {
-            error = e.error.toString();
-          } else {
-            error = e.runtimeType.toString();
-          }
-          _showSnack(
-              'Error: $error.\nCheck the connection and your provided API key.');
+          showErrorSnack(context, e);
         });
       },
     );
@@ -115,11 +108,6 @@ class _BufferListScaffoldState<T> extends State<BufferListScaffold<T>> {
     }
     await _subscribeToNewStream(stream);
   }
-
-  void _showSnack(String text) =>
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(text),
-      ));
 
   Widget _buildBody() {
     final Widget list;
@@ -155,8 +143,9 @@ class _BufferListScaffoldState<T> extends State<BufferListScaffold<T>> {
   @override
   Widget build(BuildContext context) {
     return CommonScaffold(
-        title: widget.title,
-        body: _buildBody(),
-        action: widget.actionBuilder?.call());
+      title: widget.title,
+      body: _buildBody(),
+      action: widget.actionBuilder?.call(),
+    );
   }
 }

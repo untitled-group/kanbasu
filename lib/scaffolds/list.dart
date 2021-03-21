@@ -1,10 +1,8 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:kanbasu/scaffolds/common.dart';
 import 'package:kanbasu/widgets/border.dart';
-import 'package:kanbasu/widgets/error.dart';
 import 'package:kanbasu/widgets/loading.dart';
-import 'package:logger/logger.dart';
+import 'package:kanbasu/widgets/snack.dart';
 
 class ListPayload<T, K> {
   Iterable<T> items;
@@ -41,7 +39,7 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
   bool _hasMore = true;
   bool _nowLoading = false;
   K? _nextCursor;
-  String? _error;
+  bool _error = false;
 
   final ScrollController _controller = ScrollController();
 
@@ -55,12 +53,10 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
       _controller.position.maxScrollExtent - _controller.offset;
 
   void onScroll() {
-    // Logger().d(_scrollDistance);
     if (_scrollDistance < 300 &&
         !_controller.position.outOfRange &&
         !_nowLoading &&
         _hasMore) {
-      // Logger().d('should load more');
       _loadMore();
     }
   }
@@ -78,14 +74,8 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
         _nextCursor = payload.nextCursor;
       });
     } catch (e) {
-      setState(() {
-        if (e is DioError) {
-          _error = e.error.toString();
-        } else {
-          _error = e.runtimeType.toString();
-        }
-      });
-      rethrow;
+      showErrorSnack(context, e);
+      _error = true;
     } finally {
       setState(() {
         _nowLoading = false;
@@ -101,7 +91,7 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
       _hasMore = true;
       _nowLoading = true;
       _nextCursor = null;
-      _error = null;
+      _error = false;
     });
 
     try {
@@ -112,14 +102,8 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
         _nextCursor = payload.nextCursor;
       });
     } catch (e) {
-      setState(() {
-        if (e is DioError) {
-          _error = e.error.toString();
-        } else {
-          _error = e.runtimeType.toString();
-        }
-      });
-      rethrow;
+      showErrorSnack(context, e);
+      _error = true;
     } finally {
       setState(() {
         _nowLoading = false;
@@ -127,7 +111,7 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
     }
 
     // avoid failing to load more due to insufficient data
-    while (_scrollDistance == 0 && !_nowLoading && _hasMore) {
+    while (_scrollDistance == 0 && !_nowLoading && _hasMore && !_error) {
       await _loadMore();
     }
   }
@@ -135,30 +119,16 @@ class _ListScaffoldState<T, K> extends State<ListScaffold<T, K>> {
   Widget _buildBody() {
     final Widget list;
 
-    if (_error != null) {
-      list = ListView(
-        children: [
-          KErrorWidget(
-            errorText: _error!,
-            tips: '''
-Check:
-  - the network connectivity,
-  - or if you provide a valid api key in "Me -> Settings".
-                ''',
-            onTap: _doRefresh,
-          )
-        ],
-      );
-    } else {
-      list = ListView.builder(
-        controller: _controller,
-        itemBuilder: _buildItem,
-        itemCount: _items.length * 2 + 1,
-      );
-    }
+    list = ListView.builder(
+      controller: _controller,
+      itemBuilder: _buildItem,
+      itemCount: _items.length * 2 + 1,
+    );
 
     return RefreshIndicator(
-        onRefresh: _doRefresh, child: Scrollbar(child: list));
+      onRefresh: _doRefresh,
+      child: Scrollbar(child: list),
+    );
   }
 
   Widget _buildItem(BuildContext context, int index) {
