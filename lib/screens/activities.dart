@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/activity_item.dart';
 import 'package:kanbasu/scaffolds/stream_list.dart';
@@ -21,6 +21,14 @@ Stream<T> yieldLast<T>(Stream<T> stream) {
   }();
 }
 
+Future<Stream<T>> waitFor20<T>(ReplayStream<T> stream) async {
+  // Prevent stream from being canceled
+  unawaited(stream.length.then((value) => null));
+  // Wait for at least 20 elements
+  await stream.take(20).length;
+  return stream;
+}
+
 class ActivitiesScreen extends HookWidget {
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
@@ -38,7 +46,8 @@ class ActivitiesScreen extends HookWidget {
               .getCurrentUserActivityStream()
               // The stream may be subscribed multiple times by children,
               // so we need to replay it, with the help of RxDart extension.
-              .map((s) => s.shareReplay());
+              .map((s) => s.shareReplay())
+              .asyncMap(waitFor20);
           if (manualRefresh.value) {
             // if manually refresh, return only latest result
             return yieldLast(stream);
@@ -59,7 +68,7 @@ class ActivitiesScreen extends HookWidget {
                 manualRefresh.value = true;
                 triggerRefresh.value += 1;
                 // wait until data has been refreshed
-                await activitiesData.length;
+                await activitiesData.length; // FIXME: buggy
               },
               child: StreamListScaffold<ActivityItem>(
                   title: Text('Activities'),

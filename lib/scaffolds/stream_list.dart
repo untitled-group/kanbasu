@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/widgets/border.dart';
 import 'package:kanbasu/widgets/loading.dart';
+import 'package:rxdart/rxdart.dart';
 import 'common.dart';
 
 class StreamListScaffold<T> extends HookWidget {
@@ -23,14 +24,17 @@ class StreamListScaffold<T> extends HookWidget {
     return CommonScaffold(
       title: title,
       body: HookBuilder(builder: (context) {
-        final itemsSnapshot =
-            useFuture(itemStream.toList(), initialData: List<T>.empty());
+        final stream = useMemoized(() => itemStream
+            .scan((List<T>? acc, T s, _) => (acc ?? []) + [s])
+            .debounceTime(Duration(milliseconds: 200)));
+        final itemsSnapshot = useStream(stream, initialData: List<T>.empty());
 
         final Widget list;
         final items = itemsSnapshot.data!;
+        final itemsLength = items.length;
 
         final buildItem = (BuildContext context, int index) {
-          if (index == 2 * items.length) {
+          if (index == 2 * itemsLength) {
             return Container();
           } else if (index % 2 == 1) {
             return ListBorder();
