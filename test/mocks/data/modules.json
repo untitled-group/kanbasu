@@ -1,0 +1,80 @@
+[
+    {
+        "id": 89728,
+        "name": "课程介绍",
+        "position": 1,
+        "unlock_at": null,
+        "require_sequential_progress": false,
+        "publish_final_grade": false,
+        "prerequisite_module_ids": [],
+        "state": "completed",
+        "completed_at": "2021-02-27T02:58:28Z",
+        "items_count": 1,
+        "items_url": "https://oc.sjtu.edu.cn/api/v1/courses/31611/modules/89728/items"
+    },
+    {
+        "id": 89729,
+        "name": "第一章 软件工程介绍",
+        "position": 2,
+        "unlock_at": null,
+        "require_sequential_progress": false,
+        "publish_final_grade": false,
+        "prerequisite_module_ids": [],
+        "state": "completed",
+        "completed_at": "2021-02-27T02:58:28Z",
+        "items_count": 3,
+        "items_url": "https://oc.sjtu.edu.cn/api/v1/courses/31611/modules/89729/items"
+    },
+    {
+        "id": 89730,
+        "name": "第二章 软件过程模型",
+        "position": 3,
+        "unlock_at": null,
+        "require_sequential_progress": false,
+        "publish_final_grade": false,
+        "prerequisite_module_ids": [],
+        "state": "completed",
+        "completed_at": "2021-02-25T10:21:08Z",
+        "items_count": 5,
+        "items_url": "https://oc.sjtu.edu.cn/api/v1/courses/31611/modules/89730/items"
+    },
+    {
+        "id": 89731,
+        "name": "第三章 需求分析",
+        "position": 4,
+        "unlock_at": null,
+        "require_sequential_progress": false,
+        "publish_final_grade": false,
+        "prerequisite_module_ids": [],
+        "state": "completed",
+        "completed_at": "2021-03-08T11:24:55Z",
+        "items_count": 11,
+        "items_url": "https://oc.sjtu.edu.cn/api/v1/courses/31611/modules/89731/items"
+    },
+    {
+        "id": 89732,
+        "name": "第四章 系统设计",
+        "position": 5,
+        "unlock_at": null,
+        "require_sequential_progress": false,
+        "publish_final_grade": false,
+        "prerequisite_module_ids": [],
+        "state": "completed",
+        "completed_at": "2021-03-17T07:23:49Z",
+        "items_count": 2,
+        "items_url": "https://oc.sjtu.edu.cn/api/v1/courses/31611/modules/89732/items"
+    },
+    {
+        "id": 89738,
+        "name": "课程实践",
+        "position": 11,
+        "unlock_at": null,
+        "require_sequential_progress": false,
+        "publish_final_grade": false,
+        "prerequisite_module_ids": [],
+        "state": "completed",
+        "completed_at": "2021-03-11T06:28:50Z",
+        "items_count": 3,
+        "items_url": "https://oc.sjtu.edu.cn/api/v1/courses/31611/modules/89738/items"
+    }
+]
