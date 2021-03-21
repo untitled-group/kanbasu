@@ -1,19 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:kanbasu/models/model.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/user.dart';
-import 'package:kanbasu/scaffolds/list.dart';
+import 'package:kanbasu/scaffolds/simple_list.dart';
+import 'package:kanbasu/widgets/snack.dart';
 import 'package:kanbasu/utils/persistence.dart';
+import 'package:kanbasu/utils/stream_op.dart';
+import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/user.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MeScreen extends StatefulWidget {
-  @override
-  _MeScreenState createState() => _MeScreenState();
-}
+class MeScreen extends HookWidget {
+  final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
-class _MeScreenState extends State<MeScreen> {
-  void _pushSettings() async {
+  void _pushSettings(context) async {
     final model = Provider.of<Model>(context, listen: false);
     final prefs = await SharedPreferences.getInstance();
 
@@ -75,23 +78,51 @@ class _MeScreenState extends State<MeScreen> {
   @override
   Widget build(BuildContext context) {
     final model = Provider.of<Model>(context);
-    // FIXME: a change of `model.canvas` won't make the widget rebuild
 
-    return ListScaffold<User, int>(
-      title: Text('Me'),
-      itemBuilder: (user) => UserWidget(user),
-      fetch: (_cursor) async {
-        final user = await model.canvas.getCurrentUserF() ??
-            (throw Exception('No user'));
-        return ListPayload(items: [user], hasMore: false);
+    return HookBuilder(
+      builder: (context) {
+        final manualRefresh = useState(false);
+        final triggerRefresh = useState(Completer());
+
+        final userStream = useMemoized(() {
+          final stream = model.canvas
+              .getCurrentUser()
+              // Notify RefreshIndicator to complete refresh
+              .doOnDone(() => triggerRefresh.value.complete())
+              .doOnError((error, _) => showErrorSnack(context, error));
+          if (manualRefresh.value) {
+            // if manually refresh, return only latest result
+            return yieldLast(stream);
+          } else {
+            return stream;
+          }
+        }, [manualRefresh.value, triggerRefresh.value]);
+
+        final userSnapshot = useStream(userStream, initialData: null);
+
+        final userData = userSnapshot.data;
+
+        return RefreshIndicator(
+            key: _refreshIndicatorKey,
+            onRefresh: () async {
+              manualRefresh.value = true;
+              final completer = Completer();
+              triggerRefresh.value = completer;
+              await completer.future;
+            },
+            child: SimpleListScaffold<User>(
+              title: Text('Me'),
+              itemBuilder: (user) => UserWidget(user),
+              items: userData != null ? [userData] : [],
+              actionBuilder: () => IconButton(
+                icon: Icon(Icons.settings),
+                tooltip: 'Settings',
+                onPressed: () {
+                  _pushSettings(context);
+                },
+              ),
+            ));
       },
-      actionBuilder: () => IconButton(
-        icon: Icon(Icons.settings),
-        tooltip: 'Settings',
-        onPressed: () {
-          _pushSettings();
-        },
-      ),
     );
   }
 }

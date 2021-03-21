@@ -1,23 +1,20 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/widgets/border.dart';
 import 'package:kanbasu/widgets/loading.dart';
-import 'package:rxdart/rxdart.dart';
 import 'common.dart';
 
-/// [StreamListScaffold] takes `Stream<T>` and display the items in view.
-/// This scaffold supports batch-update and on-demand-showing stream items.
-class StreamListScaffold<T> extends HookWidget {
+/// [StreamListScaffold] takes `List<T>` and display the items in view.
+class SimpleListScaffold<T> extends HookWidget {
   final Widget title;
   final Widget Function()? actionBuilder;
   final Widget Function(T payload) itemBuilder;
-  final Stream<T> itemStream;
+  final List<T> items;
 
-  StreamListScaffold({
+  SimpleListScaffold({
     required this.title,
     required this.itemBuilder,
-    required this.itemStream,
+    required this.items,
     this.actionBuilder,
   });
 
@@ -26,16 +23,7 @@ class StreamListScaffold<T> extends HookWidget {
     return CommonScaffold(
       title: title,
       body: HookBuilder(builder: (context) {
-        final stream =
-            useMemoized(() => itemStream.scan((List<T>? acc, T s, _) {
-                  final list = acc ?? List<T>.empty(growable: true);
-                  list.add(s);
-                  return list;
-                }).debounceTime(Duration(milliseconds: 200)));
-        final itemsSnapshot = useStream(stream, initialData: List<T>.empty());
-
         final Widget list;
-        final items = itemsSnapshot.data!;
         final itemsLength = items.length;
 
         final buildItem = (BuildContext context, int index) {
