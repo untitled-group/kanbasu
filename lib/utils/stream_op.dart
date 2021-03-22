@@ -1,4 +1,3 @@
-import 'package:pedantic/pedantic.dart';
 import 'package:rxdart/rxdart.dart';
 
 Stream<T> yieldLast<T>(Stream<T> stream) {
