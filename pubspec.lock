@@ -223,6 +223,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_hooks:
+    dependency: "direct main"
+    description:
+      name: flutter_hooks
+      url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
+    source: hosted
+    version: "0.16.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
