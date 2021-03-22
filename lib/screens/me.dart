@@ -71,7 +71,7 @@ class MeScreen extends ListViewScreen<User> {
 
   @override
   Stream<Stream<User>> getStream(Model model) =>
-      model.canvas.getCurrentUser().map((user) => Stream.fromIterable([user]));
+      model.canvas.getCurrentUser().map((user) => Stream.fromIterable([user].whereType<User>()));
 
   @override
   Widget getTitle() => Text('Me');
