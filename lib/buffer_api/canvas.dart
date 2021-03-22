@@ -33,7 +33,7 @@ class CanvasBufferClient {
   /// and returned as an iterator.
   ///
   /// Currently, there are two styles of APIs.
-  /// * Backupable API returns a Stream, which may contain one or two
+  /// * Backupable API returns a Stream, which is guranteed to yield two
   ///   elements. First one is from `KvStore`, and second one if from REST API.
   /// * Single API returns one object. Depend on `offline` flag, it will either
   ///   returns data from `KvStore` or from REST API.
@@ -213,17 +213,11 @@ class CanvasBufferClient {
   }
 
   /// Fetch an item sequentially from [KvStore] and [CanvasRestClient],
-  /// and produce a stream of type `T`. If none of the endpoints are available,
-  /// no items will yield.
-  Stream<T> _getItemStream<T>(String key, FromJson<T> fromJson,
+  /// and produce a stream of type `T?`.
+  Stream<T?> _getItemStream<T>(String key, FromJson<T> fromJson,
       ToJson<T> toJson, GetItem<T> getItem) async* {
-    final stream = () async* {
-      yield await getObject(key, fromJson);
-      yield await putObject(key, await toResponse(_logger, getItem), toJson);
-    };
-    await for (final item in stream()) {
-      if (item != null) yield item;
-    }
+    yield await getObject(key, fromJson);
+    yield await putObject(key, await toResponse(_logger, getItem), toJson);
   }
 
   /// Fetch an item either from [KvStore] or [CanvasRestClient],
@@ -268,7 +262,7 @@ class CanvasBufferClient {
   String _getCoursePrefix(id) => 'courses/by_id/$id';
 
   /// Returns information on a single course.
-  Stream<Course> getCourse(int id) {
+  Stream<Course?> getCourse(int id) {
     return _getItemStream(_getCoursePrefix(id), (e) => Course.fromJson(e),
         (e) => e.toJson(), () => _restClient.getCourse(id));
   }
@@ -302,7 +296,7 @@ class CanvasBufferClient {
   }
 
   /// Returns current user.
-  Stream<User> getCurrentUser() {
+  Stream<User?> getCurrentUser() {
     return _getItemStream('users/self', (e) => User.fromJson(e),
         (e) => e.toJson(), _restClient.getCurrentUser);
   }
