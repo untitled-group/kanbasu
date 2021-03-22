@@ -1,21 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/user.dart';
-import 'package:kanbasu/scaffolds/simple_list.dart';
-import 'package:kanbasu/widgets/snack.dart';
+import 'package:kanbasu/screens/list_screen.dart';
 import 'package:kanbasu/utils/persistence.dart';
-import 'package:kanbasu/utils/stream_op.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/user.dart';
 import 'package:provider/provider.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MeScreen extends HookWidget {
-  final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
-
+class MeScreen extends ListViewScreen<User> {
   void _pushSettings(context) async {
     final model = Provider.of<Model>(context, listen: false);
     final prefs = await SharedPreferences.getInstance();
@@ -76,53 +70,20 @@ class MeScreen extends HookWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final model = Provider.of<Model>(context);
+  Stream<Stream<User>> getStream(Model model) =>
+      model.canvas.getCurrentUser().map((user) => Stream.fromIterable([user]));
 
-    return HookBuilder(
-      builder: (context) {
-        final manualRefresh = useState(false);
-        final triggerRefresh = useState(Completer());
+  @override
+  Widget getTitle() => Text('Me');
 
-        final userStream = useMemoized(() {
-          final stream = model.canvas
-              .getCurrentUser()
-              // Notify RefreshIndicator to complete refresh
-              .doOnDone(() => triggerRefresh.value.complete())
-              .doOnError((error, _) => showErrorSnack(context, error));
-          if (manualRefresh.value) {
-            // if manually refresh, return only latest result
-            return yieldLast(stream);
-          } else {
-            return stream;
-          }
-        }, [manualRefresh.value, triggerRefresh.value]);
+  @override
+  Widget buildWidget(User item) => UserWidget(item);
 
-        final userSnapshot = useStream(userStream, initialData: null);
-
-        final userData = userSnapshot.data;
-
-        return RefreshIndicator(
-            key: _refreshIndicatorKey,
-            onRefresh: () async {
-              manualRefresh.value = true;
-              final completer = Completer();
-              triggerRefresh.value = completer;
-              await completer.future;
-            },
-            child: SimpleListScaffold<User>(
-              title: Text('Me'),
-              itemBuilder: (user) => UserWidget(user),
-              items: userData != null ? [userData] : [],
-              actionBuilder: () => IconButton(
-                icon: Icon(Icons.settings),
-                tooltip: 'Settings',
-                onPressed: () {
-                  _pushSettings(context);
-                },
-              ),
-            ));
-      },
-    );
-  }
+  @override
+  Widget? getAction(BuildContext context) => IconButton(
+      icon: Icon(Icons.settings),
+      tooltip: 'Settings',
+      onPressed: () {
+        _pushSettings(context);
+      });
 }
