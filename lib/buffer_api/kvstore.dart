@@ -1,5 +1,5 @@
+import 'dart:io' show Platform;
 import 'package:logger/logger.dart';
-
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
@@ -19,10 +19,12 @@ class KvStore {
 
   /// Initialize FFI for Sqlite on Flutter Desktop
   static void initFfi() {
-    // Initialize FFI
-    sqfliteFfiInit();
-    // Change the default factory
-    databaseFactory = databaseFactoryFfi;
+    if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
+      // Initialize FFI
+      sqfliteFfiInit();
+      // Change the default factory
+      databaseFactory = databaseFactoryFfi;
+    }
   }
 
   static Future<void> _initDatabase(Database db, int version) async {
