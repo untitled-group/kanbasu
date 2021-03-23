@@ -1,30 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/model.dart';
-import 'package:kanbasu/scaffolds/list.dart';
 import 'package:kanbasu/widgets/course.dart';
-import 'package:provider/provider.dart';
+import 'list_screen.dart';
 
-class CoursesScreen extends StatefulWidget {
+class CoursesScreen extends ListViewScreen<Course> {
   @override
-  _CoursesScreenState createState() => _CoursesScreenState();
-}
+  Stream<Stream<Course>> getStream(Model model) => model.canvas
+      .getCourses()
+      .map((courseList) => Stream.fromIterable(courseList));
 
-class _CoursesScreenState extends State<CoursesScreen> {
   @override
-  Widget build(BuildContext context) {
-    final model = Provider.of<Model>(context);
-    // FIXME: a change of `model.canvas` won't make the widget rebuild
+  Widget getTitle() => Text('Courses');
 
-    return ListScaffold<Course, int>(
-      title: Text('Courses'),
-      itemBuilder: (item) {
-        return CourseWidget(item);
-      },
-      fetch: (_cursor) async {
-        final courses = await model.canvas.getCoursesF();
-        return ListPayload(items: courses, hasMore: false);
-      },
-    );
-  }
+  @override
+  Widget buildWidget(Course item) => CourseWidget(item);
 }

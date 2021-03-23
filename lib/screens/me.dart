@@ -1,19 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/models/user.dart';
-import 'package:kanbasu/scaffolds/list.dart';
+import 'package:kanbasu/screens/list_screen.dart';
 import 'package:kanbasu/utils/persistence.dart';
+import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/user.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MeScreen extends StatefulWidget {
-  @override
-  _MeScreenState createState() => _MeScreenState();
-}
-
-class _MeScreenState extends State<MeScreen> {
-  void _pushSettings() async {
+class MeScreen extends ListViewScreen<User> {
+  void _pushSettings(context) async {
     final model = Provider.of<Model>(context, listen: false);
     final prefs = await SharedPreferences.getInstance();
 
@@ -73,25 +70,20 @@ class _MeScreenState extends State<MeScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final model = Provider.of<Model>(context);
-    // FIXME: a change of `model.canvas` won't make the widget rebuild
+  Stream<Stream<User>> getStream(Model model) =>
+      model.canvas.getCurrentUser().map((user) => Stream.fromIterable([user].whereType<User>()));
 
-    return ListScaffold<User, int>(
-      title: Text('Me'),
-      itemBuilder: (user) => UserWidget(user),
-      fetch: (_cursor) async {
-        final user = await model.canvas.getCurrentUserF() ??
-            (throw Exception('No user'));
-        return ListPayload(items: [user], hasMore: false);
-      },
-      actionBuilder: () => IconButton(
-        icon: Icon(Icons.settings),
-        tooltip: 'Settings',
-        onPressed: () {
-          _pushSettings();
-        },
-      ),
-    );
-  }
+  @override
+  Widget getTitle() => Text('Me');
+
+  @override
+  Widget buildWidget(User item) => UserWidget(item);
+
+  @override
+  Widget? getAction(BuildContext context) => IconButton(
+      icon: Icon(Icons.settings),
+      tooltip: 'Settings',
+      onPressed: () {
+        _pushSettings(context);
+      });
 }

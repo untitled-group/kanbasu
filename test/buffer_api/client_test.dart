@@ -28,12 +28,12 @@ void main() {
       final response = await api.getCourse(23333).last;
       final response2 = await api.getCourseF(23333);
       expect(response, equals(response2!));
-      expect(response.courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
+      expect(response!.courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
     });
 
     test('should return null when 404', () async {
       final response = await api.getCourse(23334).toList();
-      expect(response, isEmpty);
+      expect(response, equals([null, null]));
       final response2 = await api.getCourseF(23334);
       expect(response2, isNull);
     });
