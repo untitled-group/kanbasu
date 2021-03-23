@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/user.dart';
 import 'package:kanbasu/screens/list_screen.dart';
 import 'package:kanbasu/utils/persistence.dart';
@@ -70,8 +71,10 @@ class MeScreen extends ListViewScreen<User> {
   }
 
   @override
-  Stream<Stream<User>> getStream(Model model) =>
-      model.canvas.getCurrentUser().map((user) => Stream.fromIterable([user].whereType<User>()));
+  Stream<Stream<User>> getStream() => Provider.of<Model>(useContext())
+      .canvas
+      .getCurrentUser()
+      .map((user) => Stream.fromIterable([user].whereType<User>()));
 
   @override
   Widget getTitle() => Text('Me');

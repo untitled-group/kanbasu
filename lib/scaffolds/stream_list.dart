@@ -18,11 +18,14 @@ class StreamListScaffold<T> extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return HookBuilder(builder: (context) {
-      final stream = useMemoized(() => itemStream.scan((List<T>? acc, T s, _) {
-            final list = acc ?? List<T>.empty(growable: true);
-            list.add(s);
-            return list;
-          }).debounceTime(Duration(milliseconds: 200)));
+      final stream = useMemoized(
+        () => itemStream.scan((List<T>? acc, T s, _) {
+          final list = acc ?? List<T>.empty(growable: true);
+          list.add(s);
+          return list;
+        }).debounceTime(Duration(milliseconds: 200)),
+        [itemStream],
+      );
       final itemsSnapshot = useStream(stream, initialData: List<T>.empty());
 
       final Widget list;
