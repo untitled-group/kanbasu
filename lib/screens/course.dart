@@ -12,7 +12,7 @@ class CourseScreen extends CommonScreen<Course?> {
 
   @override
   Widget buildWidget(Course? data) {
-    return Single(child: Text(data.toString()));
+    return Single(Text(data.toString()));
   }
 
   @override

@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:kanbasu/models/user.dart';
-import 'package:kanbasu/screens/list_screen.dart';
+import 'package:kanbasu/screens/common_screen.dart';
 import 'package:kanbasu/utils/persistence.dart';
 import 'package:kanbasu/models/model.dart';
+import 'package:kanbasu/widgets/single.dart';
 import 'package:kanbasu/widgets/user.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MeScreen extends ListScreen<User> {
+class MeScreen extends CommonScreen<User?> {
   void _pushSettings(context) async {
     final model = Provider.of<Model>(context, listen: false);
     final prefs = await SharedPreferences.getInstance();
@@ -73,16 +74,14 @@ class MeScreen extends ListScreen<User> {
   }
 
   @override
-  Stream<Stream<User>> getStreamStream() => Provider.of<Model>(useContext())
-      .canvas
-      .getCurrentUser()
-      .map((user) => Stream.fromIterable([user].whereType<User>()));
+  Stream<User?> getStream() =>
+      Provider.of<Model>(useContext()).canvas.getCurrentUser();
+
+  @override
+  Widget buildWidget(User? data) => Single(UserWidget(data!));
 
   @override
   Widget getTitle() => Text('Me');
-
-  @override
-  Widget buildItem(User item) => UserWidget(item);
 
   @override
   Widget? getAction(BuildContext context) => IconButton(
