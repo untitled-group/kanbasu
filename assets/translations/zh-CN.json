@@ -1,0 +1,17 @@
+{
+    "title": {
+        "activities": "活动",
+        "course": "课程",
+        "courses": "课程",
+        "me": "我",
+        "settings": "设置"
+    },
+    "settings": {
+        "api_key": "API 密钥",
+        "api_endpoint": "API 端点",
+        "apply": "应用并重启"
+    },
+    "error": {
+        "check_net_api": "啊呀，发生错误: {}。\n请检查网络连接，以及提供的 API 密钥是否有效。"
+    }
+}

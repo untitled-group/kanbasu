@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:provider/provider.dart';
 import 'package:separated_column/separated_column.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class KErrorWidget extends StatelessWidget {
   final String errorText;
@@ -23,7 +24,7 @@ class KErrorWidget extends StatelessWidget {
           Text.rich(
             TextSpan(
               children: [
-                TextSpan(text: 'An error occured, some tips:\n\n'),
+                TextSpan(text: 'An error occured, some tips:\n\n'.tr()),
                 TextSpan(text: tips),
               ],
               style: TextStyle(fontSize: 16),

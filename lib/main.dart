@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:kanbasu/models/model.dart';
@@ -8,22 +9,26 @@ import 'buffer_api/kvstore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
   KvStore.initFfi();
-
   initRouter();
 
   final model = Model();
   await Future.wait([model.init()]);
 
-  return runApp(
-    ChangeNotifierProvider(
+  return runApp(EasyLocalization(
+    supportedLocales: [
+      Locale('zh', 'CN'),
+      Locale('en'),
+    ],
+    startLocale: Locale('zh', 'CN'),
+    fallbackLocale: Locale('en'),
+    path: 'assets/translations',
+    child: ChangeNotifierProvider(
       create: (context) => model,
-      child: Phoenix(
-        // for rebirthing the app
-        child: MyApp(),
-      ),
+      child: Phoenix(child: MyApp()), // for rebirthing the app
     ),
-  );
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -52,8 +57,11 @@ class MyApp extends StatelessWidget {
         ),
         pageTransitionsTheme: PageTransitionsTheme(builders: {}),
       ),
-      home: Home(),
       onGenerateRoute: router.generator,
+      locale: context.locale,
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      home: Home(),
     );
   }
 }

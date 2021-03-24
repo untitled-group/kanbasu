@@ -1,0 +1,17 @@
+{
+    "title": {
+        "activities": "Activities",
+        "course": "Course",
+        "courses": "Courses",
+        "me": "Me",
+        "settings": "Settings"
+    },
+    "settings": {
+        "api_key": "API Key",
+        "api_endpoint": "API Endpoint",
+        "apply": "Apply and Restart"
+    },
+    "error": {
+        "check_net_api": "Error: {}.\nCheck the connection and your provided API key."
+    }
+}

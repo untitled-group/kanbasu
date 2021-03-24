@@ -7,6 +7,7 @@ import 'package:kanbasu/screens/list_screen.dart';
 import 'package:kanbasu/widgets/activity.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ActivitiesScreen extends ListScreen<ActivityItem> {
   @override
@@ -14,7 +15,7 @@ class ActivitiesScreen extends ListScreen<ActivityItem> {
       Provider.of<Model>(useContext()).canvas.getCurrentUserActivityStream();
 
   @override
-  Widget getTitle() => Text('Activities');
+  Widget getTitle() => Text('title.activities'.tr());
 
   @override
   Widget buildItem(ActivityItem item) => ActivityWidget(item);
