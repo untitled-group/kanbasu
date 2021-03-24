@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:kanbasu/models/model.dart';
+import 'package:kanbasu/router.dart';
 import 'package:provider/provider.dart';
 import 'home.dart';
 import 'buffer_api/kvstore.dart';
@@ -8,6 +9,8 @@ import 'buffer_api/kvstore.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   KvStore.initFfi();
+
+  initRouter();
 
   final model = Model();
   await Future.wait([model.init()]);
@@ -49,6 +52,7 @@ class MyApp extends StatelessWidget {
         pageTransitionsTheme: PageTransitionsTheme(builders: {}),
       ),
       home: Home(),
+      onGenerateRoute: router.generator,
     );
   }
 }
