@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:kanbasu/models/user.dart';
 import 'package:kanbasu/screens/list_screen.dart';
 import 'package:kanbasu/utils/persistence.dart';
@@ -53,7 +54,7 @@ class MeScreen extends ListViewScreen<User> {
                   onPressed: () {
                     Navigator.pop(context, true);
                   },
-                  child: Text('Done'),
+                  child: Text('Apply and Restart'),
                 )
               ],
             )
@@ -67,6 +68,7 @@ class MeScreen extends ListViewScreen<User> {
       await prefs.setString(
           PreferencesKeys.api_endpoint, endpointController.text);
       await model.updateCanvasClient();
+      Phoenix.rebirth(context);
     }
   }
 

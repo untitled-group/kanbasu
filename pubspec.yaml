@@ -30,6 +30,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_hooks: ^0.16.0
+  flutter_phoenix: ^1.0.0
   logger: ^1.0.0
   path: any
   path_provider: any
