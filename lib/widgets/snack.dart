@@ -12,7 +12,9 @@ void showErrorSnack(BuildContext context, dynamic e) {
       'Error: $error.\nCheck the connection and your provided API key.');
 }
 
-void showSnack(BuildContext context, String text) =>
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(text),
-    ));
+void showSnack(BuildContext context, String text) {
+  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(text),
+  ));
+}
