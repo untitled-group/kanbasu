@@ -26,7 +26,7 @@ class StreamListScaffold<T> extends HookWidget {
           final list = acc ?? List<T>.empty(growable: true);
           list.add(s);
           return list;
-        }).debounceTime(Duration(milliseconds: 200)),
+        }).throttleTime(Duration(milliseconds: 200)),
         [itemStream],
       );
       final itemsSnapshot = useStream(stream, initialData: List<T>.empty());
