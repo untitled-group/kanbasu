@@ -39,13 +39,6 @@ class Model with ChangeNotifier {
     border: Colors.grey.shade300,
   );
 
-  int _activeTab = 0;
-  int get activeTab => _activeTab;
-  set activeTab(int activeTab) {
-    _activeTab = activeTab;
-    notifyListeners();
-  }
-
   late CanvasBufferClient _canvas;
   CanvasBufferClient get canvas => _canvas;
 

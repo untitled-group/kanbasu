@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/screens/activities.dart';
 import 'package:kanbasu/screens/courses.dart';
 import 'package:kanbasu/screens/me.dart';
@@ -8,12 +9,7 @@ import 'models/model.dart';
 
 enum _ScreenKind { Activities, Courses, Me }
 
-class Home extends StatefulWidget {
-  @override
-  _HomeState createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
+class Home extends HookWidget {
   BottomNavigationBarItem _buildNavigationItem(_ScreenKind s) {
     switch (s) {
       case _ScreenKind.Activities:
@@ -50,24 +46,28 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final model = Provider.of<Model>(context);
-    final theme = model.theme;
-    final navigationItems = _ScreenKind.values.map(_buildNavigationItem).toList();
+    return HookBuilder(builder: (context) {
+      final theme = Provider.of<Model>(context).theme;
+      final activeTab = useState(0);
 
-    return Scaffold(
-      body: IndexedStack(
-        index: model.activeTab,
-        children: _ScreenKind.values.map(_buildScreen).toList(),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: theme.primary,
-        items: navigationItems,
-        currentIndex: model.activeTab,
-        type: BottomNavigationBarType.fixed,
-        onTap: (int index) {
-          model.activeTab = index;
-        },
-      ),
-    );
+      final navigationItems =
+          _ScreenKind.values.map(_buildNavigationItem).toList();
+
+      return Scaffold(
+        body: IndexedStack(
+          index: activeTab.value,
+          children: _ScreenKind.values.map(_buildScreen).toList(),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          selectedItemColor: theme.primary,
+          items: navigationItems,
+          currentIndex: activeTab.value,
+          type: BottomNavigationBarType.fixed,
+          onTap: (int index) {
+            activeTab.value = index;
+          },
+        ),
+      );
+    });
   }
 }
