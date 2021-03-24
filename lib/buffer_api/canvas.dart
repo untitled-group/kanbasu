@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:kanbasu/buffer_api/kvstore.dart';
 import 'package:kanbasu/models/activity_item.dart';
 import 'package:kanbasu/models/module.dart';
@@ -15,16 +14,10 @@ import 'package:kanbasu/types.dart';
 import 'paginated_list.dart';
 
 /// [toResponse] transform an HTTP response to corresponding object.
-/// If the HTTP response errored, it will return null.
-Future<T?> toResponse<T>(
+Future<T> toResponse<T>(
     Logger logger, Future<HttpResponse<T>> Function() sendRequest) async {
-  try {
-    final response = await sendRequest();
-    return response.data;
-  } on DioError catch (e) {
-    logger.w('${e.error} w/response ${e.response}');
-  }
-  return null;
+  final response = await sendRequest();
+  return response.data;
 }
 
 class CanvasBufferClient {
@@ -76,12 +69,12 @@ class CanvasBufferClient {
   ///
   /// All objects are [transform]ed to [String], then stored to database as
   /// [prefix]/[id].
-  Future<List<T>> putPrefix<T>(
+  Future<void> putPrefix<T>(
       String prefix, List<T> items, String Function(T) id, ToJson<T> toJson,
       {bool purge = false}) async {
     final kvStore = _kvStore;
     if (kvStore == null) {
-      return items;
+      return;
     }
     if (purge) {
       await kvStore.rangeDelete('$_prefix/$prefix');
@@ -90,7 +83,6 @@ class CanvasBufferClient {
       await kvStore.setItem(
           '$_prefix/$prefix${id(item)}', json.encode(toJson(item)));
     }
-    return items;
   }
 
   /// Get an object of [key] from database
@@ -111,16 +103,15 @@ class CanvasBufferClient {
   /// Put [item] of [key] to database, returns [item].
   ///
   /// The object will be [transform]ed into [String].
-  Future<T?> putObject<T>(String key, T? item, ToJson<T> toJson) async {
+  Future<void> putObject<T>(String key, T? item, ToJson<T> toJson) async {
     final kvStore = _kvStore;
     if (kvStore == null) {
-      return item;
+      return;
     }
     if (item == null) {
-      return item;
+      return;
     }
     await kvStore.setItem('$_prefix/$key', json.encode(toJson(item)));
-    return item;
   }
 
   /// Close the [KvStore]. Generally this is only used in tests.
@@ -141,39 +132,24 @@ class CanvasBufferClient {
       GetId getId,
       {ScanOrder? order}) async* {
     // First, yield results from database
-    yield Stream.fromIterable(await scanPrefix(prefix, fromJson, order: order));
+    final kvStoreResult = await scanPrefix(prefix, fromJson, order: order);
+    _logger.v('[KvStore] scan $prefix => ${kvStoreResult.length} entries');
+    yield Stream.fromIterable(kvStoreResult);
     if (!_offline) {
       final stream = () async* {
+        var itemCount = 0;
+        final items = List<T>.empty(growable: true);
         // Then, yield return from REST API and put them back into database
         await for (final item in PaginatedList<T>(listPaginated).all()) {
-          await putObject('$prefix${getId(item)}', item, toJson);
+          items.add(item);
           yield item;
+          itemCount += 1;
         }
+        _logger.v('[REST] scan $prefix => $itemCount entries');
+        // batch add into KvStore
+        await putPrefix<T>(prefix, items, getId, toJson);
       };
       yield stream();
-    }
-  }
-
-  /// Fetch a [PaginatedList] either from [KvStore] or [CanvasRestClient],
-  /// and produce a stream of type `T`.
-  Future<Stream<T>> _getPaginatedStreamFuture<T>(
-      String prefix,
-      FromJson<T> fromJson,
-      ToJson<T> toJson,
-      ListPaginated<T> listPaginated,
-      GetId getId,
-      {ScanOrder? order}) async {
-    if (!_offline) {
-      final stream = () async* {
-        await for (final item in PaginatedList<T>(listPaginated).all()) {
-          await putObject('$prefix${getId(item)}', item, toJson);
-          yield item;
-        }
-      };
-      return stream();
-    } else {
-      return Stream.fromIterable(
-          await scanPrefix(prefix, fromJson, order: order));
     }
   }
 
@@ -187,28 +163,15 @@ class CanvasBufferClient {
       GetId getId,
       {ScanOrder? order}) async* {
     // First, yield results from database
-    yield await scanPrefix(prefix, fromJson, order: order);
+    final kvStoreResult = await scanPrefix(prefix, fromJson, order: order);
+    _logger.v('[KvStore] scan $prefix => ${kvStoreResult.length} entries');
+    yield kvStoreResult;
     if (!_offline) {
       // Then, yield return from REST API and put them back into database
-      yield await putPrefix(prefix,
-          await PaginatedList<T>(listPaginated).all().toList(), getId, toJson);
-    }
-  }
-
-  /// Fetch a [PaginatedList] either from [KvStore] or [CanvasRestClient],
-  /// and produce a future of type `List<T>`.
-  Future<List<T>> _getPaginatedListFuture<T>(
-      String prefix,
-      FromJson<T> fromJson,
-      ToJson<T> toJson,
-      ListPaginated<T> listPaginated,
-      GetId getId,
-      {ScanOrder? order}) async {
-    if (!_offline) {
-      return await putPrefix(prefix,
-          await PaginatedList<T>(listPaginated).all().toList(), getId, toJson);
-    } else {
-      return await scanPrefix(prefix, fromJson, order: order);
+      final restResult = await PaginatedList<T>(listPaginated).all().toList();
+      _logger.v('[REST] scan $prefix => ${restResult.length} entries');
+      yield restResult;
+      await putPrefix(prefix, restResult, getId, toJson);
     }
   }
 
@@ -216,19 +179,13 @@ class CanvasBufferClient {
   /// and produce a stream of type `T?`.
   Stream<T?> _getItemStream<T>(String key, FromJson<T> fromJson,
       ToJson<T> toJson, GetItem<T> getItem) async* {
-    yield await getObject(key, fromJson);
-    yield await putObject(key, await toResponse(_logger, getItem), toJson);
-  }
-
-  /// Fetch an item either from [KvStore] or [CanvasRestClient],
-  /// and produce a future of type `T?`.
-  Future<T?> _getItemFuture<T>(String key, FromJson<T> fromJson,
-      ToJson<T> toJson, GetItem<T> getItem) async {
-    if (!_offline) {
-      return await putObject(key, await toResponse(_logger, getItem), toJson);
-    } else {
-      return await getObject(key, fromJson);
-    }
+    final kvStoreResult = await getObject(key, fromJson);
+    _logger.v('[KvStore] get $key');
+    yield kvStoreResult;
+    final restResult = await toResponse(_logger, getItem);
+    _logger.v('[REST] get $key');
+    yield restResult;
+    await putObject(key, restResult, toJson);
   }
 
   // **************************************************************************
@@ -249,16 +206,6 @@ class CanvasBufferClient {
         (e) => e.id.toString()).map(listToCourse);
   }
 
-  /// Returns a stream of active courses for the current user.
-  Future<List<Course>> getCoursesF() async {
-    return _getPaginatedListFuture<MaybeCourse>(
-        'courses/by_id/',
-        (e) => MaybeCourse.fromJson(e),
-        (e) => e.toJson(),
-        _restClient.getCourses,
-        (e) => e.id.toString()).then(listToCourse);
-  }
-
   String _getCoursePrefix(id) => 'courses/by_id/$id';
 
   /// Returns information on a single course.
@@ -267,23 +214,7 @@ class CanvasBufferClient {
         (e) => e.toJson(), () => _restClient.getCourse(id));
   }
 
-  /// Returns information on a single course.
-  Future<Course?> getCourseF(int id) {
-    return _getItemFuture(_getCoursePrefix(id), (e) => Course.fromJson(e),
-        (e) => e.toJson(), () => _restClient.getCourse(id));
-  }
-
   String _getTabPrefix(id) => 'courses/$id/tabs/';
-
-  /// List available tabs for a course or group.
-  Future<List<Tab>> getTabsF(int id) {
-    return _getPaginatedListFuture(
-        _getTabPrefix(id),
-        (e) => Tab.fromJson(e),
-        (e) => e.toJson(),
-        ({queries}) => _restClient.getTabs(id, queries: queries),
-        (e) => e.id);
-  }
 
   /// List available tabs for a course or group.
   Stream<List<Tab>> getTabs(int id) {
@@ -301,24 +232,6 @@ class CanvasBufferClient {
         (e) => e.toJson(), _restClient.getCurrentUser);
   }
 
-  /// Returns current user.
-  Future<User?> getCurrentUserF() {
-    return _getItemFuture('users/self', (e) => User.fromJson(e),
-        (e) => e.toJson(), _restClient.getCurrentUser);
-  }
-
-  /// Returns the current user's global activity stream
-  Future<Stream<ActivityItem>> getCurrentUserActivityStreamF() {
-    return _getPaginatedStreamFuture(
-        'activity_stream/by_id/',
-        (e) => ActivityItem.fromJson(e),
-        (e) => e.toJson(),
-        ({queries}) =>
-            _restClient.getCurrentUserActivityStream(queries: queries),
-        (e) => e.id.toString(),
-        order: ScanOrder.desc);
-  }
-
   /// Returns the current user's global activity stream
   Stream<Stream<ActivityItem>> getCurrentUserActivityStream() {
     return _getPaginatedStreamStream(
@@ -334,18 +247,8 @@ class CanvasBufferClient {
   String _getModulePrefix(id) => 'courses/$id/modules/by_id/';
 
   /// List available modules for a course.
-  Future<List<Module>> getModulesF(int id) {
-    return _getPaginatedListFuture(
-        _getModulePrefix(id),
-        (e) => Module.fromJson(e),
-        (e) => e.toJson(),
-        ({queries}) => _restClient.getModules(id, queries: queries),
-        (e) => e.id.toString());
-  }
-
-  /// List available modules for a course.
-  Stream<List<Module>> getModules(int id) {
-    return _getPaginatedListStream(
+  Stream<Stream<Module>> getModules(int id) {
+    return _getPaginatedStreamStream(
         _getModulePrefix(id),
         (e) => Module.fromJson(e),
         (e) => e.toJson(),

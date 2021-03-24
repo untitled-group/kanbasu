@@ -29,7 +29,7 @@ abstract class CommonScreen<T> extends HookWidget {
               // Notify RefreshIndicator to complete refresh
               .doOnDone(() {
             triggerRefresh.value.complete();
-          }).doOnError((error, _) {
+          }).handleError((error, _) {
             showErrorSnack(context, error);
             triggerRefresh.value.complete();
           });

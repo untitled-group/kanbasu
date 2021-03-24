@@ -17,8 +17,6 @@ void main() {
 
     test('should get course list', () async {
       final data = (await api.getCourses().last).toList();
-      final dataF = await api.getCoursesF();
-      expect(data, equals(dataF));
       expect(data.length, equals(2));
       expect(data[0].courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
       expect(data[1].id, equals(318720));
@@ -26,16 +24,23 @@ void main() {
 
     test('should get single course', () async {
       final response = await api.getCourse(23333).last;
-      final response2 = await api.getCourseF(23333);
-      expect(response, equals(response2!));
       expect(response!.courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
     });
 
-    test('should return null when 404', () async {
-      final response = await api.getCourse(23334).toList();
-      expect(response, equals([null, null]));
-      final response2 = await api.getCourseF(23334);
-      expect(response2, isNull);
+    test('should catch inner error when 404', () async {
+      var errCount = 0;
+      await api.getCourse(23334).handleError((_) => errCount += 1).toList();
+      expect(errCount, equals(1));
+    });
+
+    test('should catch listing inner error when 404', () async {
+      var errCount = 0;
+      final result = await api
+          .getTabs(23333333)
+          .handleError((_) => errCount += 1)
+          .toList();
+      expect(result.length, equals(1));
+      expect(errCount, equals(1));
     });
   });
 
@@ -61,12 +66,8 @@ void main() {
 
     test('should get course list multiple times with cache', () async {
       await api.getCourses().last;
-      await api.getCoursesF();
       await api.getCourses().last;
-      await api.getCoursesF();
-      final dataF = await api.getCoursesF();
       final data = await api.getCourses().last;
-      expect(data, equals(dataF));
       expect(data.length, equals(2));
       expect(data[0].courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
       expect(data[1].id, equals(318720));
@@ -77,9 +78,7 @@ void main() {
       expect(onlineData[0].length, equals(0));
       expect(onlineData[1].length, equals(2));
       api.enableOffline();
-      final dataF = await api.getCoursesF();
       final data = await api.getCourses().last;
-      expect(data, equals(dataF));
       expect(data.length, equals(2));
       expect(data[0].courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
       expect(data[1].id, equals(318720));
@@ -95,16 +94,6 @@ void main() {
       final data = await api.getTabs(23333).last;
       expect(data.length, equals(9));
       expect(data[0].id, equals('home'));
-    });
-
-    test('should get activity stream in one-shot mode', () async {
-      final data = await api.getCurrentUserActivityStreamF();
-      final dataJson = await data.toList();
-      api.enableOffline();
-      final offlineData = await api.getCurrentUserActivityStreamF();
-      final offlineDataJson = await offlineData.toList();
-      expect(dataJson.length, equals(offlineDataJson.length));
-      expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
     });
 
     test('should get activity stream in stream mode', () async {

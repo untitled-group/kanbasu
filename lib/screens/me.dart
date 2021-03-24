@@ -79,7 +79,7 @@ class MeScreen extends CommonScreen<User?> {
 
   @override
   Widget buildWidget(User? data) =>
-      data == null ? Container() : Single(UserWidget(data));
+      Single(data == null ? Container() : UserWidget(data));
 
   @override
   Widget getTitle() => Text('Me');

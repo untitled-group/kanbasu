@@ -53,7 +53,7 @@ class Model with ChangeNotifier {
   Brightness get brightness => _brightness;
   set brightness(Brightness brightness) {
     if (brightness != _brightness) {
-      Future.delayed(Duration(milliseconds: 200), () {
+      Future.microtask(() {
         _brightness = brightness;
         notifyListeners();
       });
