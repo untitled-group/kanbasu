@@ -1,0 +1,25 @@
+title:
+  activities: 活动
+  course: 课程
+  courses: 课程
+  me: 我
+  settings: 设置
+settings:
+  api_key: API 密钥
+  api_endpoint: API 端点
+  apply: 应用并重启
+error:
+  check_net_api: |-
+    啊呀，发生错误：{}。
+    请检查网络连接，以及提供的 API 密钥是否有效。
+  tips: 啊呀，发生错误了。这里是一些提示：
+activity:
+  short_type:
+    AssessmentRequest: 评估
+    Announcement: 发布
+    Collaboration: 合作
+    Conference: 会议
+    Submission: 提交
+    Message: 信息
+    Conversation: 对话
+    DiscussionTopic: 讨论

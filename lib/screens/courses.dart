@@ -8,6 +8,7 @@ import 'package:kanbasu/screens/list_screen.dart';
 import 'package:kanbasu/widgets/course.dart';
 import 'package:kanbasu/widgets/link.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CoursesScreen extends ListScreen<Course> {
   @override
@@ -17,7 +18,7 @@ class CoursesScreen extends ListScreen<Course> {
       .map((courseList) => Stream.fromIterable(courseList));
 
   @override
-  Widget getTitle() => Text('Courses');
+  Widget getTitle() => Text('title.courses'.tr());
 
   @override
   Widget buildItem(Course item) =>
