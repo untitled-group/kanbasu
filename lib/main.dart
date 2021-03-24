@@ -7,12 +7,14 @@ import 'package:provider/provider.dart';
 import 'home.dart';
 import 'buffer_api/kvstore.dart';
 import 'package:easy_localization_loader/easy_localization_loader.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   KvStore.initFfi();
   initRouter();
+  timeago.setLocaleMessages('zh_CN', timeago.ZhCnMessages());
 
   final model = Model();
   await Future.wait([model.init()]);
@@ -24,6 +26,7 @@ void main() async {
     ],
     startLocale: Locale('zh', 'CN'),
     fallbackLocale: Locale('en'),
+    useFallbackTranslations: true,
     path: 'assets/translations',
     assetLoader: YamlAssetLoader(),
     child: ChangeNotifierProvider(

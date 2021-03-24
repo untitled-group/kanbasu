@@ -13,3 +13,13 @@ error:
     Error: {}.
     Check the connection and your provided API key.
   tips: "Error occured, here are some tips:"
+activity:
+  short_type:
+    AssessmentRequest: Ass
+    Announcement: Ann
+    Collaboration: Col
+    Conference: Con # ???
+    Submission: Sub
+    Message: Mes
+    Conversation: Con
+    DiscussionTopic: Dis

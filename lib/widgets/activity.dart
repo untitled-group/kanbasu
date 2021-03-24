@@ -4,6 +4,7 @@ import 'package:kanbasu/models/model.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:separated_column/separated_column.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ActivityWidget extends StatelessWidget {
   final ActivityItem item;
@@ -25,7 +26,7 @@ class ActivityWidget extends StatelessWidget {
               CircleAvatar(
                 backgroundColor: theme.primary,
                 foregroundColor: theme.background,
-                child: Text(item.type.substring(0, 3)),
+                child: Text('activity.short_type.${item.type}'.tr()),
               ),
               SizedBox(
                 width: 10,
@@ -60,7 +61,10 @@ class ActivityWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          timeago.format(item.updatedAt),
+                          timeago.format(
+                            item.updatedAt,
+                            locale: context.locale.toStringWithSeparator(),
+                          ),
                           style: TextStyle(
                               fontSize: 14, color: theme.tertiaryText),
                         ),
