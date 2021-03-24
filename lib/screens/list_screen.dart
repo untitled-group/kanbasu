@@ -6,9 +6,7 @@ import 'package:kanbasu/scaffolds/common.dart';
 import 'package:kanbasu/scaffolds/stream_list.dart';
 import 'package:kanbasu/widgets/snack.dart';
 import 'package:kanbasu/utils/stream_op.dart';
-import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/loading.dart';
-import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 /// [ListViewScreen] takes a stream from parent model, and display it in
@@ -16,7 +14,7 @@ import 'package:rxdart/rxdart.dart';
 abstract class ListViewScreen<T> extends HookWidget {
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
-  Stream<Stream<T>> getStream(Model model);
+  Stream<Stream<T>> getStream();
 
   Widget buildWidget(T item);
 
@@ -26,14 +24,12 @@ abstract class ListViewScreen<T> extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = Provider.of<Model>(context);
-
     return HookBuilder(builder: (context) {
       final manualRefresh = useState(false);
       final triggerRefresh = useState(Completer());
 
       final itemStream = useMemoized(() {
-        final stream = getStream(model)
+        final stream = getStream()
             // The stream may be subscribed multiple times by children,
             // so we need to replay it, with the help of RxDart extension.
             .map((s) => s.shareReplay())
@@ -51,25 +47,30 @@ abstract class ListViewScreen<T> extends HookWidget {
         } else {
           return stream;
         }
-      }, [manualRefresh.value, triggerRefresh.value]);
+      }, [
+        manualRefresh.value,
+        triggerRefresh.value,
+      ]);
 
       final listSnapshot = useStream(itemStream, initialData: null);
 
       final listData = listSnapshot.data;
 
       final refreshIndicator = RefreshIndicator(
-          key: _refreshIndicatorKey,
-          onRefresh: () async {
-            manualRefresh.value = true;
-            final completer = Completer();
-            triggerRefresh.value = completer;
-            await completer.future;
-          },
-          child: listData == null && listSnapshot.error == null
-              ? LoadingWidget(isMore: true)
-              : StreamListScaffold<T>(
-                  itemBuilder: (item) => buildWidget(item),
-                  itemStream: listData ?? Stream.empty()));
+        key: _refreshIndicatorKey,
+        onRefresh: () async {
+          manualRefresh.value = true;
+          final completer = Completer();
+          triggerRefresh.value = completer;
+          await completer.future;
+        },
+        child: listData == null && listSnapshot.error == null
+            ? LoadingWidget(isMore: true)
+            : StreamListScaffold<T>(
+                itemBuilder: (item) => buildWidget(item),
+                itemStream: listData ?? Stream.empty(),
+              ),
+      );
 
       return CommonScaffold(
         title: getTitle(),

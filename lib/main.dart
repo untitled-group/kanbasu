@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:provider/provider.dart';
 import 'home.dart';
@@ -12,7 +13,13 @@ void main() async {
   await Future.wait([model.init()]);
 
   return runApp(
-    ChangeNotifierProvider(create: (context) => model, child: MyApp()),
+    ChangeNotifierProvider(
+      create: (context) => model,
+      child: Phoenix(
+        // for rebirthing the app
+        child: MyApp(),
+      ),
+    ),
   );
 }
 
