@@ -49,7 +49,10 @@ class Home extends HookWidget {
     final navigationItems =
         _ScreenKind.values.map(_buildNavigationItem).toList();
     final screens = _ScreenKind.values.map(_buildScreen).toList();
-    final theme = Provider.of<Model>(context).theme;
+
+    final model = Provider.of<Model>(context);
+    model.brightness = MediaQuery.of(context).platformBrightness;
+    final theme = model.theme;
 
     return HookBuilder(builder: (context) {
       final activeTab = useState(0);

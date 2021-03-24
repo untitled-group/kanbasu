@@ -29,15 +29,38 @@ class Palette {
 }
 
 class Model with ChangeNotifier {
-  final theme = Palette(
+  final _themeLight = Palette(
     primary: Colors.red.shade700,
     text: Colors.black,
     secondaryText: Colors.grey.shade800,
     tertiaryText: Colors.grey.shade600,
     background: Colors.white,
-    grayBackground: Colors.grey.shade100,
+    grayBackground: Colors.grey.shade50,
     border: Colors.grey.shade300,
   );
+
+  final _themeDark = Palette(
+    primary: Colors.red.shade700,
+    text: Colors.grey.shade300,
+    secondaryText: Colors.grey.shade400,
+    tertiaryText: Colors.grey.shade500,
+    background: Colors.black,
+    grayBackground: Colors.grey.shade900,
+    border: Colors.grey.shade700,
+  );
+
+  var _brightness = Brightness.light;
+  Brightness get brightness => _brightness;
+  set brightness(Brightness brightness) {
+    if (brightness != _brightness) {
+      Future.delayed(Duration(milliseconds: 200), () {
+        _brightness = brightness;
+        notifyListeners();
+      });
+    }
+  }
+
+  Palette get theme => brightness == Brightness.dark ? _themeDark : _themeLight;
 
   late CanvasBufferClient _canvas;
   CanvasBufferClient get canvas => _canvas;
