@@ -24,7 +24,7 @@ class KErrorWidget extends StatelessWidget {
           Text.rich(
             TextSpan(
               children: [
-                TextSpan(text: 'An error occured, some tips:\n\n'.tr()),
+                TextSpan(text: 'error_tips'.tr() + '\n\n'),
                 TextSpan(text: tips),
               ],
               style: TextStyle(fontSize: 16),
