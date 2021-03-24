@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:kanbasu/scaffolds/common.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:kanbasu/models/course.dart';
+import 'package:kanbasu/models/model.dart';
+import 'package:kanbasu/screens/common_screen.dart';
+import 'package:kanbasu/widgets/single.dart';
+import 'package:provider/provider.dart';
 
-class CourseScreen extends StatelessWidget {
+class CourseScreen extends CommonScreen<Course?> {
   final int id;
-  const CourseScreen({
-    Key? key,
-    required this.id,
-  }) : super(key: key);
+  CourseScreen({required this.id});
 
   @override
-  Widget build(BuildContext context) {
-    return CommonScaffold(
-      title: Text('Course $id'),
-      body: Container(child: Text('$id')),
-    );
+  Widget buildWidget(Course? data) {
+    return Single(child: Text(data.toString()));
   }
+
+  @override
+  Stream<Course?> getStream() =>
+      Provider.of<Model>(useContext()).canvas.getCourse(id);
+
+  @override
+  Widget getTitle() => Text('Course');
 }
