@@ -48,6 +48,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: theme.grayBackground,
           foregroundColor: theme.text,
           actionsIconTheme: IconThemeData(color: theme.text),
+          iconTheme: IconThemeData(color: theme.text),
         ),
         pageTransitionsTheme: PageTransitionsTheme(builders: {}),
       ),

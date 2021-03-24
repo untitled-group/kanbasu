@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/course.dart';
+import 'package:kanbasu/widgets/link.dart';
 import 'package:provider/provider.dart';
 import 'list_screen.dart';
 
@@ -19,5 +20,6 @@ class CoursesScreen extends ListViewScreen<Course> {
   Widget getTitle() => Text('Courses');
 
   @override
-  Widget buildWidget(context, Course item) => CourseWidget(item);
+  Widget buildWidget(context, Course item) =>
+      Link(path: '/course/${item.id}', child: CourseWidget(item));
 }
