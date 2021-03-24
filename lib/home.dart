@@ -6,55 +6,58 @@ import 'package:provider/provider.dart';
 
 import 'models/model.dart';
 
+enum _ScreenKind { Activities, Courses, Me }
+
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  List<BottomNavigationBarItem> _buildNavigationItems() {
-    final activities = BottomNavigationBarItem(
-        icon: Icon(Icons.notifications_outlined),
-        activeIcon: Icon(Icons.notifications),
-        label: 'Activities');
-
-    final courses = BottomNavigationBarItem(
-        icon: Icon(Icons.book_outlined),
-        activeIcon: Icon(Icons.book),
-        label: 'Courses');
-
-    final me = BottomNavigationBarItem(
-        icon: Icon(Icons.person_outline),
-        activeIcon: Icon(Icons.person),
-        label: 'Me');
-
-    return [activities, courses, me];
+  BottomNavigationBarItem _buildNavigationItem(_ScreenKind s) {
+    switch (s) {
+      case _ScreenKind.Activities:
+        return BottomNavigationBarItem(
+          icon: Icon(Icons.notifications_outlined),
+          activeIcon: Icon(Icons.notifications),
+          label: 'Activities',
+        );
+      case _ScreenKind.Courses:
+        return BottomNavigationBarItem(
+          icon: Icon(Icons.book_outlined),
+          activeIcon: Icon(Icons.book),
+          label: 'Courses',
+        );
+      case _ScreenKind.Me:
+        return BottomNavigationBarItem(
+          icon: Icon(Icons.person_outline),
+          activeIcon: Icon(Icons.person),
+          label: 'Me',
+        );
+    }
   }
 
-  Widget _buildScreen(int index) {
-    switch (index) {
-      case 0:
+  Widget _buildScreen(_ScreenKind s) {
+    switch (s) {
+      case _ScreenKind.Activities:
         return ActivitiesScreen();
-      case 1:
+      case _ScreenKind.Courses:
         return CoursesScreen();
-      case 2:
+      case _ScreenKind.Me:
         return MeScreen();
     }
-    throw Exception();
   }
 
   @override
   Widget build(BuildContext context) {
     final model = Provider.of<Model>(context);
     final theme = model.theme;
-    final navigationItems = _buildNavigationItems();
+    final navigationItems = _ScreenKind.values.map(_buildNavigationItem).toList();
 
     return Scaffold(
       body: IndexedStack(
         index: model.activeTab,
-        children: [
-          for (var i = 0; i < navigationItems.length; i++) _buildScreen(i)
-        ],
+        children: _ScreenKind.values.map(_buildScreen).toList(),
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: theme.primary,
