@@ -19,5 +19,5 @@ class CoursesScreen extends ListViewScreen<Course> {
   Widget getTitle() => Text('Courses');
 
   @override
-  Widget buildWidget(Course item) => CourseWidget(item);
+  Widget buildWidget(context, Course item) => CourseWidget(item);
 }

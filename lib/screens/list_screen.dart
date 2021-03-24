@@ -16,7 +16,7 @@ abstract class ListViewScreen<T> extends HookWidget {
 
   Stream<Stream<T>> getStream();
 
-  Widget buildWidget(T item);
+  Widget buildWidget(BuildContext context, T item);
 
   Widget getTitle();
 
@@ -67,7 +67,7 @@ abstract class ListViewScreen<T> extends HookWidget {
         child: listData == null && listSnapshot.error == null
             ? LoadingWidget(isMore: true)
             : StreamListScaffold<T>(
-                itemBuilder: (item) => buildWidget(item),
+                itemBuilder: (item) => buildWidget(context, item),
                 itemStream: listData ?? Stream.empty(),
               ),
       );

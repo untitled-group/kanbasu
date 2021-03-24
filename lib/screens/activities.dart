@@ -17,5 +17,5 @@ class ActivitiesScreen extends ListViewScreen<ActivityItem> {
   Widget getTitle() => Text('Activities');
 
   @override
-  Widget buildWidget(ActivityItem item) => ActivityWidget(item);
+  Widget buildWidget(context, ActivityItem item) => ActivityWidget(item);
 }
