@@ -26,11 +26,13 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<Model>(context).theme;
+    final model = Provider.of<Model>(context);
+    final theme = model.theme;
 
     return MaterialApp(
       title: 'Kanbasu',
       theme: ThemeData(
+        brightness: model.brightness,
         primarySwatch: Colors.red,
         primaryColor: theme.primary,
         accentColor: theme.primary,
@@ -40,7 +42,7 @@ class MyApp extends StatelessWidget {
           headline6: TextStyle(color: theme.text),
         ),
         appBarTheme: AppBarTheme(
-          backgroundColor: theme.background,
+          backgroundColor: theme.grayBackground,
           foregroundColor: theme.text,
           actionsIconTheme: IconThemeData(color: theme.text),
         ),

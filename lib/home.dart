@@ -46,17 +46,21 @@ class Home extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HookBuilder(builder: (context) {
-      final theme = Provider.of<Model>(context).theme;
-      final activeTab = useState(0);
+    final navigationItems =
+        _ScreenKind.values.map(_buildNavigationItem).toList();
+    final screens = _ScreenKind.values.map(_buildScreen).toList();
 
-      final navigationItems =
-          _ScreenKind.values.map(_buildNavigationItem).toList();
+    final model = Provider.of<Model>(context);
+    model.brightness = MediaQuery.of(context).platformBrightness;
+    final theme = model.theme;
+
+    return HookBuilder(builder: (context) {
+      final activeTab = useState(0);
 
       return Scaffold(
         body: IndexedStack(
           index: activeTab.value,
-          children: _ScreenKind.values.map(_buildScreen).toList(),
+          children: screens,
         ),
         bottomNavigationBar: BottomNavigationBar(
           selectedItemColor: theme.primary,
