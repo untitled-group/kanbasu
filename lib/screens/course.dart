@@ -16,14 +16,14 @@ class CourseScreen extends CommonScreen<Course?> {
   Widget buildWidget(Course? data) {
     final model = Provider.of<Model>(useContext());
     return DefaultTabController(
-        initialIndex: 1,
+        initialIndex: 0,
         length: 7,
         child: NestedScrollView(
           headerSliverBuilder: (context, bool innerBoxIsScrolled) {
             return <Widget>[
               SliverOverlapAbsorber(
                 handle:
-                NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
                 sliver: SliverSafeArea(
                   top: false,
                   sliver: SliverAppBar(
@@ -33,28 +33,28 @@ class CourseScreen extends CommonScreen<Course?> {
                     snap: false,
                     primary: true,
                     forceElevated: innerBoxIsScrolled,
-                    bottom: const TabBar(
+                    bottom: TabBar(
                       tabs: <Widget>[
                         Tab(
-                          text: 'Overview',
+                          text: 'tabs.overview'.tr(),
                         ),
                         Tab(
-                          text: '公告',
+                          text: 'tabs.announcement'.tr(),
                         ),
                         Tab(
-                          text: '作业',
+                          text: 'tabs.assignment'.tr(),
                         ),
                         Tab(
-                          text: '讨论',
+                          text: 'tabs.discussion'.tr(),
                         ),
                         Tab(
-                          text: '文件',
+                          text: 'tabs.file'.tr(),
                         ),
                         Tab(
-                          text: '大纲',
+                          text: 'tabs.syllabus'.tr(),
                         ),
                         Tab(
-                          text: '单元',
+                          text: 'tabs.module'.tr(),
                         ),
                       ],
                     ),
@@ -77,24 +77,21 @@ class CourseScreen extends CommonScreen<Course?> {
                               children: [
                                 Text(
                                   index / 5 == 0
-                                      ? '最新动态'
+                                      ? 'overview.activities'.tr()
                                       : index == 2
-                                      ? '公告'
-                                      : index / 5 == 1
-                                      ? '作业'
-                                      : index / 5 == 2
-                                      ? '讨论'
-                                      : index / 5 == 3
-                                      ? '文件'
-                                      : '',
-                                  style: Theme
-                                      .of(context)
-                                      .textTheme
-                                      .headline5,
+                                          ? 'tabs.announcement'.tr()
+                                          : index / 5 == 1
+                                              ? 'tabs.assignment'.tr()
+                                              : index / 5 == 2
+                                                  ? 'tabs.discussion'.tr()
+                                                  : index / 5 == 3
+                                                      ? 'tabs.file'.tr()
+                                                      : '',
+                                  style: Theme.of(context).textTheme.headline5,
                                 ),
                                 TextButton(
                                   onPressed: () {},
-                                  child: Text('更多'),
+                                  child: Text('overview.more'.tr()),
                                 )
                               ],
                             ));
@@ -117,15 +114,14 @@ class CourseScreen extends CommonScreen<Course?> {
                                           child: RichText(
                                             text: TextSpan(
                                               style:
-                                              DefaultTextStyle
-                                                  .of(context)
-                                                  .style,
+                                                  DefaultTextStyle.of(context)
+                                                      .style,
                                               children: <TextSpan>[
                                                 TextSpan(
                                                     text: '作业',
                                                     style: TextStyle(
                                                         color:
-                                                        Colors.blueAccent)),
+                                                            Colors.blueAccent)),
                                                 TextSpan(
                                                   text: ' · ',
                                                 ),
@@ -154,9 +150,8 @@ class CourseScreen extends CommonScreen<Course?> {
                                           child: RichText(
                                             text: TextSpan(
                                               style:
-                                              DefaultTextStyle
-                                                  .of(context)
-                                                  .style,
+                                                  DefaultTextStyle.of(context)
+                                                      .style,
                                               children: <TextSpan>[
                                                 TextSpan(
                                                     text: '文件',
@@ -183,9 +178,8 @@ class CourseScreen extends CommonScreen<Course?> {
                                           child: RichText(
                                             text: TextSpan(
                                               style:
-                                              DefaultTextStyle
-                                                  .of(context)
-                                                  .style,
+                                                  DefaultTextStyle.of(context)
+                                                      .style,
                                               children: <TextSpan>[
                                                 TextSpan(
                                                     text: '公告',
@@ -210,15 +204,14 @@ class CourseScreen extends CommonScreen<Course?> {
                                           child: RichText(
                                             text: TextSpan(
                                               style:
-                                              DefaultTextStyle
-                                                  .of(context)
-                                                  .style,
+                                                  DefaultTextStyle.of(context)
+                                                      .style,
                                               children: <TextSpan>[
                                                 TextSpan(
                                                     text: '作业',
                                                     style: TextStyle(
                                                         color:
-                                                        Colors.blueAccent)),
+                                                            Colors.blueAccent)),
                                                 TextSpan(
                                                   text: ' · ',
                                                 ),
@@ -250,36 +243,34 @@ class CourseScreen extends CommonScreen<Course?> {
                                 horizontal: 16, vertical: 1),
                             child: Card(
                                 child: ListTile(
-                                  leading:
+                              leading:
                                   CircleAvatar(child: Icon(Icons.description)),
-                                  title: Text('第三章作业'),
-                                  subtitle: RichText(
-                                    text: TextSpan(
-                                      style: DefaultTextStyle
-                                          .of(context)
-                                          .style,
-                                      children: <TextSpan>[
-                                        TextSpan(
-                                          text: '截止时间：2021 年 4 月 1 日',
-                                        ),
-                                        TextSpan(
-                                          text: ' · ',
-                                        ),
-                                        TextSpan(
-                                          text: '已提交',
-                                          style: TextStyle(color: Colors.green),
-                                        )
-                                      ],
+                              title: Text('第三章作业'),
+                              subtitle: RichText(
+                                text: TextSpan(
+                                  style: DefaultTextStyle.of(context).style,
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: '截止时间：2021 年 4 月 1 日',
                                     ),
-                                  ),
-                                  trailing: Badge(
-                                      elevation: 0,
-                                      showBadge: index % 5 <= 2,
-                                      child: IconButton(
-                                        icon: Icon(Icons.arrow_forward),
-                                        onPressed: () {},
-                                      )),
-                                )));
+                                    TextSpan(
+                                      text: ' · ',
+                                    ),
+                                    TextSpan(
+                                      text: '已提交',
+                                      style: TextStyle(color: Colors.green),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              trailing: Badge(
+                                  elevation: 0,
+                                  showBadge: index % 5 <= 2,
+                                  child: IconButton(
+                                    icon: Icon(Icons.arrow_forward),
+                                    onPressed: () {},
+                                  )),
+                            )));
                       }
                       return Container();
                     })),
@@ -307,10 +298,7 @@ class CourseScreen extends CommonScreen<Course?> {
 
   @override
   Stream<Course?> getStream() =>
-      Provider
-          .of<Model>(useContext())
-          .canvas
-          .getCourse(id);
+      Provider.of<Model>(useContext()).canvas.getCourse(id);
 
   @override
   Widget getTitle() => Text('title.course'.tr());
