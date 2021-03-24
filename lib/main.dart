@@ -6,6 +6,7 @@ import 'package:kanbasu/router.dart';
 import 'package:provider/provider.dart';
 import 'home.dart';
 import 'buffer_api/kvstore.dart';
+import 'package:easy_localization_loader/easy_localization_loader.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,7 @@ void main() async {
     startLocale: Locale('zh', 'CN'),
     fallbackLocale: Locale('en'),
     path: 'assets/translations',
+    assetLoader: YamlAssetLoader(),
     child: ChangeNotifierProvider(
       create: (context) => model,
       child: Phoenix(child: MyApp()), // for rebirthing the app
