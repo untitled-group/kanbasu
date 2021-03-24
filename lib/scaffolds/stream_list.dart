@@ -21,13 +21,12 @@ class StreamListScaffold<T> extends HookWidget {
     return HookBuilder(builder: (context) {
       final stream = useMemoized(
         () => itemStream
+            .handleError((error, _) => showErrorSnack(context, error))
             .scan((List<T>? acc, T s, _) {
-              final list = acc ?? List<T>.empty(growable: true);
-              list.add(s);
-              return list;
-            })
-            .debounceTime(Duration(milliseconds: 200))
-            .handleError((error, _) => showErrorSnack(context, error)),
+          final list = acc ?? List<T>.empty(growable: true);
+          list.add(s);
+          return list;
+        }).debounceTime(Duration(milliseconds: 200)),
         [itemStream],
       );
       final itemsSnapshot = useStream(stream, initialData: List<T>.empty());
