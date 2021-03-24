@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/widgets/border.dart';
+import 'package:kanbasu/widgets/snack.dart';
 import 'package:rxdart/rxdart.dart';
 
 /// [StreamListScaffold] takes `Stream<T>` and display the items in view.
@@ -19,11 +20,14 @@ class StreamListScaffold<T> extends HookWidget {
   Widget build(BuildContext context) {
     return HookBuilder(builder: (context) {
       final stream = useMemoized(
-        () => itemStream.scan((List<T>? acc, T s, _) {
-          final list = acc ?? List<T>.empty(growable: true);
-          list.add(s);
-          return list;
-        }).debounceTime(Duration(milliseconds: 200)),
+        () => itemStream
+            .scan((List<T>? acc, T s, _) {
+              final list = acc ?? List<T>.empty(growable: true);
+              list.add(s);
+              return list;
+            })
+            .debounceTime(Duration(milliseconds: 200))
+            .handleError((error, _) => showErrorSnack(context, error)),
         [itemStream],
       );
       final itemsSnapshot = useStream(stream, initialData: List<T>.empty());
