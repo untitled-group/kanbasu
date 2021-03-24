@@ -11,6 +11,7 @@ import 'package:kanbasu/widgets/single.dart';
 import 'package:kanbasu/widgets/user.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class MeScreen extends CommonScreen<User?> {
   void _pushSettings(context) async {
@@ -26,7 +27,7 @@ class MeScreen extends CommonScreen<User?> {
       builder: (context) {
         return AlertDialog(
           scrollable: true,
-          title: Text('Settings'),
+          title: Text('title.settings'.tr()),
           content: Form(
             child: Column(
               children: [
@@ -34,14 +35,14 @@ class MeScreen extends CommonScreen<User?> {
                   controller: keyController,
                   obscureText: true,
                   decoration: InputDecoration(
-                    labelText: 'API Key',
+                    labelText: 'settings.api_key'.tr(),
                     icon: Icon(Icons.vpn_key),
                   ),
                 ),
                 TextFormField(
                   controller: endpointController,
                   decoration: InputDecoration(
-                    labelText: 'API Endpoint',
+                    labelText: 'settings.api_endpoint'.tr(),
                     icon: Icon(Icons.link),
                   ),
                 ),
@@ -55,7 +56,7 @@ class MeScreen extends CommonScreen<User?> {
                   onPressed: () {
                     Navigator.pop(context, true);
                   },
-                  child: Text('Apply and Restart'),
+                  child: Text('settings.apply'.tr()),
                 )
               ],
             )
@@ -82,12 +83,12 @@ class MeScreen extends CommonScreen<User?> {
       Single(data == null ? Container() : UserWidget(data));
 
   @override
-  Widget getTitle() => Text('Me');
+  Widget getTitle() => Text('title.me'.tr());
 
   @override
   Widget? getAction(BuildContext context) => IconButton(
       icon: Icon(Icons.settings),
-      tooltip: 'Settings',
+      tooltip: 'title.settings'.tr(),
       onPressed: () {
         _pushSettings(context);
       });

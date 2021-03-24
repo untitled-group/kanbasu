@@ -1,0 +1,25 @@
+title:
+  activities: Activities
+  course: Course
+  courses: Courses
+  me: Me
+  settings: Settings
+settings:
+  api_key: API Key
+  api_endpoint: API Endpoint
+  apply: Apply and Restart
+error:
+  check_net_api: |-
+    Error: {}.
+    Check the connection and your provided API key.
+  tips: "Error occured, here are some tips:"
+activity:
+  short_type:
+    AssessmentRequest: Ass
+    Announcement: Ann
+    Collaboration: Col
+    Conference: Con # ???
+    Submission: Sub
+    Message: Mes
+    Conversation: Con
+    DiscussionTopic: Dis

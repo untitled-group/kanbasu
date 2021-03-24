@@ -4,6 +4,7 @@ import 'package:kanbasu/screens/activities.dart';
 import 'package:kanbasu/screens/courses.dart';
 import 'package:kanbasu/screens/me.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'models/model.dart';
 
@@ -16,19 +17,19 @@ class Home extends HookWidget {
         return BottomNavigationBarItem(
           icon: Icon(Icons.notifications_outlined),
           activeIcon: Icon(Icons.notifications),
-          label: 'Activities',
+          label: 'title.activities'.tr(),
         );
       case _ScreenKind.Courses:
         return BottomNavigationBarItem(
           icon: Icon(Icons.book_outlined),
           activeIcon: Icon(Icons.book),
-          label: 'Courses',
+          label: 'title.courses'.tr(),
         );
       case _ScreenKind.Me:
         return BottomNavigationBarItem(
           icon: Icon(Icons.person_outline),
           activeIcon: Icon(Icons.person),
-          label: 'Me',
+          label: 'title.me'.tr(),
         );
     }
   }
