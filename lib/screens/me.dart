@@ -82,7 +82,7 @@ class MeScreen extends ListViewScreen<User> {
   Widget getTitle() => Text('Me');
 
   @override
-  Widget buildWidget(context, User item) => UserWidget(item);
+  Widget buildWidget(User item) => UserWidget(item);
 
   @override
   Widget? getAction(BuildContext context) => IconButton(

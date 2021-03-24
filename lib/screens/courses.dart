@@ -20,6 +20,6 @@ class CoursesScreen extends ListViewScreen<Course> {
   Widget getTitle() => Text('Courses');
 
   @override
-  Widget buildWidget(context, Course item) =>
+  Widget buildWidget(Course item) =>
       Link(path: '/course/${item.id}', child: CourseWidget(item));
 }
