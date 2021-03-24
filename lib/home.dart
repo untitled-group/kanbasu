@@ -36,11 +36,11 @@ class Home extends HookWidget {
   Widget _buildScreen(_ScreenKind s) {
     switch (s) {
       case _ScreenKind.Activities:
-        return Container(); //ActivitiesScreen();
+        return ActivitiesScreen();
       case _ScreenKind.Courses:
-        return Container(); //CoursesScreen();
+        return CoursesScreen();
       case _ScreenKind.Me:
-        return Container(); //MeScreen();
+        return MeScreen();
     }
   }
 
