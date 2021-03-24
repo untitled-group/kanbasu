@@ -11,7 +11,7 @@ import 'package:rxdart/rxdart.dart';
 abstract class CommonScreen<T> extends HookWidget {
   Stream<T> getStream();
 
-  Widget buildWidget(T data);
+  Widget buildWidget(T? data);
 
   Widget getTitle();
 
@@ -52,7 +52,7 @@ abstract class CommonScreen<T> extends HookWidget {
         },
         child: data == null && snapshot.error == null
             ? LoadingWidget(isMore: true)
-            : buildWidget(data!),
+            : buildWidget(data),
       );
 
       return CommonScaffold(

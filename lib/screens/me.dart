@@ -78,7 +78,8 @@ class MeScreen extends CommonScreen<User?> {
       Provider.of<Model>(useContext()).canvas.getCurrentUser();
 
   @override
-  Widget buildWidget(User? data) => Single(UserWidget(data!));
+  Widget buildWidget(User? data) =>
+      data == null ? Container() : Single(UserWidget(data));
 
   @override
   Widget getTitle() => Text('Me');

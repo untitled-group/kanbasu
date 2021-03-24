@@ -24,10 +24,10 @@ abstract class ListScreen<T> extends CommonScreen<Stream<T>> {
   }
 
   @override
-  Widget buildWidget(Stream<T> data) {
+  Widget buildWidget(Stream<T>? data) {
     return StreamListScaffold<T>(
       itemBuilder: buildItem,
-      itemStream: data,
+      itemStream: data ?? Stream<T>.empty(),
     );
   }
 }
