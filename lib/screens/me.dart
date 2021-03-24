@@ -11,7 +11,7 @@ import 'package:kanbasu/widgets/user.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MeScreen extends ListViewScreen<User> {
+class MeScreen extends ListScreen<User> {
   void _pushSettings(context) async {
     final model = Provider.of<Model>(context, listen: false);
     final prefs = await SharedPreferences.getInstance();
@@ -73,7 +73,7 @@ class MeScreen extends ListViewScreen<User> {
   }
 
   @override
-  Stream<Stream<User>> getStream() => Provider.of<Model>(useContext())
+  Stream<Stream<User>> getStreamStream() => Provider.of<Model>(useContext())
       .canvas
       .getCurrentUser()
       .map((user) => Stream.fromIterable([user].whereType<User>()));
@@ -82,7 +82,7 @@ class MeScreen extends ListViewScreen<User> {
   Widget getTitle() => Text('Me');
 
   @override
-  Widget buildWidget(User item) => UserWidget(item);
+  Widget buildItem(User item) => UserWidget(item);
 
   @override
   Widget? getAction(BuildContext context) => IconButton(
