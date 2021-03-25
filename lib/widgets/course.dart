@@ -44,18 +44,11 @@ class CourseWidget extends StatelessWidget {
                             //* add more span here
                           ]),
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          item.courseCode.trim(),
-                          style: TextStyle(
-                              fontSize: 14, color: theme.tertiaryText),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                      ],
+                    Text(
+                      item.courseCode.trim(),
+                      style: TextStyle(fontSize: 14, color: theme.tertiaryText),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                   ],
                 ),
