@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/router.dart';
+import 'package:kanbasu/utils/timeago_zh_cn.dart';
 import 'package:provider/provider.dart';
 import 'home.dart';
 import 'buffer_api/kvstore.dart';
@@ -14,7 +15,7 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   KvStore.initFfi();
   initRouter();
-  timeago.setLocaleMessages('zh_CN', timeago.ZhCnMessages());
+  timeago.setLocaleMessages('zh_CN', KZhCnMessages());
 
   final model = Model();
   await Future.wait([model.init()]);
@@ -22,10 +23,10 @@ void main() async {
   return runApp(EasyLocalization(
     supportedLocales: [
       Locale('zh', 'CN'),
-      Locale('en'),
+      Locale('en', 'US'),
     ],
     startLocale: Locale('zh', 'CN'),
-    fallbackLocale: Locale('en'),
+    fallbackLocale: Locale('en', 'US'),
     useFallbackTranslations: true,
     path: 'assets/translations',
     assetLoader: YamlAssetLoader(),
@@ -62,6 +63,7 @@ class MyApp extends StatelessWidget {
           iconTheme: IconThemeData(color: theme.text),
         ),
         pageTransitionsTheme: PageTransitionsTheme(builders: {}),
+        indicatorColor: theme.primary,
       ),
       onGenerateRoute: router.generator,
       locale: context.locale,

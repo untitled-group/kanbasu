@@ -83,10 +83,10 @@ class MeScreen extends CommonScreen<User?> {
       Single(data == null ? Container() : UserWidget(data));
 
   @override
-  Widget getTitle(s) => Text('title.me'.tr());
+  Widget getTitle(d) => Text('title.me'.tr());
 
   @override
-  Widget? getAction(BuildContext context) => IconButton(
+  Widget? getAction(context, d) => IconButton(
       icon: Icon(Icons.settings),
       tooltip: 'title.settings'.tr(),
       onPressed: () {

@@ -34,3 +34,5 @@ tabs:
 overview:
   activities: Recent Activities
   more: More
+actions:
+  open_in_browser: Open in browser

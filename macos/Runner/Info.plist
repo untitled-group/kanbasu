@@ -5,7 +5,7 @@
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>zh_CN</string>
-		<string>en</string>
+		<string>en_US</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>

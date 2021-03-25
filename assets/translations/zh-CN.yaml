@@ -34,3 +34,5 @@ tabs:
 overview:
   activities: 最新动态
   more: 更多
+actions:
+  open_in_browser: 用浏览器打开

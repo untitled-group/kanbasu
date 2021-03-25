@@ -1,4 +1,3 @@
-import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:kanbasu/router.dart';
 
@@ -15,11 +14,7 @@ class Link extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => router.navigateTo(
-        context,
-        path,
-        transition: TransitionType.material,
-      ),
+      onTap: () => navigateTo(context, path),
       child: child,
     );
   }

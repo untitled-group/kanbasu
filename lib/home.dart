@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/screens/activities.dart';
 import 'package:kanbasu/screens/courses.dart';
@@ -69,6 +70,7 @@ class Home extends HookWidget {
           currentIndex: activeTab.value,
           type: BottomNavigationBarType.fixed,
           onTap: (int index) {
+            HapticFeedback.mediumImpact();
             activeTab.value = index;
           },
         ),
