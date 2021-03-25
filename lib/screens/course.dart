@@ -43,8 +43,7 @@ class CourseScreen extends CommonScreen<Course?> {
               itemBuilder: (BuildContext context, int index) {
                 if (index % 5 == 0 || index == 2) {
                   return Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding: EdgeInsets.fromLTRB(16, 20, 16, 12),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
