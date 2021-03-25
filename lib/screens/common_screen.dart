@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/scaffolds/common.dart';
 import 'package:kanbasu/utils/stream_op.dart';
@@ -50,7 +51,7 @@ abstract class CommonScreen<T> extends HookWidget {
           manualRefresh.value = true;
           final completer = Completer();
           triggerRefresh.value = completer;
-          await completer.future;
+          await Future.wait([completer.future, HapticFeedback.mediumImpact()]);
         },
         child: data == null && snapshot.error == null
             ? LoadingWidget(isMore: true)
