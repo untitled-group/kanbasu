@@ -22,10 +22,10 @@ void main() async {
   return runApp(EasyLocalization(
     supportedLocales: [
       Locale('zh', 'CN'),
-      Locale('en'),
+      Locale('en', 'US'),
     ],
     startLocale: Locale('zh', 'CN'),
-    fallbackLocale: Locale('en'),
+    fallbackLocale: Locale('en', 'US'),
     useFallbackTranslations: true,
     path: 'assets/translations',
     assetLoader: YamlAssetLoader(),
