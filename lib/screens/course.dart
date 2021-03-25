@@ -266,6 +266,7 @@ class CourseScreen extends CommonScreen<Course?> {
       icon: Icon(Icons.open_in_browser),
       tooltip: 'actions.open_in_browser'.tr(),
       onPressed: () async {
+        // TODO: replace this with real url
         final prefs = await SharedPreferences.getInstance();
         final path = '${getApiEndpoint(prefs)}/courses/${data.id}';
         print(path);
