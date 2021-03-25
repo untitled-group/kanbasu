@@ -54,6 +54,7 @@ class MyApp extends StatelessWidget {
         primaryTextTheme: TextTheme(
           headline6: TextStyle(color: theme.text),
         ),
+        tabBarTheme: TabBarTheme(labelColor: theme.text),
         appBarTheme: AppBarTheme(
           backgroundColor: theme.grayBackground,
           foregroundColor: theme.text,
