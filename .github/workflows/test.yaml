@@ -20,5 +20,8 @@ jobs:
         run: |
           flutter pub get
           flutter pub run build_runner build
+        env:
+          PUB_HOSTED_URL: https://mirrors.sjtug.sjtu.edu.cn/dart-pub
+          FLUTTER_STORAGE_BASE_URL: https://mirrors.sjtug.sjtu.edu.cn
       - run: dart analyze --fatal-infos
       - run: flutter test
