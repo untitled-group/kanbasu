@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/model.dart';
+import 'package:kanbasu/router.dart';
 import 'package:kanbasu/screens/common_screen.dart';
+import 'package:kanbasu/utils/persistence.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CourseScreen extends CommonScreen<Course?> {
   final int id;
@@ -253,4 +256,21 @@ class CourseScreen extends CommonScreen<Course?> {
   @override
   Widget getTitle(Course? data) =>
       Text(data == null ? 'title.course'.tr() : data.name);
+
+  @override
+  Widget? getAction(BuildContext context, Course? data) {
+    if (data == null) {
+      return null;
+    }
+    return IconButton(
+      icon: Icon(Icons.open_in_browser),
+      tooltip: 'actions.open_in_browser'.tr(),
+      onPressed: () async {
+        final prefs = await SharedPreferences.getInstance();
+        final path = '${getApiEndpoint(prefs)}/courses/${data.id}';
+        print(path);
+        await navigateTo(context, path);
+      },
+    );
+  }
 }

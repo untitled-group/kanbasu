@@ -15,11 +15,7 @@ class Link extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => router.navigateTo(
-        context,
-        path,
-        transition: TransitionType.material,
-      ),
+      onTap: () => navigateTo(context, path),
       child: child,
     );
   }
