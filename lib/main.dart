@@ -62,6 +62,7 @@ class MyApp extends StatelessWidget {
           iconTheme: IconThemeData(color: theme.text),
         ),
         pageTransitionsTheme: PageTransitionsTheme(builders: {}),
+        indicatorColor: theme.primary,
       ),
       onGenerateRoute: router.generator,
       locale: context.locale,
