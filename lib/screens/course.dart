@@ -249,5 +249,6 @@ class CourseScreen extends CommonScreen<Course?> {
       Provider.of<Model>(useContext()).canvas.getCourse(id);
 
   @override
-  Widget getTitle() => Text('title.course'.tr());
+  Widget getTitle(Course? data) =>
+      Text(data == null ? 'title.course'.tr() : data.name);
 }

@@ -18,7 +18,7 @@ class CoursesScreen extends ListScreen<Course> {
       .map((courseList) => Stream.fromIterable(courseList));
 
   @override
-  Widget getTitle() => Text('title.courses'.tr());
+  Widget getTitle(s) => Text('title.courses'.tr());
 
   @override
   Widget buildItem(Course item) =>

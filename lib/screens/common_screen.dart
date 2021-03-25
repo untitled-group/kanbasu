@@ -13,7 +13,7 @@ abstract class CommonScreen<T> extends HookWidget {
 
   Widget buildWidget(T? data);
 
-  Widget getTitle();
+  Widget getTitle(T? data);
 
   Widget? getAction(BuildContext context) => null;
 
@@ -59,7 +59,7 @@ abstract class CommonScreen<T> extends HookWidget {
 
       final tabBar = getTabBar();
       final scaffold = CommonScaffold(
-        title: getTitle(),
+        title: getTitle(data),
         body: refreshIndicator,
         action: getAction(context),
         bottom: tabBar,

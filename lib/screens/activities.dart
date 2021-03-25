@@ -15,7 +15,7 @@ class ActivitiesScreen extends ListScreen<ActivityItem> {
       Provider.of<Model>(useContext()).canvas.getCurrentUserActivityStream();
 
   @override
-  Widget getTitle() => Text('title.activities'.tr());
+  Widget getTitle(s) => Text('title.activities'.tr());
 
   @override
   Widget buildItem(ActivityItem item) => ActivityWidget(item);
