@@ -27,7 +27,10 @@ class CourseScreen extends CommonScreen<Course?> {
     ];
 
     assert(tabs.length == tabCount);
-    return TabBar(tabs: tabs);
+    return TabBar(
+      tabs: tabs,
+      isScrollable: true,
+    );
   }
 
   @override
