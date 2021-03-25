@@ -23,3 +23,14 @@ activity:
     Message: Mes
     Conversation: Con
     DiscussionTopic: Dis
+tabs:
+  overview: Overview
+  announcement: Announcements
+  assignment: Assignments
+  discussion: Discussions
+  file: Files
+  syllabus: Syllabus
+  module: Modules
+overview:
+  activities: Recent Activities
+  more: More

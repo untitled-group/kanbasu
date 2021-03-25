@@ -13,9 +13,11 @@ abstract class CommonScreen<T> extends HookWidget {
 
   Widget buildWidget(T? data);
 
-  Widget getTitle();
+  Widget getTitle(T? data);
 
   Widget? getAction(BuildContext context) => null;
+
+  TabBar? getTabBar() => null;
 
   @override
   Widget build(BuildContext context) {
@@ -55,11 +57,22 @@ abstract class CommonScreen<T> extends HookWidget {
             : buildWidget(data),
       );
 
-      return CommonScaffold(
-        title: getTitle(),
+      final tabBar = getTabBar();
+      final scaffold = CommonScaffold(
+        title: getTitle(data),
         body: refreshIndicator,
         action: getAction(context),
+        bottom: tabBar,
       );
+
+      if (tabBar == null) {
+        return scaffold;
+      } else {
+        return DefaultTabController(
+          length: tabBar.tabs.length,
+          child: scaffold,
+        );
+      }
     });
   }
 }

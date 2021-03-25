@@ -1,6 +1,6 @@
 title:
   activities: 活动
-  course: 课程
+  course: 课程详情
   courses: 课程
   me: 我
   settings: 设置
@@ -16,10 +16,21 @@ error:
 activity:
   short_type:
     AssessmentRequest: 评估
-    Announcement: 发布
+    Announcement: 公告
     Collaboration: 合作
     Conference: 会议
     Submission: 提交
     Message: 信息
     Conversation: 对话
     DiscussionTopic: 讨论
+tabs:
+  overview: 概览
+  announcement: 公告
+  assignment: 作业
+  discussion: 讨论
+  file: 文件
+  syllabus: 大纲
+  module: 单元
+overview:
+  activities: 最新动态
+  more: 更多
