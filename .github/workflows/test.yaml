@@ -22,7 +22,10 @@ jobs:
           flutter pub run build_runner build
       - run: dart analyze --fatal-infos
       - run: flutter test --coverage
-      - run: lcov --list coverage/lcov.info
+      - uses: romeovs/lcov-reporter-action@v0.2.16
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          lcov-file: ./coverage/lcov.info
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
