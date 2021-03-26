@@ -51,3 +51,4 @@ app.*.map.json
 *.chopper.dart
 *.g.dart
 config.dart
+coverage/lcov.info
