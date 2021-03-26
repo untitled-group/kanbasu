@@ -7,6 +7,7 @@ import 'tab_mock.dart';
 import 'course_mock.dart';
 import 'user_mock.dart';
 import 'module_mock.dart';
+import 'assignment_mock.dart';
 
 ResponseBody jsonResponse(content, {String? link}) {
   if (link == null) {
@@ -44,6 +45,8 @@ class MockAdapter extends HttpClientAdapter {
           return jsonResponse(tabResponse);
         case '/courses/23333/modules':
           return jsonResponse(moduleResponse);
+        case '/courses/23333/assignments':
+          return jsonResponse(assignmentResponse);
         case '/users/self':
           return jsonResponse(currentUserResponse);
         case '/users/23334':
