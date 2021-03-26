@@ -22,6 +22,7 @@ jobs:
           flutter pub run build_runner build
       - run: dart analyze --fatal-infos
       - run: flutter test --coverage
+      - run: lcov --list coverage/lcov.info
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
