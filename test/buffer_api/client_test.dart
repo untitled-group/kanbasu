@@ -113,5 +113,14 @@ void main() {
       expect(dataJson.length, equals(offlineDataJson.length));
       expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
     });
+
+    test('should get assignments in stream mode', () async {
+      final data = await api.getAssignments(23333).last;
+      final dataJson = await data.toList();
+      final offlineData = await api.getAssignments(23333).first;
+      final offlineDataJson = await offlineData.toList();
+      expect(dataJson.length, equals(offlineDataJson.length));
+      expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
+    });
   });
 }

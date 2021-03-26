@@ -40,5 +40,10 @@ void main() {
       final modules = await api.getModules(23333);
       expect(modules.data[0].name, equals('课程介绍'));
     });
+
+    test('should get assignments', () async {
+      final assignments = await api.getAssignments(23333);
+      expect(assignments.data[0].id, equals(86658));
+    });
   });
 }
