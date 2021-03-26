@@ -21,8 +21,7 @@ part 'serializers.g.dart';
   Course,
   ActivityItem,
   MaybeCourse,
-  Module,
-  Submission
+  Module
 ])
 final Serializers serializers = (_$serializers.toBuilder()
       ..add(Iso8601DateTimeSerializer())

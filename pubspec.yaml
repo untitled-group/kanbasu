@@ -30,7 +30,7 @@ dependencies:
   dio: ^4.0.0-prev3
   easy_localization: ^3.0.0
   easy_localization_loader:
-    git: https://git.sjtu.edu.cn/iskyzh/easy_localization_loader
+    git: https://github.com/untitled-group/easy_localization_loader.git
   fluro: ^2.0.3
   flutter:
     sdk: flutter
