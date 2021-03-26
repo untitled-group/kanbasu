@@ -257,7 +257,7 @@ class CanvasBufferClient {
         (e) => e.id.toString());
   }
 
-  String _getAssignmentPrefix(id) => 'courses/$id/assignments/by_id';
+  String _getAssignmentPrefix(id) => 'courses/$id/assignments/by_id/';
 
   /// List available modules for a course.
   Stream<Stream<Assignment>> getAssignments(int id) {
