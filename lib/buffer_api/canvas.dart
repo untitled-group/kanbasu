@@ -4,6 +4,7 @@ import 'package:kanbasu/buffer_api/kvstore.dart';
 import 'package:kanbasu/models/activity_item.dart';
 import 'package:kanbasu/models/module.dart';
 import 'package:kanbasu/models/assignment.dart';
+import 'package:kanbasu/models/submission.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:logger/logger.dart';
 import 'package:kanbasu/rest_api/canvas.dart';
@@ -261,7 +262,7 @@ class CanvasBufferClient {
 
   String _getAssignmentPrefix(id) => 'courses/$id/assignments/by_id/';
 
-  /// List available modules for a course.
+  /// List available assignments for a course.
   Stream<Stream<Assignment>> getAssignments(int id) {
     return _getPaginatedStreamStream(
         _getAssignmentPrefix(id),
@@ -269,5 +270,18 @@ class CanvasBufferClient {
         (e) => e.toJson(),
         ({queries}) => _restClient.getAssignments(id, queries: queries),
         (e) => e.id.toString());
+  }
+
+  String _getSubmissionPrefix(course_id, assignment_id, user_id) =>
+      'courses/$course_id/assignments/$assignment_id/submissions/$user_id';
+
+  /// List available submission for an assignment.
+  Stream<Submission?> getSubmission(int course_id, int assignment_id,
+      [String user_id = 'self']) {
+    return _getItemStream(
+        _getSubmissionPrefix(course_id, assignment_id, user_id),
+        (e) => Submission.fromJson(e),
+        (e) => e.toJson(),
+        () => _restClient.getSubmission(course_id, assignment_id, user_id));
   }
 }
