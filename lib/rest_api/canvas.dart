@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:kanbasu/models/maybe_course.dart';
 import 'package:kanbasu/models/module.dart';
 import 'package:kanbasu/models/assignment.dart';
+import 'package:kanbasu/models/submission.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/tab.dart';
 import 'package:kanbasu/models/user.dart';
@@ -40,6 +41,12 @@ abstract class CanvasRestClient {
   /// List available assignments for a course or group.
   @GET('/courses/{id}/assignments')
   Future<HttpResponse<List<Assignment>>> getAssignments(@Path() int id,
+      {@Queries() Map<String, dynamic>? queries});
+
+  /// List available submissions for an assignment for self.
+  @GET('/courses/{id}/assignments/{assignment_id}/submissions/self')
+  Future<HttpResponse<Submission>> getSubmission(
+      @Path() int id, int assignment_id,
       {@Queries() Map<String, dynamic>? queries});
 
   /// Get current user

@@ -122,5 +122,10 @@ void main() {
       expect(dataJson.length, equals(offlineDataJson.length));
       expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
     });
+
+    test('should get submission summary in stream mode', () async {
+      final response = await api.getSubmission(23333, 24444).last;
+      expect(response!.id, equals(3904019));
+    });
   });
 }

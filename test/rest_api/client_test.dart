@@ -45,5 +45,10 @@ void main() {
       final assignments = await api.getAssignments(23333);
       expect(assignments.data[0].id, equals(86658));
     });
+
+    test('should get submission', () async {
+      final submission = await api.getSubmission(23333, 24444);
+      expect(submission.data.id, equals(3904019));
+    });
   });
 }
