@@ -50,5 +50,10 @@ void main() {
       final submission = await api.getSubmission(23333, 24444);
       expect(submission.data.id, equals(3904019));
     });
+
+    test('should get information for not-available submissions', () async {
+      final submission = await api.getSubmission(23333, 25555);
+      expect(submission.data.id, equals(3904039));
+    });
   });
 }

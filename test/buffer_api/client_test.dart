@@ -129,5 +129,12 @@ void main() {
       expect(data!.id, equals(3904019));
       expect(json.encode(data), equals(json.encode(offlineData)));
     });
+
+    test('should get unsubmitted submission summary in stream mode', () async {
+      final data = await api.getSubmission(23333, 25555).last;
+      final offlineData = await api.getSubmission(23333, 25555).first;
+      expect(data!.id, equals(3904039));
+      expect(json.encode(data), equals(json.encode(offlineData)));
+    });
   });
 }
