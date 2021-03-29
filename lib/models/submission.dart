@@ -38,7 +38,7 @@ abstract class Submission implements Built<Submission, SubmissionBuilder> {
   @BuiltValueField(wireName: 'attempt')
   int? get attempt;
   @BuiltValueField(wireName: 'cached_due_date')
-  String get cachedDueDate;
+  DateTime get cachedDueDate;
   @BuiltValueField(wireName: 'excused')
   bool? get excused;
   @BuiltValueField(wireName: 'late_policy_status')
