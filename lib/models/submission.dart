@@ -12,35 +12,35 @@ abstract class Submission implements Built<Submission, SubmissionBuilder> {
   @BuiltValueField(wireName: 'id')
   int get id;
   @BuiltValueField(wireName: 'body')
-  String get body;
+  String? get body;
   @BuiltValueField(wireName: 'url')
   String? get url;
   @BuiltValueField(wireName: 'grade')
-  String get grade;
+  String? get grade;
   @BuiltValueField(wireName: 'score')
-  double get score;
+  double? get score;
   @BuiltValueField(wireName: 'submitted_at')
-  String get submittedAt;
+  String? get submittedAt;
   @BuiltValueField(wireName: 'assignment_id')
   int get assignmentId;
   @BuiltValueField(wireName: 'user_id')
   int get userId;
   @BuiltValueField(wireName: 'submission_type')
-  String get submissionType;
+  String? get submissionType;
   @BuiltValueField(wireName: 'workflow_state')
   String get workflowState;
   @BuiltValueField(wireName: 'grade_matches_current_submission')
   bool get gradeMatchesCurrentSubmission;
   @BuiltValueField(wireName: 'graded_at')
-  String get gradedAt;
+  String? get gradedAt;
   @BuiltValueField(wireName: 'grader_id')
-  int get graderId;
+  int? get graderId;
   @BuiltValueField(wireName: 'attempt')
-  int get attempt;
+  int? get attempt;
   @BuiltValueField(wireName: 'cached_due_date')
   String get cachedDueDate;
   @BuiltValueField(wireName: 'excused')
-  bool get excused;
+  bool? get excused;
   @BuiltValueField(wireName: 'late_policy_status')
   String? get latePolicyStatus;
   @BuiltValueField(wireName: 'points_deducted')
@@ -51,14 +51,6 @@ abstract class Submission implements Built<Submission, SubmissionBuilder> {
   bool get late;
   @BuiltValueField(wireName: 'missing')
   bool get missing;
-  @BuiltValueField(wireName: 'seconds_late')
-  int get secondsLate;
-  @BuiltValueField(wireName: 'entered_grade')
-  String get enteredGrade;
-  @BuiltValueField(wireName: 'entered_score')
-  double get enteredScore;
-  @BuiltValueField(wireName: 'preview_url')
-  String get previewUrl;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(Submission.serializer, this)!
