@@ -183,10 +183,12 @@ class CanvasBufferClient {
     final kvStoreResult = await getObject(key, fromJson);
     _logger.v('[KvStore] get $key');
     yield kvStoreResult;
-    final restResult = await toResponse(_logger, getItem);
-    _logger.v('[REST] get $key');
-    yield restResult;
-    await putObject(key, restResult, toJson);
+    if (!_offline) {
+      final restResult = await toResponse(_logger, getItem);
+      _logger.v('[REST] get $key');
+      yield restResult;
+      await putObject(key, restResult, toJson);
+    }
   }
 
   // **************************************************************************
