@@ -20,7 +20,7 @@ abstract class Submission implements Built<Submission, SubmissionBuilder> {
   @BuiltValueField(wireName: 'score')
   double? get score;
   @BuiltValueField(wireName: 'submitted_at')
-  String? get submittedAt;
+  DateTime? get submittedAt;
   @BuiltValueField(wireName: 'assignment_id')
   int get assignmentId;
   @BuiltValueField(wireName: 'user_id')
@@ -32,7 +32,7 @@ abstract class Submission implements Built<Submission, SubmissionBuilder> {
   @BuiltValueField(wireName: 'grade_matches_current_submission')
   bool get gradeMatchesCurrentSubmission;
   @BuiltValueField(wireName: 'graded_at')
-  String? get gradedAt;
+  DateTime? get gradedAt;
   @BuiltValueField(wireName: 'grader_id')
   int? get graderId;
   @BuiltValueField(wireName: 'attempt')
