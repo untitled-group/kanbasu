@@ -14,11 +14,11 @@ abstract class Submission implements Built<Submission, SubmissionBuilder> {
   @BuiltValueField(wireName: 'body')
   String get body;
   @BuiltValueField(wireName: 'url')
-  String get url;
+  String? get url;
   @BuiltValueField(wireName: 'grade')
   String get grade;
   @BuiltValueField(wireName: 'score')
-  int get score;
+  double get score;
   @BuiltValueField(wireName: 'submitted_at')
   String get submittedAt;
   @BuiltValueField(wireName: 'assignment_id')
@@ -42,11 +42,11 @@ abstract class Submission implements Built<Submission, SubmissionBuilder> {
   @BuiltValueField(wireName: 'excused')
   bool get excused;
   @BuiltValueField(wireName: 'late_policy_status')
-  String get latePolicyStatus;
+  String? get latePolicyStatus;
   @BuiltValueField(wireName: 'points_deducted')
-  int get pointsDeducted;
+  double? get pointsDeducted;
   @BuiltValueField(wireName: 'grading_period_id')
-  int get gradingPeriodId;
+  int? get gradingPeriodId;
   @BuiltValueField(wireName: 'late')
   bool get late;
   @BuiltValueField(wireName: 'missing')
@@ -56,7 +56,7 @@ abstract class Submission implements Built<Submission, SubmissionBuilder> {
   @BuiltValueField(wireName: 'entered_grade')
   String get enteredGrade;
   @BuiltValueField(wireName: 'entered_score')
-  int get enteredScore;
+  double get enteredScore;
   @BuiltValueField(wireName: 'preview_url')
   String get previewUrl;
 

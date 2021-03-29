@@ -44,10 +44,10 @@ abstract class CanvasRestClient {
       {@Queries() Map<String, dynamic>? queries});
 
   /// List available submissions for an assignment for self.
-  @GET('/courses/{id}/assignments/{assignment_id}/submissions/self')
+  @GET('/courses/{course_id}/assignments/{assignment_id}/submissions/{user_id}')
   Future<HttpResponse<Submission>> getSubmission(
-      @Path() int id, int assignment_id,
-      {@Queries() Map<String, dynamic>? queries});
+      @Path() int course_id, @Path() int assignment_id,
+      [@Path() String user_id = 'self']);
 
   /// Get current user
   @GET('/users/self')

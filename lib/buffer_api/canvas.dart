@@ -270,16 +270,16 @@ class CanvasBufferClient {
         (e) => e.id.toString());
   }
 
-  String _getSubmissionPrefix(id, assignment_id, user_id) =>
-      'courses/$id/assignments/$assignment_id/submissions/$user_id';
+  String _getSubmissionPrefix(course_id, assignment_id, user_id) =>
+      'courses/$course_id/assignments/$assignment_id/submissions/$user_id';
 
   /// List available submission for an assignment.
-  Stream<Submission?> getSubmission(int id, int assignment_id,
+  Stream<Submission?> getSubmission(int course_id, int assignment_id,
       [String user_id = 'self']) {
     return _getItemStream(
-        _getSubmissionPrefix(id, assignment_id, user_id),
+        _getSubmissionPrefix(course_id, assignment_id, user_id),
         (e) => Submission.fromJson(e),
         (e) => e.toJson(),
-        () => _restClient.getSubmission(id, assignment_id));
+        () => _restClient.getSubmission(course_id, assignment_id, user_id));
   }
 }
