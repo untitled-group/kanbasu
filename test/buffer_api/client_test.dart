@@ -64,6 +64,19 @@ void main() {
       api = null;
     });
 
+    test('should get current user', () async {
+      final data = await api.getCurrentUser().toList();
+      expect(data.length, equals(2));
+      expect(data[1].id, equals(23334));
+    });
+
+    test('should return only one item in offline mode', () async {
+      api.enableOffline();
+      final data = await api.getCurrentUser().toList();
+      expect(data.length, equals(1));
+      expect(data[0], isNull);
+    });
+
     test('should get course list multiple times with cache', () async {
       await api.getCourses().last;
       await api.getCourses().last;
