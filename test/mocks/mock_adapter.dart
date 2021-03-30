@@ -9,6 +9,7 @@ import 'user_mock.dart';
 import 'module_mock.dart';
 import 'assignment_mock.dart';
 import 'submission_mock.dart';
+import 'file_mock.dart';
 import 'unsubmitted_submission_mock.dart';
 
 ResponseBody jsonResponse(content, {String? link}) {
@@ -53,6 +54,8 @@ class MockAdapter extends HttpClientAdapter {
           return jsonResponse(submissionResponse);
         case '/courses/23333/assignments/25555/submissions/self':
           return jsonResponse(unsubmittedSubmissionResponse);
+        case '/courses/23333/files':
+          return jsonResponse(fileResponse);
         case '/users/self':
           return jsonResponse(currentUserResponse);
         case '/users/23334':

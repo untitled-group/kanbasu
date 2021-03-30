@@ -6,6 +6,7 @@ import 'package:kanbasu/models/maybe_course.dart';
 import 'package:kanbasu/models/module.dart';
 import 'package:kanbasu/models/assignment.dart';
 import 'package:kanbasu/models/submission.dart';
+import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/tab.dart';
 import 'package:kanbasu/models/user.dart';
@@ -48,6 +49,11 @@ abstract class CanvasRestClient {
   Future<HttpResponse<Submission>> getSubmission(
       @Path() int course_id, @Path() int assignment_id,
       [@Path() String user_id = 'self']);
+
+  /// List available files for a course.
+  @GET('/courses/{id}/files')
+  Future<HttpResponse<List<File>>> getFiles(@Path() int id,
+      {@Queries() Map<String, dynamic>? queries});
 
   /// Get current user
   @GET('/users/self')

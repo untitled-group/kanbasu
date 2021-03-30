@@ -149,5 +149,14 @@ void main() {
       expect(data!.id, equals(3904039));
       expect(json.encode(data), equals(json.encode(offlineData)));
     });
+
+    test('should get files in stream mode', () async {
+      final data = await api.getFiles(23333).last;
+      final dataJson = await data.toList();
+      final offlineData = await api.getFiles(23333).first;
+      final offlineDataJson = await offlineData.toList();
+      expect(dataJson.length, equals(offlineDataJson.length));
+      expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
+    });
   });
 }

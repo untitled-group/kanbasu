@@ -5,6 +5,7 @@ import 'package:kanbasu/models/activity_item.dart';
 import 'package:kanbasu/models/module.dart';
 import 'package:kanbasu/models/assignment.dart';
 import 'package:kanbasu/models/submission.dart';
+import 'package:kanbasu/models/file.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:logger/logger.dart';
 import 'package:kanbasu/rest_api/canvas.dart';
@@ -284,5 +285,17 @@ class CanvasBufferClient {
         (e) => Submission.fromJson(e),
         (e) => e.toJson(),
         () => _restClient.getSubmission(course_id, assignment_id, user_id));
+  }
+
+  String _getFilePrefix(id) => 'courses/$id/files/by_id/';
+
+  /// List available files for a course.
+  Stream<Stream<File>> getFiles(int id) {
+    return _getPaginatedStreamStream(
+        _getFilePrefix(id),
+        (e) => File.fromJson(e),
+        (e) => e.toJson(),
+        ({queries}) => _restClient.getFiles(id, queries: queries),
+        (e) => e.id.toString());
   }
 }
