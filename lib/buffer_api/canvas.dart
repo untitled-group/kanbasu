@@ -134,7 +134,8 @@ class CanvasBufferClient {
       ToJson<T> toJson,
       ListPaginated<T> listPaginated,
       GetId getId,
-      {ScanOrder? order}) async* {
+      {ScanOrder? order,
+      bool purge = false}) async* {
     // First, yield results from database
     final kvStoreResult = await scanPrefix(prefix, fromJson, order: order);
     _logger.v('[KvStore] scan $prefix => ${kvStoreResult.length} entries');
@@ -151,7 +152,7 @@ class CanvasBufferClient {
         }
         _logger.v('[REST] scan $prefix => $itemCount entries');
         // batch add into KvStore
-        await putPrefix<T>(prefix, items, getId, toJson);
+        await putPrefix<T>(prefix, items, getId, toJson, purge: purge);
       };
       yield stream();
     }
@@ -165,7 +166,8 @@ class CanvasBufferClient {
       ToJson<T> toJson,
       ListPaginated<T> listPaginated,
       GetId getId,
-      {ScanOrder? order}) async* {
+      {ScanOrder? order,
+      bool purge = false}) async* {
     // First, yield results from database
     final kvStoreResult = await scanPrefix(prefix, fromJson, order: order);
     _logger.v('[KvStore] scan $prefix => ${kvStoreResult.length} entries');
@@ -175,7 +177,7 @@ class CanvasBufferClient {
       final restResult = await PaginatedList<T>(listPaginated).all().toList();
       _logger.v('[REST] scan $prefix => ${restResult.length} entries');
       yield restResult;
-      await putPrefix(prefix, restResult, getId, toJson);
+      await putPrefix(prefix, restResult, getId, toJson, purge: purge);
     }
   }
 
@@ -205,11 +207,13 @@ class CanvasBufferClient {
   /// Returns a stream of active courses for the current user.
   Stream<List<Course>> getCourses() {
     return _getPaginatedListStream<MaybeCourse>(
-        'courses/by_id/',
-        (e) => MaybeCourse.fromJson(e),
-        (e) => e.toJson(),
-        _restClient.getCourses,
-        (e) => e.id.toString()).map(listToCourse);
+            'courses/by_id/',
+            (e) => MaybeCourse.fromJson(e),
+            (e) => e.toJson(),
+            _restClient.getCourses,
+            (e) => e.id.toString(),
+            purge: true)
+        .map(listToCourse);
   }
 
   String _getCoursePrefix(id) => 'courses/by_id/$id';
