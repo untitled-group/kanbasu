@@ -1,0 +1,22 @@
+{
+    "id": 24444,
+    "uuid": "[body redacted]",
+    "folder_id": 404125,
+    "display_name": "0. Course Introduction-3.pdf",
+    "filename": "0.+Course+Introduction.pdf",
+    "content-type": "application/pdf",
+    "url": "[body redacted]",
+    "size": 2538172,
+    "created_at": "2021-02-22T06:06:26Z",
+    "updated_at": "2021-02-22T07:07:40Z",
+    "unlock_at": null,
+    "locked": false,
+    "hidden": false,
+    "lock_at": null,
+    "hidden_for_user": false,
+    "thumbnail_url": null,
+    "modified_at": "2021-02-22T06:06:26Z",
+    "mime_class": "pdf",
+    "media_entry_id": null,
+    "locked_for_user": false
+}

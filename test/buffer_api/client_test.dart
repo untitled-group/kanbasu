@@ -146,14 +146,14 @@ void main() {
     test('should get submission summary in stream mode', () async {
       final data = await api.getSubmission(23333, 24444).last;
       final offlineData = await api.getSubmission(23333, 24444).first;
-      expect(data!.id, equals(3904019));
+      expect(data!.id, equals(24444));
       expect(json.encode(data), equals(json.encode(offlineData)));
     });
 
     test('should get unsubmitted submission summary in stream mode', () async {
       final data = await api.getSubmission(23333, 25555).last;
       final offlineData = await api.getSubmission(23333, 25555).first;
-      expect(data!.id, equals(3904039));
+      expect(data!.id, equals(25555));
       expect(json.encode(data), equals(json.encode(offlineData)));
     });
 
@@ -164,6 +164,21 @@ void main() {
       final offlineDataJson = await offlineData.toList();
       expect(dataJson.length, equals(offlineDataJson.length));
       expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
+    });
+
+    test('should get info about a single file in stream mode', () async {
+      final data = await api.getFile(23333, 24444).last;
+      final offlineData = await api.getFile(23333, 24444).first;
+      expect(data!.filename, equals('0.+Course+Introduction.pdf'));
+      expect(json.encode(data), equals(json.encode(offlineData)));
+    });
+
+    test('should cache file when fetching all files', () async {
+      final data = await api.getFiles(23333).toList();
+      expect(await data[0].toList(), equals([]));
+      await data[1].toList(); // ensure all REST APIs have been called
+      final offlineData = await api.getFile(23333, 24444).first;
+      expect(offlineData!.filename, equals('0.+Course+Introduction.pdf'));
     });
   });
 }
