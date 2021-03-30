@@ -51,8 +51,13 @@ abstract class CanvasRestClient {
       [@Path() String user_id = 'self']);
 
   /// List available files for a course.
-  @GET('/courses/{id}/files')
-  Future<HttpResponse<List<File>>> getFiles(@Path() int id,
+  @GET('/courses/{course_id}/files')
+  Future<HttpResponse<List<File>>> getFiles(@Path() int course_id,
+      {@Queries() Map<String, dynamic>? queries});
+
+  /// Get information about a single file.
+  @GET('/courses/{course_id}/files/{file_id}')
+  Future<HttpResponse<File>> getFile(@Path() int course_id, @Path() int file_id,
       {@Queries() Map<String, dynamic>? queries});
 
   /// Get current user
