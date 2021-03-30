@@ -48,22 +48,22 @@ void main() {
 
     test('should get submission', () async {
       final submission = await api.getSubmission(23333, 24444);
-      expect(submission.data.id, equals(3904019));
+      expect(submission.data.id, equals(24444));
     });
 
     test('should get information for not-available submissions', () async {
       final submission = await api.getSubmission(23333, 25555);
-      expect(submission.data.id, equals(3904039));
+      expect(submission.data.id, equals(25555));
     });
 
     test('should get files for a course', () async {
       final files = await api.getFiles(23333);
-      expect(files.data[0].id, equals(2262891));
+      expect(files.data[0].id, equals(24444));
     });
 
     test('should get info about a single file for a course', () async {
       final file = await api.getFile(23333, 24444);
-      expect(file.data.id, equals(2296951));
+      expect(file.data.id, equals(24444));
     });
   });
 }
