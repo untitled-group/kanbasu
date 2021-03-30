@@ -14,6 +14,7 @@ import 'package:kanbasu/models/maybe_course.dart';
 import 'package:kanbasu/models/tab.dart';
 import 'package:kanbasu/models/user.dart';
 import 'package:kanbasu/types.dart';
+import 'package:kanbasu/utils/logging.dart';
 import 'paginated_list.dart';
 
 /// [toResponse] transform an HTTP response to corresponding object.
@@ -37,7 +38,7 @@ class CanvasBufferClient {
   static const String _prefix = 'kanbasu/api_cache';
   final CanvasRestClient _restClient;
   final KvStore? _kvStore;
-  final Logger _logger = Logger();
+  final Logger _logger = createLogger();
   bool _offline = false;
 
   CanvasBufferClient(this._restClient, [this._kvStore]);
