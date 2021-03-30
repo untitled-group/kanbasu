@@ -60,5 +60,10 @@ void main() {
       final files = await api.getFiles(23333);
       expect(files.data[0].id, equals(2262891));
     });
+
+    test('should get info about a single file for a course', () async {
+      final file = await api.getFile(23333, 24444);
+      expect(file.data.id, equals(2296951));
+    });
   });
 }

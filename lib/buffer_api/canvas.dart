@@ -287,15 +287,23 @@ class CanvasBufferClient {
         () => _restClient.getSubmission(course_id, assignment_id, user_id));
   }
 
-  String _getFilePrefix(id) => 'courses/$id/files/by_id/';
+  String _getFilesPrefix(id) => 'courses/$id/files/by_id/';
 
   /// List available files for a course.
   Stream<Stream<File>> getFiles(int id) {
     return _getPaginatedStreamStream(
-        _getFilePrefix(id),
+        _getFilesPrefix(id),
         (e) => File.fromJson(e),
         (e) => e.toJson(),
         ({queries}) => _restClient.getFiles(id, queries: queries),
         (e) => e.id.toString());
+  }
+
+  String _getFilePrefix(id, file_id) => 'courses/$id/files/$file_id';
+
+  /// List a specific file.
+  Stream<File?> getFile(int id, int file_id) {
+    return _getItemStream(_getFilePrefix(id, file_id), (e) => File.fromJson(e),
+        (e) => e.toJson(), () => _restClient.getFile(id, file_id));
   }
 }
