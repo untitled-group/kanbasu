@@ -55,5 +55,10 @@ void main() {
       final submission = await api.getSubmission(23333, 25555);
       expect(submission.data.id, equals(3904039));
     });
+
+    test('should get files for a course', () async {
+      final files = await api.getFiles(23333);
+      expect(files.data[0].id, equals(2262891));
+    });
   });
 }

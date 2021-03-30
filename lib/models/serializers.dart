@@ -11,6 +11,7 @@ import 'maybe_course.dart';
 import 'activity_item.dart';
 import 'module.dart';
 import 'submission.dart';
+import 'file.dart';
 
 part 'serializers.g.dart';
 
@@ -23,7 +24,8 @@ part 'serializers.g.dart';
   ActivityItem,
   MaybeCourse,
   Module,
-  Submission
+  Submission,
+  File
 ])
 final Serializers serializers = (_$serializers.toBuilder()
       ..add(Iso8601DateTimeSerializer())
