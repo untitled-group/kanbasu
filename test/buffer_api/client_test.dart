@@ -97,6 +97,13 @@ void main() {
       expect(data[1].id, equals(318720));
       final data2 = await api.getCourse(23333).last;
       expect(data2.courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
+      api.disableOffline();
+    });
+
+    test('should fill course cache when listing', () async {
+      await api.getCourses().toList();
+      final data = await api.getCourse(23333).first;
+      expect(data!.courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
     });
 
     test('should get tabs in offline mode', () async {
