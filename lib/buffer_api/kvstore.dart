@@ -4,6 +4,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:kanbasu/utils/logging.dart';
 
 enum ScanOrder { asc, desc }
 
@@ -12,7 +13,7 @@ class KvStore {
   /// B-Tree engine. [KvStore] supports put, get and range scan.
 
   static const String _tableName = 'json';
-  final logger = Logger();
+  final logger = createLogger();
   final Future<Database> _database;
 
   KvStore(this._database);
@@ -42,7 +43,7 @@ class KvStore {
     final future = () async {
       final directory = await getApplicationSupportDirectory();
       final path = join(directory.path, '$name.db');
-      Logger().i('Database created at $path');
+      createLogger().i('Database created at $path');
       return openDatabase(path, onCreate: _initDatabase, version: 1);
     };
     return KvStore(future());
