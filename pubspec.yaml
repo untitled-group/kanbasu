@@ -29,8 +29,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   dio: ^4.0.0-prev3
   easy_localization: ^3.0.0
-  easy_localization_loader:
-    git: https://github.com/untitled-group/easy_localization_loader.git
+  easy_localization_loader: ^1.0.0
   fluro: ^2.0.3
   flutter:
     sdk: flutter
