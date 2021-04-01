@@ -203,7 +203,7 @@ packages:
       name: dio
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
-    version: "4.0.0-prev3"
+    version: "4.0.0"
   easy_localization:
     dependency: "direct main"
     description:
@@ -552,7 +552,7 @@ packages:
       name: retrofit_generator
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
-    version: "2.0.0-beta2"
+    version: "2.0.0-beta3"
   rxdart:
     dependency: "direct main"
     description:
@@ -844,7 +844,7 @@ packages:
       name: vm_service
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
-    version: "6.1.0+1"
+    version: "6.2.0"
   watcher:
     dependency: transitive
     description:
@@ -872,7 +872,7 @@ packages:
       name: win32
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
-    version: "2.0.4"
+    version: "2.0.5"
   xdg_directories:
     dependency: transitive
     description:
