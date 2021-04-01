@@ -16,12 +16,14 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: "2.0.x"
-      - name: Prepare
-        run: |
-          flutter pub get
-          flutter pub run build_runner build
-      - run: dart analyze --fatal-infos
-      - run: flutter test --coverage
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Codegen
+        run: flutter pub run build_runner build
+      - name: Lint
+        run: dart analyze --fatal-infos
+      - name: Test
+        run: flutter test --coverage
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:

@@ -18,10 +18,10 @@ jobs:
           flutter-version: "2.0.x"
       - name: Install prereqs
         run: sudo apt install clang cmake ninja-build pkg-config libgtk-3-dev libblkid-dev liblzma-dev libgcrypt20-dev
-      - name: Prepare
-        run: |
-          flutter pub get
-          flutter pub run build_runner build
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Codegen
+        run: flutter pub run build_runner build
       - name: Build apk
         run: flutter build apk
       - name: Build Linux desktop
