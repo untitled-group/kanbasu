@@ -254,16 +254,28 @@ class CanvasBufferClient {
         order: ScanOrder.desc);
   }
 
-  String _getModulePrefix(id) => 'courses/$id/modules/by_id/';
+  String _getModulesPrefix(id) => 'courses/$id/modules/by_id/';
 
   /// List available modules for a course.
   Stream<Stream<Module>> getModules(int id) {
     return _getPaginatedStreamStream(
-        _getModulePrefix(id),
+        _getModulesPrefix(id),
         (e) => Module.fromJson(e),
         (e) => e.toJson(),
         ({queries}) => _restClient.getModules(id, queries: queries),
         (e) => e.id.toString());
+  }
+
+  String _getModulePrefix(course_id, module_id) =>
+      'courses/$course_id/modules/by_id/$module_id';
+
+  /// List single module for a course.
+  Stream<Module?> getModule(int course_id, int file_id) {
+    return _getItemStream(
+        _getModulePrefix(course_id, file_id),
+        (e) => Module.fromJson(e),
+        (e) => e.toJson(),
+        () => _restClient.getModule(course_id, file_id));
   }
 
   String _getAssignmentPrefix(id) => 'courses/$id/assignments/by_id/';
