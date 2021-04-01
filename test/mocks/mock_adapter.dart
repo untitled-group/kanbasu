@@ -47,6 +47,8 @@ class MockAdapter extends HttpClientAdapter {
         case '/courses/23333/tabs':
           return jsonResponse(tabResponse);
         case '/courses/23333/modules':
+          return jsonResponse(modulesResponse);
+        case '/courses/23333/modules/89728':
           return jsonResponse(moduleResponse);
         case '/courses/23333/assignments':
           return jsonResponse(assignmentResponse);

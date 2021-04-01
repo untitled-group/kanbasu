@@ -39,6 +39,12 @@ abstract class CanvasRestClient {
   Future<HttpResponse<List<Module>>> getModules(@Path() int id,
       {@Queries() Map<String, dynamic>? queries});
 
+  /// List a single module for a course or group.
+  @GET('/courses/{course_id}/modules/{module_id}')
+  Future<HttpResponse<Module>> getModule(
+      @Path() int course_id, @Path() int module_id,
+      {@Queries() Map<String, dynamic>? queries});
+
   /// List available assignments for a course or group.
   @GET('/courses/{id}/assignments')
   Future<HttpResponse<List<Assignment>>> getAssignments(@Path() int id,

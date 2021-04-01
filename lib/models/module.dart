@@ -18,7 +18,7 @@ abstract class Module implements Built<Module, ModuleBuilder> {
   @BuiltValueField(wireName: 'position')
   int get position;
   @BuiltValueField(wireName: 'unlock_at')
-  String? get unlockAt;
+  DateTime? get unlockAt;
   @BuiltValueField(wireName: 'require_sequential_progress')
   bool get requireSequentialProgress;
   @BuiltValueField(wireName: 'publish_final_grade')
@@ -26,7 +26,7 @@ abstract class Module implements Built<Module, ModuleBuilder> {
   @BuiltValueField(wireName: 'state')
   String get state;
   @BuiltValueField(wireName: 'completed_at')
-  String get completedAt;
+  DateTime get completedAt;
   @BuiltValueField(wireName: 'items_count')
   int get itemsCount;
   @BuiltValueField(wireName: 'items_url')
