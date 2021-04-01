@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:kanbasu/buffer_api/canvas.dart';
 import 'package:kanbasu/buffer_api/kvstore.dart';
 import 'package:kanbasu/resolver/resolver.dart';
