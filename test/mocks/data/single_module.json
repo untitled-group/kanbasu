@@ -1,0 +1,13 @@
+{
+    "id": 89728,
+    "name": "课程介绍",
+    "position": 1,
+    "unlock_at": null,
+    "require_sequential_progress": false,
+    "publish_final_grade": false,
+    "prerequisite_module_ids": [],
+    "state": "completed",
+    "completed_at": "2021-03-01T00:02:21Z",
+    "items_count": 1,
+    "items_url": "https://oc.sjtu.edu.cn/api/v1/courses/31611/modules/89728/items"
+}
