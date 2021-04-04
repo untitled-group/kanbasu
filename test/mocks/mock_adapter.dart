@@ -7,6 +7,7 @@ import 'tab_mock.dart';
 import 'course_mock.dart';
 import 'user_mock.dart';
 import 'module_mock.dart';
+import 'module_item_mock.dart';
 import 'assignment_mock.dart';
 import 'submission_mock.dart';
 import 'file_mock.dart';
@@ -50,6 +51,10 @@ class MockAdapter extends HttpClientAdapter {
           return jsonResponse(modulesResponse);
         case '/courses/23333/modules/89728':
           return jsonResponse(moduleResponse);
+        case '/courses/23333/modules/89729/items':
+          return jsonResponse(moduleItemsResponse);
+        case '/courses/23333/modules/89729/items/400460':
+          return jsonResponse(moduleItemResponse);
         case '/courses/23333/assignments':
           return jsonResponse(assignmentResponse);
         case '/courses/23333/assignments/24444/submissions/self':

@@ -46,6 +46,16 @@ void main() {
       expect(module.data.name, equals('课程介绍'));
     });
 
+    test('should get module items', () async {
+      final module_items = await api.getModuleItems(23333, 89729);
+      expect(module_items.data[0].id, equals(400460));
+    });
+
+    test('should get a single module item', () async {
+      final module_item = await api.getModuleItem(23333, 89729, 400460);
+      expect(module_item.data.title, equals('1. Introduction to SE.pdf'));
+    });
+
     test('should get assignments', () async {
       final assignments = await api.getAssignments(23333);
       expect(assignments.data[0].id, equals(86658));
