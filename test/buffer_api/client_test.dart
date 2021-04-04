@@ -149,6 +149,30 @@ void main() {
       expect(offlineData!.name, equals('课程介绍'));
     });
 
+    test('should get module items in stream mode', () async {
+      final data = await api.getModuleItems(23333, 89729).last;
+      final dataJson = await data.toList();
+      final offlineData = await api.getModuleItems(23333, 89729).first;
+      final offlineDataJson = await offlineData.toList();
+      expect(dataJson.length, equals(offlineDataJson.length));
+      expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
+    });
+
+    test('should get info about a single module item in stream mode', () async {
+      final data = await api.getModuleItem(23333, 89729, 400460).last;
+      final offlineData = await api.getModuleItem(23333, 89729, 400460).first;
+      expect(data!.title, equals('1. Introduction to SE.pdf'));
+      expect(json.encode(data), equals(json.encode(offlineData)));
+    });
+
+    test('should cache module item when fetching all module items', () async {
+      final data = await api.getModuleItems(23333, 89729).toList();
+      expect(await data[0].toList(), equals([]));
+      await data[1].toList(); // ensure all REST APIs have been called
+      final offlineData = await api.getModuleItem(23333, 89729, 400460).first;
+      expect(offlineData!.title, equals('1. Introduction to SE.pdf'));
+    });
+
     test('should get assignments in stream mode', () async {
       final data = await api.getAssignments(23333).last;
       final dataJson = await data.toList();

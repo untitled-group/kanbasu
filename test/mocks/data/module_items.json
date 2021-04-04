@@ -1,0 +1,35 @@
+[
+    {
+        "id": 400460,
+        "title": "1. Introduction to SE.pdf",
+        "position": 1,
+        "indent": 0,
+        "type": "File",
+        "module_id": 89729,
+        "html_url": "https://oc.sjtu.edu.cn/courses/31611/modules/items/400460",
+        "content_id": 2262959,
+        "url": "https://oc.sjtu.edu.cn/api/v1/courses/31611/files/2262959"
+    },
+    {
+        "id": 390857,
+        "title": "第一章作业",
+        "position": 6,
+        "indent": 0,
+        "type": "Assignment",
+        "module_id": 89729,
+        "html_url": "https://oc.sjtu.edu.cn/courses/31611/modules/items/390857",
+        "content_id": 86658,
+        "url": "https://oc.sjtu.edu.cn/api/v1/courses/31611/assignments/86658"
+    },
+    {
+        "id": 390858,
+        "title": "第一章Q&A",
+        "position": 7,
+        "indent": 0,
+        "type": "Discussion",
+        "module_id": 89729,
+        "html_url": "https://oc.sjtu.edu.cn/courses/31611/modules/items/390858",
+        "content_id": 60772,
+        "url": "https://oc.sjtu.edu.cn/api/v1/courses/31611/discussion_topics/60772"
+    }
+]

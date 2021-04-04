@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 
 import 'package:kanbasu/models/maybe_course.dart';
 import 'package:kanbasu/models/module.dart';
+import 'package:kanbasu/models/module_item.dart';
 import 'package:kanbasu/models/assignment.dart';
 import 'package:kanbasu/models/submission.dart';
 import 'package:kanbasu/models/file.dart';
@@ -43,6 +44,16 @@ abstract class CanvasRestClient {
   @GET('/courses/{course_id}/modules/{module_id}')
   Future<HttpResponse<Module>> getModule(
       @Path() int course_id, @Path() int module_id,
+      {@Queries() Map<String, dynamic>? queries});
+
+  @GET('/courses/{course_id}/modules/{module_id}/items')
+  Future<HttpResponse<List<ModuleItem>>> getModuleItems(
+      @Path() int course_id, @Path() int module_id,
+      {@Queries() Map<String, dynamic>? queries});
+
+  @GET('/courses/{course_id}/modules/{module_id}/items/{item_id}')
+  Future<HttpResponse<ModuleItem>> getModuleItem(
+      @Path() int course_id, @Path() int module_id, @Path() int item_id,
       {@Queries() Map<String, dynamic>? queries});
 
   /// List available assignments for a course or group.

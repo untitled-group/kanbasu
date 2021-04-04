@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:kanbasu/buffer_api/kvstore.dart';
 import 'package:kanbasu/models/activity_item.dart';
 import 'package:kanbasu/models/module.dart';
+import 'package:kanbasu/models/module_item.dart';
 import 'package:kanbasu/models/assignment.dart';
 import 'package:kanbasu/models/submission.dart';
 import 'package:kanbasu/models/file.dart';
@@ -270,12 +271,38 @@ class CanvasBufferClient {
       'courses/$course_id/modules/by_id/$module_id';
 
   /// List single module for a course.
-  Stream<Module?> getModule(int course_id, int file_id) {
+  Stream<Module?> getModule(int course_id, int module_id) {
     return _getItemStream(
-        _getModulePrefix(course_id, file_id),
+        _getModulePrefix(course_id, module_id),
         (e) => Module.fromJson(e),
         (e) => e.toJson(),
-        () => _restClient.getModule(course_id, file_id));
+        () => _restClient.getModule(course_id, module_id));
+  }
+
+  String _getModuleItemsPrefix(course_id, module_id) =>
+      'courses/$course_id/modules/$module_id/items/by_id/';
+
+  /// List single module for a course.
+  Stream<Stream<ModuleItem>> getModuleItems(int course_id, int module_id) {
+    return _getPaginatedStreamStream(
+        _getModuleItemsPrefix(course_id, module_id),
+        (e) => ModuleItem.fromJson(e),
+        (e) => e.toJson(),
+        ({queries}) =>
+            _restClient.getModuleItems(course_id, module_id, queries: queries),
+        (e) => e.id.toString());
+  }
+
+  String _getModuleItemPrefix(course_id, module_id, item_id) =>
+      'courses/$course_id/modules/$module_id/items/by_id/$item_id';
+
+  /// List single module for a course.
+  Stream<ModuleItem?> getModuleItem(int course_id, int module_id, item_id) {
+    return _getItemStream(
+        _getModuleItemPrefix(course_id, module_id, item_id),
+        (e) => ModuleItem.fromJson(e),
+        (e) => e.toJson(),
+        () => _restClient.getModuleItem(course_id, module_id, item_id));
   }
 
   String _getAssignmentPrefix(id) => 'courses/$id/assignments/by_id/';

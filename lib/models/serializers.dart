@@ -10,6 +10,7 @@ import 'course.dart';
 import 'maybe_course.dart';
 import 'activity_item.dart';
 import 'module.dart';
+import 'module_item.dart';
 import 'submission.dart';
 import 'file.dart';
 
@@ -24,6 +25,7 @@ part 'serializers.g.dart';
   ActivityItem,
   MaybeCourse,
   Module,
+  ModuleItem,
   Submission,
   File
 ])
