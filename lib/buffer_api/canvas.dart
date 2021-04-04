@@ -7,6 +7,7 @@ import 'package:kanbasu/models/module_item.dart';
 import 'package:kanbasu/models/assignment.dart';
 import 'package:kanbasu/models/submission.dart';
 import 'package:kanbasu/models/file.dart';
+import 'package:kanbasu/models/page.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:logger/logger.dart';
 import 'package:kanbasu/rest_api/canvas.dart';
@@ -352,5 +353,29 @@ class CanvasBufferClient {
         (e) => File.fromJson(e),
         (e) => e.toJson(),
         () => _restClient.getFile(course_id, file_id));
+  }
+
+  String _getPagesPrefix(course_id) => 'courses/$course_id/pages/by_id/';
+
+  /// List available pages for a course.
+  Stream<Stream<Page>> getPages(int course_id) {
+    return _getPaginatedStreamStream(
+        _getPagesPrefix(course_id),
+        (e) => Page.fromJson(e),
+        (e) => e.toJson(),
+        ({queries}) => _restClient.getPages(course_id, queries: queries),
+        (e) => e.pageId.toString());
+  }
+
+  String _getPagePrefix(course_id, page_id) =>
+      'courses/$course_id/pages/by_id/$page_id';
+
+  /// List a specific page.
+  Stream<Page?> getPage(int course_id, int page_id) {
+    return _getItemStream(
+        _getPagePrefix(course_id, page_id),
+        (e) => Page.fromJson(e),
+        (e) => e.toJson(),
+        () => _restClient.getPage(course_id, page_id));
   }
 }
