@@ -263,13 +263,10 @@ class CourseScreen extends CommonScreen<Course?> {
       return null;
     }
     return IconButton(
-      icon: Icon(Icons.open_in_browser),
-      tooltip: 'actions.open_in_browser'.tr(),
+      icon: Icon(Icons.folder),
+      tooltip: 'tabs.file'.tr(),
       onPressed: () async {
-        // TODO: replace this with real url
-        final prefs = await SharedPreferences.getInstance();
-        final path = '${getApiEndpoint(prefs)}/courses/${data.id}';
-        print(path);
+        final path = '/course/${data.id}/files';
         await navigateTo(context, path);
       },
     );

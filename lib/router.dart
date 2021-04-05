@@ -1,6 +1,7 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:kanbasu/screens/course.dart';
+import 'package:kanbasu/screens/files.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final router = FluroRouter();
@@ -10,6 +11,12 @@ void initRouter() {
     handlerFunc: (context, parameters) {
       final courseId = int.parse(parameters['courseId']!.first);
       return CourseScreen(id: courseId);
+    },
+  ));
+  router.define('/course/:courseId/files', handler: Handler(
+    handlerFunc: (context, parameters) {
+      final courseId = int.parse(parameters['courseId']!.first);
+      return FilesScreen(courseId: courseId);
     },
   ));
 }
