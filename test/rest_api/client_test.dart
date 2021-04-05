@@ -80,5 +80,15 @@ void main() {
       final file = await api.getFile(23333, 24444);
       expect(file.data.id, equals(24444));
     });
+
+    test('should get pages for a course', () async {
+      final pages = await api.getPages(23333);
+      expect(pages.data[0].title, equals('第四节课在线视频'));
+    });
+
+    test('should get info about a single page for a course', () async {
+      final page = await api.getPage(23333, 41136);
+      expect(page.data.title, equals('第一节课在线视频'));
+    });
   });
 }

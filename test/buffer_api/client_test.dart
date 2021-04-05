@@ -219,5 +219,29 @@ void main() {
       final offlineData = await api.getFile(23333, 24444).first;
       expect(offlineData!.filename, equals('0.+Course+Introduction.pdf'));
     });
+
+    test('should get pages in stream mode', () async {
+      final data = await api.getPages(23333).last;
+      final dataJson = await data.toList();
+      final offlineData = await api.getPages(23333).first;
+      final offlineDataJson = await offlineData.toList();
+      expect(dataJson.length, equals(offlineDataJson.length));
+      expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
+    });
+
+    test('should get info about a single page in stream mode', () async {
+      final data = await api.getPage(23333, 41136).last;
+      final offlineData = await api.getPage(23333, 41136).first;
+      expect(data!.title, equals('第一节课在线视频'));
+      expect(json.encode(data), equals(json.encode(offlineData)));
+    });
+
+    test('should cache page when fetching all pages', () async {
+      final data = await api.getPages(23333).toList();
+      expect(await data[0].toList(), equals([]));
+      await data[1].toList(); // ensure all REST APIs have been called
+      final offlineData = await api.getPage(23333, 41136).first;
+      expect(offlineData!.title, equals('第一节课在线视频'));
+    });
   });
 }

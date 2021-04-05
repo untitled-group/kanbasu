@@ -8,6 +8,7 @@ import 'package:kanbasu/models/module_item.dart';
 import 'package:kanbasu/models/assignment.dart';
 import 'package:kanbasu/models/submission.dart';
 import 'package:kanbasu/models/file.dart';
+import 'package:kanbasu/models/page.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/tab.dart';
 import 'package:kanbasu/models/user.dart';
@@ -75,6 +76,16 @@ abstract class CanvasRestClient {
   /// Get information about a single file.
   @GET('/courses/{course_id}/files/{file_id}')
   Future<HttpResponse<File>> getFile(@Path() int course_id, @Path() int file_id,
+      {@Queries() Map<String, dynamic>? queries});
+
+  /// List available pages for a course.
+  @GET('/courses/{course_id}/pages')
+  Future<HttpResponse<List<Page>>> getPages(@Path() int course_id,
+      {@Queries() Map<String, dynamic>? queries});
+
+  /// Get information about a single page.
+  @GET('/courses/{course_id}/pages/{page_id}')
+  Future<HttpResponse<Page>> getPage(@Path() int course_id, @Path() int page_id,
       {@Queries() Map<String, dynamic>? queries});
 
   /// Get current user
