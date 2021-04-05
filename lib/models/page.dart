@@ -14,7 +14,7 @@ abstract class Page implements Built<Page, PageBuilder> {
   @BuiltValueField(wireName: 'title')
   String get title;
   @BuiltValueField(wireName: 'created_at')
-  String get createdAt;
+  DateTime get createdAt;
   @BuiltValueField(wireName: 'url')
   String get url;
   @BuiltValueField(wireName: 'editing_roles')
@@ -32,7 +32,7 @@ abstract class Page implements Built<Page, PageBuilder> {
   @BuiltValueField(wireName: 'todo_date')
   String? get todoDate;
   @BuiltValueField(wireName: 'updated_at')
-  String get updatedAt;
+  DateTime get updatedAt;
   @BuiltValueField(wireName: 'locked_for_user')
   bool get lockedForUser;
   @BuiltValueField(wireName: 'body')
