@@ -273,7 +273,7 @@ void main() {
       final data = await api.getFolders(23333).toList();
       expect(await data[0].toList(), equals([]));
       await data[1].toList(); // ensure all REST APIs have been called
-      final offlineData = await api.getFolders(23333, 313142).first;
+      final offlineData = await api.getFolder(23333, 313142).first;
       expect(offlineData!.name, equals('assignments'));
     });
   });
