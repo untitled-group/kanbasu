@@ -95,5 +95,15 @@ void main() {
       final planners = await api.getPlanners();
       expect(planners.data[0].courseId, equals(31427));
     });
+
+    test('should get folders for a course', () async {
+      final folders = await api.getFolders(23333);
+      expect(folders.data[0].id, equals(313142));
+    });
+
+    test('should get info about a single folder for a course', () async {
+      final folder = await api.getFolder(23333, 313142);
+      expect(folder.data.id, equals(313142));
+    });
   });
 }

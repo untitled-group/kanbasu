@@ -7,6 +7,7 @@ import 'package:kanbasu/models/module_item.dart';
 import 'package:kanbasu/models/assignment.dart';
 import 'package:kanbasu/models/submission.dart';
 import 'package:kanbasu/models/file.dart';
+import 'package:kanbasu/models/folder.dart';
 import 'package:kanbasu/models/page.dart';
 import 'package:kanbasu/models/planner.dart';
 import 'package:retrofit/retrofit.dart';
@@ -380,7 +381,7 @@ class CanvasBufferClient {
         () => _restClient.getPage(course_id, page_id));
   }
 
-  String _getPlannersPrefix() => 'planners/';
+  String _getPlannersPrefix() => 'planners/by_id/';
 
   /// List available planners for a course.
   Stream<Stream<Planner>> getPlanners() {
@@ -390,5 +391,29 @@ class CanvasBufferClient {
         (e) => e.toJson(),
         ({queries}) => _restClient.getPlanners(queries: queries),
         (e) => e.plannableId.toString());
+  }
+
+  String _getFoldersPrefix(course_id) => 'courses/$course_id/folders/by_id/';
+
+  /// List available folders for a course.
+  Stream<Stream<Folder>> getFolders(int course_id) {
+    return _getPaginatedStreamStream(
+        _getFoldersPrefix(course_id),
+        (e) => Folder.fromJson(e),
+        (e) => e.toJson(),
+        ({queries}) => _restClient.getFolders(course_id, queries: queries),
+        (e) => e.id.toString());
+  }
+
+  String _getFolderPrefix(course_id, folder_id) =>
+      'courses/$course_id/folders/by_id/$folder_id';
+
+  /// List a specific file.
+  Stream<Folder?> getFolder(int course_id, int folder_id) {
+    return _getItemStream(
+        _getFolderPrefix(course_id, folder_id),
+        (e) => Folder.fromJson(e),
+        (e) => e.toJson(),
+        () => _restClient.getFolder(course_id, folder_id));
   }
 }

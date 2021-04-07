@@ -15,6 +15,7 @@ import 'module.dart';
 import 'module_item.dart';
 import 'submission.dart';
 import 'file.dart';
+import 'folder.dart';
 import 'page.dart';
 import 'planner.dart';
 
@@ -33,7 +34,8 @@ part 'serializers.g.dart';
   Submission,
   File,
   Page,
-  Planner
+  Planner,
+  Folder
 ])
 final Serializers serializers = (_$serializers.toBuilder()
       ..add(Iso8601DateTimeSerializer())
