@@ -8,6 +8,7 @@ import 'package:kanbasu/models/assignment.dart';
 import 'package:kanbasu/models/submission.dart';
 import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/page.dart';
+import 'package:kanbasu/models/planner.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:logger/logger.dart';
 import 'package:kanbasu/rest_api/canvas.dart';
@@ -377,5 +378,17 @@ class CanvasBufferClient {
         (e) => Page.fromJson(e),
         (e) => e.toJson(),
         () => _restClient.getPage(course_id, page_id));
+  }
+
+  String _getPlannersPrefix() => 'planners/';
+
+  /// List available planners for a course.
+  Stream<Stream<Planner>> getPlanners() {
+    return _getPaginatedStreamStream(
+        _getPlannersPrefix(),
+        (e) => Planner.fromJson(e),
+        (e) => e.toJson(),
+        ({queries}) => _restClient.getPlanners(queries: queries),
+        (e) => e.plannableId.toString());
   }
 }
