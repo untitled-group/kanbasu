@@ -243,5 +243,14 @@ void main() {
       final offlineData = await api.getPage(23333, 41136).first;
       expect(offlineData!.title, equals('第一节课在线视频'));
     });
+
+    test('should get planners in stream mode', () async {
+      final data = await api.getPlanners().last;
+      final dataJson = await data.toList();
+      final offlineData = await api.getPlanners().first;
+      final offlineDataJson = await offlineData.toList();
+      expect(dataJson.length, equals(offlineDataJson.length));
+      expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
+    });
   });
 }

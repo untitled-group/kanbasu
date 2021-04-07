@@ -90,5 +90,10 @@ void main() {
       final page = await api.getPage(23333, 41136);
       expect(page.data.title, equals('第一节课在线视频'));
     });
+
+    test('should get planners', () async {
+      final planners = await api.getPlanners();
+      expect(planners.data[0].courseId, equals(31427));
+    });
   });
 }
