@@ -9,7 +9,7 @@ part 'folder.g.dart';
 abstract class Folder implements Built<Folder, FolderBuilder> {
   Folder._();
 
-  factory Folder([updates(FolderBuilder b)]) = _$Folder;
+  factory Folder([Function(FolderBuilder b) updates]) = _$Folder;
 
   @BuiltValueField(wireName: 'id')
   int get id;
