@@ -175,7 +175,7 @@ packages:
       name: crypto
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
-    version: "3.0.0"
+    version: "3.0.1"
   csv:
     dependency: transitive
     description:
@@ -482,7 +482,7 @@ packages:
       name: petitparser
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
-    version: "4.0.2"
+    version: "4.1.0"
   platform:
     dependency: transitive
     description:
@@ -886,7 +886,7 @@ packages:
       name: xml
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
-    version: "5.0.2"
+    version: "5.1.0"
   yaml:
     dependency: transitive
     description:

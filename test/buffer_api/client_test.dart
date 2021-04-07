@@ -243,5 +243,38 @@ void main() {
       final offlineData = await api.getPage(23333, 41136).first;
       expect(offlineData!.title, equals('第一节课在线视频'));
     });
+
+    test('should get planners in stream mode', () async {
+      final data = await api.getPlanners().last;
+      final dataJson = await data.toList();
+      final offlineData = await api.getPlanners().first;
+      final offlineDataJson = await offlineData.toList();
+      expect(dataJson.length, equals(offlineDataJson.length));
+      expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
+    });
+
+    test('should get folders in stream mode', () async {
+      final data = await api.getFolders(23333).last;
+      final dataJson = await data.toList();
+      final offlineData = await api.getFolders(23333).first;
+      final offlineDataJson = await offlineData.toList();
+      expect(dataJson.length, equals(offlineDataJson.length));
+      expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
+    });
+
+    test('should get info about a single folder in stream mode', () async {
+      final data = await api.getFolder(23333, 313142).last;
+      final offlineData = await api.getFolder(23333, 313142).first;
+      expect(data!.name, equals('assignments'));
+      expect(json.encode(data), equals(json.encode(offlineData)));
+    });
+
+    test('should cache page when fetching all folders', () async {
+      final data = await api.getFolders(23333).toList();
+      expect(await data[0].toList(), equals([]));
+      await data[1].toList(); // ensure all REST APIs have been called
+      final offlineData = await api.getFolder(23333, 313142).first;
+      expect(offlineData!.name, equals('assignments'));
+    });
   });
 }

@@ -8,7 +8,9 @@ import 'package:kanbasu/models/module_item.dart';
 import 'package:kanbasu/models/assignment.dart';
 import 'package:kanbasu/models/submission.dart';
 import 'package:kanbasu/models/file.dart';
+import 'package:kanbasu/models/folder.dart';
 import 'package:kanbasu/models/page.dart';
+import 'package:kanbasu/models/planner.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/tab.dart';
 import 'package:kanbasu/models/user.dart';
@@ -78,6 +80,17 @@ abstract class CanvasRestClient {
   Future<HttpResponse<File>> getFile(@Path() int course_id, @Path() int file_id,
       {@Queries() Map<String, dynamic>? queries});
 
+  /// List available folders for a course.
+  @GET('/courses/{course_id}/folders')
+  Future<HttpResponse<List<Folder>>> getFolders(@Path() int course_id,
+      {@Queries() Map<String, dynamic>? queries});
+
+  /// Get information about a single folder.
+  @GET('/courses/{course_id}/folders/{folder_id}')
+  Future<HttpResponse<Folder>> getFolder(
+      @Path() int course_id, @Path() int folder_id,
+      {@Queries() Map<String, dynamic>? queries});
+
   /// List available pages for a course.
   @GET('/courses/{course_id}/pages')
   Future<HttpResponse<List<Page>>> getPages(@Path() int course_id,
@@ -86,6 +99,11 @@ abstract class CanvasRestClient {
   /// Get information about a single page.
   @GET('/courses/{course_id}/pages/{page_id}')
   Future<HttpResponse<Page>> getPage(@Path() int course_id, @Path() int page_id,
+      {@Queries() Map<String, dynamic>? queries});
+
+  /// Get information about planners.
+  @GET('/planners/items')
+  Future<HttpResponse<List<Planner>>> getPlanners(
       {@Queries() Map<String, dynamic>? queries});
 
   /// Get current user

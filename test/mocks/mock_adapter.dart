@@ -6,12 +6,14 @@ import 'package:dio/adapter.dart';
 import 'tab_mock.dart';
 import 'course_mock.dart';
 import 'user_mock.dart';
+import 'folder_mock.dart';
 import 'module_mock.dart';
 import 'module_item_mock.dart';
 import 'assignment_mock.dart';
 import 'submission_mock.dart';
 import 'file_mock.dart';
 import 'page_mock.dart';
+import 'planner_mock.dart';
 import 'unsubmitted_submission_mock.dart';
 
 ResponseBody jsonResponse(content, {String? link}) {
@@ -70,12 +72,18 @@ class MockAdapter extends HttpClientAdapter {
           return jsonResponse(pagesResponse);
         case '/courses/23333/pages/41136':
           return jsonResponse(pageResponse);
+        case '/planners/items':
+          return jsonResponse(plannersResponse);
         case '/users/self':
           return jsonResponse(currentUserResponse);
         case '/users/23334':
           return jsonResponse(currentUserResponse);
         case '/users/self/activity_stream':
           return jsonResponse(activityStreamResponse);
+        case '/courses/23333/folders':
+          return jsonResponse(foldersResponse);
+        case '/courses/23333/folders/313142':
+          return jsonResponse(folderResponse);
         default:
           return ResponseBody.fromString('Mock HTTP 404 Error', 404);
       }
