@@ -8,14 +8,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kanbasu/models/model.dart';
-import 'package:kanbasu/screens/list_screen.dart';
+import 'package:kanbasu/widgets/refreshable_stream_list.dart';
 import 'package:provider/provider.dart';
 
 Widget wrapWidgetForTest(Widget child) {
   final model = Model();
   return ChangeNotifierProvider(
     create: (context) => model,
-    child: MaterialApp(home: TestListScreen()), // for rebirthing the app
+    child: MaterialApp(home: TestListScreen()),
   );
 }
 
@@ -25,7 +25,7 @@ class TestStruct {
 }
 
 // ignore: deprecated_member_use_from_same_package
-class TestListScreen extends ListScreen<TestStruct> {
+class TestListScreen extends RefreshableStreamListWidget<TestStruct> {
   @override
   Stream<Stream<TestStruct>> getStreamStream() => Stream.fromIterable([
         Stream.fromIterable([TestStruct('old')]),
@@ -33,14 +33,11 @@ class TestListScreen extends ListScreen<TestStruct> {
       ]);
 
   @override
-  Widget getTitle(s) => Text('Test Screen');
-
-  @override
   Widget buildItem(TestStruct item) => Text(item.data);
 }
 
 void main() {
-  group('ListScreen', () {
+  group('StreamList', () {
     testWidgets('should show latest information', (WidgetTester tester) async {
       await tester.pumpWidget(wrapWidgetForTest(TestListScreen()));
       await tester.pumpAndSettle();
