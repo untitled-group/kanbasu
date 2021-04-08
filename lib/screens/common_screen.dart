@@ -8,6 +8,7 @@ import 'package:kanbasu/widgets/loading.dart';
 import 'package:kanbasu/widgets/snack.dart';
 import 'package:rxdart/rxdart.dart';
 
+@deprecated
 abstract class CommonScreen<T> extends HookWidget {
   Stream<T> getStream();
 

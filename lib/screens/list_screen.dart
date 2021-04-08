@@ -10,6 +10,7 @@ import 'package:rxdart/rxdart.dart';
 
 /// [ListScreen] takes a stream from parent model, and display it in
 /// [StreamListScaffold].
+@deprecated
 abstract class ListScreen<T> extends CommonScreen<Stream<T>> {
   Stream<Stream<T>> getStreamStream();
 

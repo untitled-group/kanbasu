@@ -24,6 +24,7 @@ class TestStruct {
   TestStruct(this.data);
 }
 
+// ignore: deprecated_member_use_from_same_package
 class TestListScreen extends ListScreen<TestStruct> {
   @override
   Stream<Stream<TestStruct>> getStreamStream() => Stream.fromIterable([
