@@ -1,38 +1,29 @@
-import 'package:fluro/fluro.dart';
-import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
 import 'package:kanbasu/screens/course.dart';
 import 'package:kanbasu/screens/files.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-final router = FluroRouter();
-
-void initRouter() {
-  router.define('/course/:courseId', handler: Handler(
-    handlerFunc: (context, parameters) {
-      final courseId = int.parse(parameters['courseId']!.first);
-      return CourseScreen(id: courseId);
-    },
-  ));
-  router.define('/course/:courseId/files', handler: Handler(
-    handlerFunc: (context, parameters) {
-      final courseId = int.parse(parameters['courseId']!.first);
-      return FilesScreen(courseId: courseId);
-    },
-  ));
-}
+final getPages = [
+  GetPage(
+    name: '/course/:courseId',
+    page: () => CourseScreen(id: int.parse(Get.parameters['courseId']!)),
+  ),
+  GetPage(
+    name: '/course/:courseId/files',
+    page: () => FilesScreen(courseId: int.parse(Get.parameters['courseId']!)),
+  ),
+];
 
 Future<void> navigateTo(
-  BuildContext context,
   String path, {
   bool replace = false,
 }) async {
   if (path.startsWith('/')) {
-    await router.navigateTo(
-      context,
-      path,
-      transition: TransitionType.material,
-      replace: replace,
-    );
+    if (replace) {
+      await Get.offNamed(path);
+    } else {
+      await Get.toNamed(path);
+    }
   } else {
     if (await canLaunch(path)) {
       await launch(path);

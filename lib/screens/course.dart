@@ -265,7 +265,7 @@ class CourseScreen extends CommonScreen<Course?> {
       tooltip: 'tabs.file'.tr(),
       onPressed: () async {
         final path = '/course/${data.id}/files';
-        await navigateTo(context, path);
+        await navigateTo(path);
       },
     );
   }
