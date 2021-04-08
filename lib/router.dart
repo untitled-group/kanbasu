@@ -6,7 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 final getPages = [
   GetPage(
     name: '/course/:courseId',
-    page: () => CourseScreen(id: int.parse(Get.parameters['courseId']!)),
+    page: () => CourseScreen(courseId: int.parse(Get.parameters['courseId']!)),
   ),
   GetPage(
     name: '/course/:courseId/files',
