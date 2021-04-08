@@ -43,7 +43,9 @@ class _CourseMockTabView extends RefreshableStreamWidget<void> {
                       style: Theme.of(context).textTheme.headline5,
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        DefaultTabController.of(context)!.animateTo(1);
+                      },
                       child: Text('overview.more'.tr()),
                     )
                   ],

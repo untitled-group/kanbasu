@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/utils/stream_op.dart';
 import 'package:kanbasu/widgets/loading.dart';
+import 'package:kanbasu/widgets/snack.dart';
 import 'package:rxdart/rxdart.dart';
 
 abstract class RefreshableStreamWidget<T> extends HookWidget {
@@ -25,7 +26,7 @@ abstract class RefreshableStreamWidget<T> extends HookWidget {
           final stream = getStream().doOnDone(() {
             triggerRefresh.value.complete();
           }).handleError((error, _) {
-            // showErrorSnack(context, error);
+            showErrorSnack(context, error);
             triggerRefresh.value.complete();
           });
 
