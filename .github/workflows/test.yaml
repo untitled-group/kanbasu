@@ -6,6 +6,7 @@ on:
   pull_request:
     branches:
       - main
+    types: [opened, labeled, unlabeled, synchronize]
   workflow_dispatch:
 
 jobs:
@@ -13,6 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Check PR label
+        if: contains(github.event.pull_request.labels.*.name, 'wip')
+        run: exit 1
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: "2.0.x"
