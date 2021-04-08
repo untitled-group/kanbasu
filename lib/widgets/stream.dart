@@ -11,6 +11,8 @@ abstract class StreamWidget<T> extends HookWidget {
 
   Widget buildWidget(T? data);
 
+  bool showLoadingWidget() => false;
+
   @override
   Widget build(BuildContext context) {
     return HookBuilder(builder: (context) {
@@ -27,9 +29,10 @@ abstract class StreamWidget<T> extends HookWidget {
       final snapshot = useStream(itemStream, initialData: null);
       final data = snapshot.data;
 
-      final widget = data == null && snapshot.error == null
-          ? LoadingWidget(isMore: true)
-          : buildWidget(data);
+      final widget =
+          data == null && snapshot.error == null && showLoadingWidget()
+              ? LoadingWidget(isMore: true)
+              : buildWidget(data);
       return widget;
     });
   }

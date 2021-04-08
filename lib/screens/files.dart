@@ -53,7 +53,9 @@ class FilesScreen extends ListScreen<File> {
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
           children: [
-            Text(item.displayName),
+            Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [Text(item.displayName)]),
             Expanded(
                 child: Align(
               alignment: Alignment.centerRight,
