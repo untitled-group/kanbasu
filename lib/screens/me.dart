@@ -4,16 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:kanbasu/models/user.dart';
-import 'package:kanbasu/screens/common_screen.dart';
 import 'package:kanbasu/utils/persistence.dart';
 import 'package:kanbasu/models/model.dart';
-import 'package:kanbasu/widgets/single.dart';
+import 'package:kanbasu/widgets/stream.dart';
 import 'package:kanbasu/widgets/user.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-class MeScreen extends CommonScreen<User?> {
+class _MeView extends StreamWidget<User?> {
+  @override
+  Widget buildWidget(User? data) =>
+      data == null ? Container() : UserWidget(data);
+
+  @override
+  Stream<User?> getStream() =>
+      Provider.of<Model>(useContext()).canvas.getCurrentUser();
+}
+
+class MeScreen extends StatelessWidget {
   void _pushSettings(context) async {
     final model = Provider.of<Model>(context, listen: false);
     final prefs = await SharedPreferences.getInstance();
@@ -75,21 +84,20 @@ class MeScreen extends CommonScreen<User?> {
   }
 
   @override
-  Stream<User?> getStream() =>
-      Provider.of<Model>(useContext()).canvas.getCurrentUser();
-
-  @override
-  Widget buildWidget(User? data) =>
-      Single(data == null ? Container() : UserWidget(data));
-
-  @override
-  Widget getTitle(d) => Text('title.me'.tr());
-
-  @override
-  Widget? getAction(context, d) => IconButton(
-      icon: Icon(Icons.settings),
-      tooltip: 'title.settings'.tr(),
-      onPressed: () {
-        _pushSettings(context);
-      });
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('title.settings'.tr()),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.settings),
+              tooltip: 'title.settings'.tr(),
+              onPressed: () {
+                _pushSettings(context);
+              })
+        ],
+      ),
+      body: _MeView(),
+    );
+  }
 }
