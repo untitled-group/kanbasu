@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/file.dart';
-import 'package:kanbasu/screens/list_screen.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/link.dart';
+import 'package:kanbasu/widgets/refreshable_stream_list.dart';
 import 'package:kanbasu/widgets/stream.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -34,17 +34,14 @@ class _FilesTitle extends StreamWidget<Course?> {
       Provider.of<Model>(useContext()).canvas.getCourse(courseId);
 }
 
-class FilesScreen extends ListScreen<File> {
+class _FilesView extends RefreshableStreamListWidget<File> {
   final int courseId;
 
-  FilesScreen({required this.courseId});
+  _FilesView(this.courseId);
 
   @override
   Stream<Stream<File>> getStreamStream() =>
       Provider.of<Model>(useContext()).canvas.getFiles(courseId);
-
-  @override
-  Widget getTitle(s) => useMemoized(() => _FilesTitle(courseId));
 
   @override
   Widget buildItem(File item) => Link(
@@ -64,4 +61,18 @@ class FilesScreen extends ListScreen<File> {
           ],
         ),
       ));
+}
+
+class FilesScreen extends StatelessWidget {
+  final int courseId;
+
+  FilesScreen({required this.courseId});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: _FilesTitle(courseId)),
+      body: _FilesView(courseId),
+    );
+  }
 }

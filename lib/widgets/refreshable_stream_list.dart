@@ -1,17 +1,20 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:kanbasu/utils/stream_op.dart';
 import 'package:kanbasu/widgets/border.dart';
+import 'package:kanbasu/widgets/refreshable_stream.dart';
 import 'package:kanbasu/widgets/snack.dart';
 import 'package:rxdart/rxdart.dart';
 
-/// [StreamListScaffold] takes `Stream<T>` and display the items in view.
+/// [_StreamListView] takes `Stream<T>` and display the items in view.
 /// This scaffold supports batch-update and on-demand-showing stream items.
-class StreamListScaffold<T> extends HookWidget {
+class _StreamListView<T> extends HookWidget {
   final Widget Function(T payload) itemBuilder;
   final Stream<T> itemStream;
 
-  StreamListScaffold({
+  _StreamListView({
     required this.itemBuilder,
     required this.itemStream,
   });
@@ -52,5 +55,33 @@ class StreamListScaffold<T> extends HookWidget {
 
       return Scrollbar(child: list);
     });
+  }
+}
+
+abstract class RefreshableStreamListWidget<T>
+    extends RefreshableStreamWidget<Stream<T>> {
+  Stream<Stream<T>> getStreamStream();
+
+  Widget buildItem(T item);
+
+  @override
+  Stream<Stream<T>> getStream() {
+    final context = useContext();
+    return getStreamStream()
+        // The stream may be subscribed multiple times by children,
+        // so we need to replay it, with the help of RxDart extension.
+        .map((s) => s
+            .handleError((error) => showErrorSnack(context, error))
+            .shareReplay())
+        // Wait until there are enough elements to fill the screen
+        .asyncMap(waitFor<T>(10));
+  }
+
+  @override
+  Widget buildWidget(Stream<T>? data) {
+    return _StreamListView<T>(
+      itemBuilder: buildItem,
+      itemStream: data ?? Stream<T>.empty(),
+    );
   }
 }
