@@ -43,28 +43,31 @@ class MyApp extends StatelessWidget {
     final model = Provider.of<Model>(context);
     final theme = model.theme;
 
+    final themeData = ThemeData(
+      brightness: model.brightness,
+      primarySwatch: Colors.red,
+      primaryColor: theme.primary,
+      accentColor: theme.primary,
+      scaffoldBackgroundColor: theme.background,
+      buttonColor: theme.primary,
+      primaryTextTheme: TextTheme(
+        headline6: TextStyle(color: theme.text),
+      ),
+      tabBarTheme: TabBarTheme(labelColor: theme.text),
+      appBarTheme: AppBarTheme(
+        backgroundColor: theme.grayBackground,
+        foregroundColor: theme.text,
+        actionsIconTheme: IconThemeData(color: theme.text),
+        iconTheme: IconThemeData(color: theme.text),
+      ),
+      pageTransitionsTheme: PageTransitionsTheme(builders: {}),
+      indicatorColor: theme.primary,
+    );
+
     return GetMaterialApp(
       title: 'Kanbasu',
-      theme: ThemeData(
-        brightness: model.brightness,
-        primarySwatch: Colors.red,
-        primaryColor: theme.primary,
-        accentColor: theme.primary,
-        scaffoldBackgroundColor: theme.background,
-        buttonColor: theme.primary,
-        primaryTextTheme: TextTheme(
-          headline6: TextStyle(color: theme.text),
-        ),
-        tabBarTheme: TabBarTheme(labelColor: theme.text),
-        appBarTheme: AppBarTheme(
-          backgroundColor: theme.grayBackground,
-          foregroundColor: theme.text,
-          actionsIconTheme: IconThemeData(color: theme.text),
-          iconTheme: IconThemeData(color: theme.text),
-        ),
-        pageTransitionsTheme: PageTransitionsTheme(builders: {}),
-        indicatorColor: theme.primary,
-      ),
+      darkTheme: themeData,
+      theme: themeData,
       locale: context.locale,
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
