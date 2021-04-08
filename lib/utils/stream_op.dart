@@ -12,6 +12,10 @@ Stream<T> yieldLast<T>(Stream<T> stream) {
   }();
 }
 
+Stream<T> yieldFirst<T>(Stream<T> stream) {
+  return stream.firstWhere((element) => element != null).asStream();
+}
+
 Future<Stream<T>> Function(ReplayStream<T>) waitFor<T>(int N) {
   return (stream) async {
     // Prevent stream from being canceled

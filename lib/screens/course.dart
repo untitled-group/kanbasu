@@ -5,10 +5,8 @@ import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/router.dart';
 import 'package:kanbasu/screens/common_screen.dart';
-import 'package:kanbasu/utils/persistence.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CourseScreen extends CommonScreen<Course?> {
   final int id;
@@ -263,14 +261,11 @@ class CourseScreen extends CommonScreen<Course?> {
       return null;
     }
     return IconButton(
-      icon: Icon(Icons.open_in_browser),
-      tooltip: 'actions.open_in_browser'.tr(),
+      icon: Icon(Icons.folder),
+      tooltip: 'tabs.file'.tr(),
       onPressed: () async {
-        // TODO: replace this with real url
-        final prefs = await SharedPreferences.getInstance();
-        final path = '${getApiEndpoint(prefs)}/courses/${data.id}';
-        print(path);
-        await navigateTo(context, path);
+        final path = '/course/${data.id}/files';
+        await navigateTo(path);
       },
     );
   }
