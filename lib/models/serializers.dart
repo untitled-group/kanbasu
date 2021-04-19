@@ -1,8 +1,6 @@
 import 'package:built_value/iso_8601_date_time_serializer.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/standard_json_plugin.dart';
-import 'package:built_collection/built_collection.dart';
-import 'package:built_value/json_object.dart';
 
 import 'assignment.dart';
 import 'lock_info.dart';
@@ -18,6 +16,7 @@ import 'file.dart';
 import 'folder.dart';
 import 'page.dart';
 import 'planner.dart';
+import 'plannable.dart';
 
 part 'serializers.g.dart';
 
