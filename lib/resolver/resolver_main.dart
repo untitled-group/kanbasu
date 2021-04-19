@@ -25,6 +25,6 @@ Future<void> resolverMain() async {
   logger.i('Resolving...');
   final resolver = Resolver(rest, keyspace, logger);
   await for (final progress in resolver.visit()) {
-    logger.i(progress);
+    logger.i('${progress.message} ${progress.percent * 100.0}');
   }
 }

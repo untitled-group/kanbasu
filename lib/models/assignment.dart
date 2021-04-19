@@ -12,7 +12,7 @@ abstract class Assignment implements Built<Assignment, AssignmentBuilder> {
   @BuiltValueField(wireName: 'id')
   int get id;
   @BuiltValueField(wireName: 'description')
-  String get description;
+  String? get description;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(Assignment.serializer, this)!

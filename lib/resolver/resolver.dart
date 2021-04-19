@@ -43,14 +43,13 @@ class Resolver {
           percent: progress.percent / total + of / total,
           message: progress.message);
 
+  void onError(dynamic error, StackTrace st) {
+    _logger.w('An error occurred when downloading', error, st);
+  }
+
   /// Visit all objects.
   Stream<ResolveProgress> visit() async* {
     _logger.i('[Visitor] Root');
-
-    final courses = await _api.getCourses().last;
-    await for (final progress in visitCourses(courses)) {
-      yield progress;
-    }
 
     yield ofCurrent('解析用户日程', 1, 1);
     final planners = await _api.getPlanners().last;
@@ -59,6 +58,11 @@ class Resolver {
     yield ofCurrent('解析用户动态', 1, 1);
     final activities = await _api.getCurrentUserActivityStream().last;
     await for (final _ in visitActivities(activities)) {}
+
+    // final courses = await _api.getCourses().last;
+    // await for (final progress in visitCourses(courses)) {
+    //   yield progress;
+    // }
   }
 
   /// Visit Stream of [ActivityItem].
@@ -66,14 +70,14 @@ class Resolver {
       Stream<ActivityItem> activities) async* {
     _logger.i('[Visitor] Activities');
 
-    await activities.handleError(_logger.w).toList();
+    await activities.handleError(onError).toList();
   }
 
   /// Visit Stream of [Planner].
   Stream<ResolveProgress> visitPlanners(Stream<Planner> planners) async* {
     _logger.i('[Visitor] Planners');
 
-    await planners.handleError(_logger.w).toList();
+    await planners.handleError(onError).toList();
   }
 
   /// Visit List of [Course].
@@ -125,14 +129,14 @@ class Resolver {
   Stream<ResolveProgress> visitFiles(Stream<File> files) async* {
     _logger.i('[Visitor] Files');
 
-    await files.handleError(_logger.w).toList();
+    await files.handleError(onError).toList();
   }
 
   /// Visit stream of [Folder].
   Stream<ResolveProgress> visitFolders(Stream<Folder> folders) async* {
     _logger.i('[Visitor] Folders');
 
-    await folders.handleError(_logger.w).toList();
+    await folders.handleError(onError).toList();
   }
 
   /// Visit stream of [Assignment].
@@ -140,7 +144,7 @@ class Resolver {
       Stream<Assignment> assignments) async* {
     _logger.i('[Visitor] Assignments');
 
-    await assignments.handleError(_logger.w).toList();
+    await assignments.handleError(onError).toList();
   }
 
   /// Visit stream of [Module].
@@ -154,14 +158,13 @@ class Resolver {
         yield progress;
       }
     }
-    await modules.handleError(_logger.w).toList();
   }
 
   /// Visit [Module]
   Stream<ResolveProgress> visitModule(Course course, Module module) async* {
     await _api
         .getModuleItems(course.id, module.id)
-        .handleError(_logger.w)
+        .handleError(onError)
         .toList();
   }
 }
