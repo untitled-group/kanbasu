@@ -72,7 +72,7 @@ class MockAdapter extends HttpClientAdapter {
           return jsonResponse(pagesResponse);
         case '/courses/23333/pages/41136':
           return jsonResponse(pageResponse);
-        case '/planners/items':
+        case '/planner/items':
           return jsonResponse(plannersResponse);
         case '/users/self':
           return jsonResponse(currentUserResponse);
