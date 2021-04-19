@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:get/route_manager.dart';
 import 'package:kanbasu/models/model.dart';
-import 'package:kanbasu/resolver/resolver_main.dart';
 import 'package:kanbasu/router.dart';
 import 'package:kanbasu/utils/timeago_zh_cn.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +17,7 @@ Future<void> main() async {
   KvStore.initFfi();
   timeago.setLocaleMessages('zh_CN', KZhCnMessages());
 
-  await resolverMain();
+  // await resolverMain();
 
   final model = Model();
   await Future.wait([model.init()]);
