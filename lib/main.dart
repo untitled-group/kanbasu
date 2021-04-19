@@ -11,11 +11,13 @@ import 'buffer_api/kvstore.dart';
 import 'package:easy_localization_loader/easy_localization_loader.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   KvStore.initFfi();
   timeago.setLocaleMessages('zh_CN', KZhCnMessages());
+
+  // await resolverMain();
 
   final model = Model();
   await Future.wait([model.init()]);

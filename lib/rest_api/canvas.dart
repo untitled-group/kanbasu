@@ -102,7 +102,7 @@ abstract class CanvasRestClient {
       {@Queries() Map<String, dynamic>? queries});
 
   /// Get information about planners.
-  @GET('/planners/items')
+  @GET('/planner/items')
   Future<HttpResponse<List<Planner>>> getPlanners(
       {@Queries() Map<String, dynamic>? queries});
 
