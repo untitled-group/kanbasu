@@ -24,9 +24,9 @@ abstract class Module implements Built<Module, ModuleBuilder> {
   @BuiltValueField(wireName: 'publish_final_grade')
   bool get publishFinalGrade;
   @BuiltValueField(wireName: 'state')
-  String get state;
+  String? get state;
   @BuiltValueField(wireName: 'completed_at')
-  DateTime get completedAt;
+  DateTime? get completedAt;
   @BuiltValueField(wireName: 'items_count')
   int get itemsCount;
   @BuiltValueField(wireName: 'items_url')

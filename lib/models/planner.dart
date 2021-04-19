@@ -20,7 +20,7 @@ abstract class Planner implements Built<Planner, PlannerBuilder> {
   @BuiltValueField(wireName: 'plannable_id')
   int get plannableId;
   @BuiltValueField(wireName: 'planner_override')
-  String? get plannerOverride;
+  BuiltMap<String, JsonObject>? get plannerOverride;
   @BuiltValueField(wireName: 'new_activity')
   bool get newActivity;
   @BuiltValueField(wireName: 'plannable_date')
