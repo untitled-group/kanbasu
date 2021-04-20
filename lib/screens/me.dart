@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:kanbasu/models/user.dart';
+import 'package:kanbasu/resolver/resolver_main.dart';
+import 'package:kanbasu/utils/logging.dart';
 import 'package:kanbasu/utils/persistence.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/stream.dart';
@@ -97,7 +99,34 @@ class MeScreen extends StatelessWidget {
               })
         ],
       ),
-      body: _MeView(),
+      body: ListView(children: [
+        _MeView(),
+        Divider(),
+        Text('开发者工具'),
+        SizedBox(height: 5),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: Colors.grey, // background
+            onPrimary: Colors.white, // foreground
+          ),
+          onPressed: () {
+            final logger = createLogger();
+            logger.i('Aggregator!');
+          },
+          child: Text('运行 Aggregator'),
+        ),
+        SizedBox(height: 5),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: Colors.grey, // background
+            onPrimary: Colors.white, // foreground
+          ),
+          onPressed: () {
+            resolverMain();
+          },
+          child: Text('运行 Resolver'),
+        )
+      ]),
     );
   }
 }
