@@ -51,6 +51,8 @@ abstract class Submission implements Built<Submission, SubmissionBuilder> {
   bool get late;
   @BuiltValueField(wireName: 'missing')
   bool get missing;
+  @BuiltValueField(wireName: 'preview_url')
+  String? get previewUrl;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(Submission.serializer, this)!
