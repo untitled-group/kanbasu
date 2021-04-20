@@ -1,5 +1,3 @@
-import 'package:dio/dio.dart';
-import 'package:kanbasu/rest_api/canvas.dart';
 import 'package:kanbasu/buffer_api/canvas.dart';
 import 'package:kanbasu/models/assignment.dart';
 import 'package:kanbasu/models/file.dart';
@@ -26,6 +24,21 @@ class BriefInfo {
     this.upload_date = upload_date;
     this.due_date = due_date;
   }
+
+  BriefInfo.fromJson(Map<String, dynamic> json)
+      : title = json['title'],
+        type = json['type'],
+        course_id = json['course_id'],
+        description = json['description'];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'type': type,
+      'course_id': course_id,
+      'description': description
+    };
+  }
 }
 
 Future<List> getListDataFromApi(Stream stream, bool useOnlineData) async {
@@ -48,12 +61,8 @@ Future getItemDataFromApi(Stream stream, bool useOnlineData) async {
   }
 }
 
-Future<List<BriefInfo>> aggregate({bool useOnlineData = false}) async {
-  // needed keys: title, type, course_id, description, url, upload_date, due_date
-  final dio = Dio();
-  final restClient = CanvasRestClient(dio);
-  final api = CanvasBufferClient(restClient, null);
-
+Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
+    {bool useOnlineData = false}) async {
   // ignore: omit_local_variable_types
   List<BriefInfo> aggregations = [];
   // ignore: omit_local_variable_types
@@ -69,20 +78,21 @@ Future<List<BriefInfo>> aggregate({bool useOnlineData = false}) async {
 
   // info about assignment, file and grading
   for (var course_id in available_courses) {
-    var course_name = course_id_name[course_id] ?? 'course null';
+    var course_name = course_id_name[course_id] ?? 'null course';
 
     final assignments =
         await getListDataFromApi(api.getAssignments(course_id), useOnlineData);
     for (var assignment in assignments) {
       var assignment_id = assignment.id;
+      var assignment_name = assignment.name;
       var new_agg = aggregateFromAssignment(assignment, course_id, course_name);
       aggregations.add(new_agg);
 
       var submission = await getItemDataFromApi(
           api.getSubmission(course_id, assignment_id), useOnlineData);
       if (submission.grade != null) {
-        var new_agg =
-            aggregateFromSubmisson(submission, course_id, course_name);
+        var new_agg = aggregateFromSubmisson(
+            submission, course_id, course_name, assignment_name);
         aggregations.add(new_agg);
       }
     }
@@ -111,7 +121,7 @@ Future<List<BriefInfo>> aggregate({bool useOnlineData = false}) async {
 BriefInfo aggregateFromPlanner(
     Planner planner, int course_id, String course_name) {
   // only deal with announcements
-  var title = '{course_name} 通知: {planner.plannable.title}';
+  var title = '$course_name 通知: ${planner.plannable.title}';
   var res = BriefInfo(title, 'announcements', planner.courseId);
   res.fillInfo(
       description: planner.plannable.message,
@@ -123,7 +133,11 @@ BriefInfo aggregateFromPlanner(
 
 BriefInfo aggregateFromAssignment(
     Assignment assignment, int course_id, String course_name) {
-  var res = BriefInfo('{course_name} 课程作业: {assignment.name} 已布置', 'assignment',
+  var title = '$course_name 课程作业已布置';
+  if (assignment.name != null) {
+    title = '$course_name 课程作业: ${assignment.name} 已布置';
+  }
+  var res = BriefInfo(title, 'assignment',
       course_id); // need a little change, because we don not know the format of assignment.name
   res.fillInfo(
       description: assignment.description,
@@ -135,17 +149,23 @@ BriefInfo aggregateFromAssignment(
 
 BriefInfo aggregateFromFile(File file, int course_id, String course_name) {
   var res =
-      BriefInfo('{course_name} 课程上传文件: {file.filename}', 'file', course_id);
+      BriefInfo('$course_name 课程上传文件: ${file.displayName}', 'file', course_id);
   res.fillInfo(
-      description: file.filename, url: file.url, upload_date: file.updatedAt);
+      description: file.displayName,
+      url: file.url,
+      upload_date: file.updatedAt);
 
   return res;
 }
 
-BriefInfo aggregateFromSubmisson(
-    Submission submission, int course_id, String course_name) {
-  var res = BriefInfo(
-      '{course_name} 课程作业: {assignment.name} 已批改', 'grading', course_id);
+BriefInfo aggregateFromSubmisson(Submission submission, int course_id,
+    String course_name, String? assignment_name) {
+  var title = '$course_name 课程作业已批改';
+  if (assignment_name != null) {
+    title = '$course_name 课程作业: $assignment_name 已批改';
+  }
+
+  var res = BriefInfo(title, 'grading', course_id);
   res.fillInfo(
       description: '{submission.grade} / {submission.score}',
       url: submission.url); // or previewUrl?
