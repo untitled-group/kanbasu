@@ -13,6 +13,7 @@ import 'package:kanbasu/widgets/user.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:kanbasu/aggregation.dart';
 
 class _MeView extends StreamWidget<User?> {
   @override
@@ -112,6 +113,11 @@ class MeScreen extends StatelessWidget {
           onPressed: () {
             final logger = createLogger();
             logger.i('Aggregator!');
+            final aggregation = aggregate(
+                Provider.of<Model>(context, listen: false).canvas,
+                useOnlineData: true);
+            aggregation.then((data) => {logger.i(data)});
+            logger.i('Finish aggregator');
           },
           child: Text('运行 Aggregator'),
         ),

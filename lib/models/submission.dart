@@ -37,8 +37,6 @@ abstract class Submission implements Built<Submission, SubmissionBuilder> {
   int? get graderId;
   @BuiltValueField(wireName: 'attempt')
   int? get attempt;
-  @BuiltValueField(wireName: 'cached_due_date')
-  DateTime get cachedDueDate;
   @BuiltValueField(wireName: 'excused')
   bool? get excused;
   @BuiltValueField(wireName: 'late_policy_status')
@@ -51,6 +49,8 @@ abstract class Submission implements Built<Submission, SubmissionBuilder> {
   bool get late;
   @BuiltValueField(wireName: 'missing')
   bool get missing;
+  @BuiltValueField(wireName: 'preview_url')
+  String? get previewUrl;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(Submission.serializer, this)!

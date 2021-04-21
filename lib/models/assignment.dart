@@ -11,8 +11,14 @@ abstract class Assignment implements Built<Assignment, AssignmentBuilder> {
 
   @BuiltValueField(wireName: 'id')
   int get id;
+  @BuiltValueField(wireName: 'name')
+  String? get name;
   @BuiltValueField(wireName: 'description')
   String? get description;
+  @BuiltValueField(wireName: 'due_at')
+  DateTime? get dueAt;
+  @BuiltValueField(wireName: 'html_url')
+  String? get htmlUrl;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(Assignment.serializer, this)!

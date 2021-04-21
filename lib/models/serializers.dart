@@ -18,6 +18,7 @@ import 'file.dart';
 import 'folder.dart';
 import 'page.dart';
 import 'planner.dart';
+import 'plannable.dart';
 
 part 'serializers.g.dart';
 

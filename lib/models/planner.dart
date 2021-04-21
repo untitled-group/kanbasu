@@ -5,6 +5,7 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/json_object.dart';
 import 'package:built_value/serializer.dart';
 import 'serializers.dart';
+import 'plannable.dart';
 
 part 'planner.g.dart';
 
@@ -28,7 +29,7 @@ abstract class Planner implements Built<Planner, PlannerBuilder> {
   @BuiltValueField(wireName: 'plannable_type')
   String get plannableType;
   @BuiltValueField(wireName: 'plannable')
-  BuiltMap<String, JsonObject> get plannable;
+  Plannable get plannable;
   @BuiltValueField(wireName: 'html_url')
   String get htmlUrl;
 
