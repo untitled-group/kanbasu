@@ -323,7 +323,7 @@ class CanvasBufferClient {
   String _getSubmissionPrefix(course_id, assignment_id, user_id) =>
       'courses/$course_id/assignments/$assignment_id/submissions/$user_id';
 
-  /// List available submission for an assignment.
+  /// Get available submission for an assignment.
   Stream<Submission?> getSubmission(int course_id, int assignment_id,
       [String user_id = 'self']) {
     return _getItemStream(
@@ -331,6 +331,20 @@ class CanvasBufferClient {
         (e) => Submission.fromJson(e),
         (e) => e.toJson(),
         () => _restClient.getSubmission(course_id, assignment_id, user_id));
+  }
+
+  // FIXME: submissions cannot be cached independently
+  String _getSubmissionsPrefix(course_id) =>
+      'courses/$course_id/submissions/by_id/';
+
+  /// List available submissions for an assignment.
+  Stream<Stream<Submission>> getSubmissions(int course_id) {
+    return _getPaginatedStreamStream(
+        _getSubmissionsPrefix(course_id),
+        (e) => Submission.fromJson(e),
+        (e) => e.toJson(),
+        ({queries}) => _restClient.getSubmissions(course_id, queries: queries),
+        (e) => e.id.toString());
   }
 
   String _getFilesPrefix(course_id) => 'courses/$course_id/files/by_id/';
