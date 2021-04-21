@@ -276,5 +276,14 @@ void main() {
       final offlineData = await api.getFolder(23333, 313142).first;
       expect(offlineData!.name, equals('assignments'));
     });
+
+    test('should get info about all submissions in stream mode', () async {
+      final data = await api.getSubmissions(23333).last;
+      final dataJson = await data.toList();
+      final offlineData = await api.getSubmissions(23333).first;
+      final offlineDataJson = await offlineData.toList();
+      expect(dataJson.length, equals(offlineDataJson.length));
+      expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
+    });
   });
 }

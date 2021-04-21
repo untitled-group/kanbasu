@@ -64,11 +64,36 @@ abstract class CanvasRestClient {
   Future<HttpResponse<List<Assignment>>> getAssignments(@Path() int id,
       {@Queries() Map<String, dynamic>? queries});
 
-  /// List available submissions for an assignment for self.
+  /// Get available submissions for an assignment for self.
   @GET('/courses/{course_id}/assignments/{assignment_id}/submissions/{user_id}')
   Future<HttpResponse<Submission>> getSubmission(
       @Path() int course_id, @Path() int assignment_id,
-      [@Path() String user_id = 'self']);
+      [@Path() String user_id = 'self',
+      @Query('include[]') List<String> includes = const [
+        'submission_history',
+        'submission_comments',
+        'rubric_assessment',
+        'assignment',
+        'visibility',
+        'course',
+        'user',
+        'group'
+      ]]);
+
+  /// List available submissions for a course.
+  @GET('/courses/{course_id}/students/submissions')
+  Future<HttpResponse<List<Submission>>> getSubmissions(@Path() int course_id,
+      {@Query('include[]') List<String> includes = const [
+        'submission_history',
+        'submission_comments',
+        'rubric_assessment',
+        'assignment',
+        'visibility',
+        'course',
+        'user',
+        'group'
+      ],
+      @Queries() Map<String, dynamic>? queries});
 
   /// List available files for a course.
   @GET('/courses/{course_id}/files')

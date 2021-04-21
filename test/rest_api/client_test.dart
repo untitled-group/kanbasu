@@ -105,5 +105,10 @@ void main() {
       final folder = await api.getFolder(23333, 313142);
       expect(folder.data.id, equals(313142));
     });
+
+    test('should get info about all submissions of a course', () async {
+      final submissions = await api.getSubmissions(23333);
+      expect(submissions.data[0].id, equals(3463087));
+    });
   });
 }
