@@ -285,5 +285,15 @@ void main() {
       expect(dataJson.length, equals(offlineDataJson.length));
       expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
     });
+
+    test('should get info about all submissions with queries in stream mode',
+        () async {
+      final data = await api.getSubmissions(23334).last;
+      final dataJson = await data.toList();
+      final offlineData = await api.getSubmissions(23334).first;
+      final offlineDataJson = await offlineData.toList();
+      expect(dataJson.length, equals(offlineDataJson.length));
+      expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
+    });
   });
 }

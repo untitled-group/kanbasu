@@ -110,5 +110,11 @@ void main() {
       final submissions = await api.getSubmissions(23333);
       expect(submissions.data[0].id, equals(3463087));
     });
+
+    test('should get info about all submissions of a course with queries',
+        () async {
+      final submissions = await api.getSubmissions(23334);
+      expect(submissions.data[0].id, equals(3904019));
+    });
   });
 }

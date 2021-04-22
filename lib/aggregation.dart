@@ -6,8 +6,8 @@ import 'package:kanbasu/models/submission.dart';
 
 class BriefInfo {
   String? title; // in practice, it will never be null
-  String type; // also create a struct?
-  int course_id; // or String?
+  String type;
+  int course_id;
   String? description;
   String? url;
   DateTime? upload_date;
@@ -83,16 +83,16 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
     final assignments =
         await getListDataFromApi(api.getAssignments(course_id), useOnlineData);
     for (var assignment in assignments) {
-      var assignment_id = assignment.id;
-      var assignment_name = assignment.name;
       var new_agg = aggregateFromAssignment(assignment, course_id, course_name);
       aggregations.add(new_agg);
+    }
 
-      var submission = await getItemDataFromApi(
-          api.getSubmission(course_id, assignment_id), useOnlineData);
+    var submissions =
+        await getListDataFromApi(api.getSubmissions(course_id), useOnlineData);
+    for (var submission in submissions) {
       if (submission.grade != null) {
-        var new_agg = aggregateFromSubmisson(
-            submission, course_id, course_name, assignment_name);
+        var new_agg =
+            aggregateFromSubmission(submission, course_id, course_name);
         aggregations.add(new_agg);
       }
     }
@@ -137,8 +137,7 @@ BriefInfo aggregateFromAssignment(
   if (assignment.name != null) {
     title = '$course_name 课程作业: ${assignment.name} 已布置';
   }
-  var res = BriefInfo(title, 'assignment',
-      course_id); // need a little change, because we don not know the format of assignment.name
+  var res = BriefInfo(title, 'assignment', course_id);
   res.fillInfo(
       description: assignment.description,
       url: assignment.htmlUrl,
@@ -158,17 +157,26 @@ BriefInfo aggregateFromFile(File file, int course_id, String course_name) {
   return res;
 }
 
-BriefInfo aggregateFromSubmisson(Submission submission, int course_id,
-    String course_name, String? assignment_name) {
-  var title = '$course_name 课程作业已批改';
-  if (assignment_name != null) {
-    title = '$course_name 课程作业: $assignment_name 已批改';
+BriefInfo aggregateFromSubmission(
+    Submission submission, int course_id, String course_name) {
+  var title = '$course_name 课程作业已评分';
+  var assignment = submission.assignment;
+  if (assignment != null) {
+    title = '$course_name 课程作业: ${assignment.name} 已批改';
   }
 
   var res = BriefInfo(title, 'grading', course_id);
-  res.fillInfo(
-      description: '{submission.grade} / {submission.score}',
-      url: submission.url); // or previewUrl?
+  var description = '分数: ${submission.grade}';
+
+  if (submission.submissionComments != null &&
+      submission.submissionComments!.isNotEmpty) {
+    var comment = submission.submissionComments![0]['comments'];
+    if (comment != null) {
+      description = '分数: ${submission.grade}, [$comment]';
+    }
+  }
+
+  res.fillInfo(description: description, url: submission.previewUrl);
 
   return res;
 }
