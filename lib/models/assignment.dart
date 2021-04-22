@@ -19,6 +19,10 @@ abstract class Assignment implements Built<Assignment, AssignmentBuilder> {
   DateTime? get dueAt;
   @BuiltValueField(wireName: 'html_url')
   String? get htmlUrl;
+  @BuiltValueField(wireName: 'updated_at')
+  DateTime? get updatedAt;
+  @BuiltValueField(wireName: 'created_at')
+  DateTime get createdAt;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(Assignment.serializer, this)!

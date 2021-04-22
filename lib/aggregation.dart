@@ -5,23 +5,20 @@ import 'package:kanbasu/models/planner.dart';
 import 'package:kanbasu/models/submission.dart';
 
 class BriefInfo {
-  String? title; // in practice, it will never be null
+  String title;
   String type;
   int course_id;
-  String? description;
+  String description = '';
+  DateTime update_at = DateTime.now();
   String? url;
-  DateTime? upload_date;
   DateTime? due_date;
 
   BriefInfo(this.title, this.type, this.course_id);
-  void fillInfo(
-      {String? description,
-      String? url,
-      DateTime? upload_date,
-      DateTime? due_date}) {
+  void fillInfo(String description, DateTime update_at,
+      {String? url, DateTime? due_date}) {
     this.description = description;
     this.url = url;
-    this.upload_date = upload_date;
+    this.update_at = update_at;
     this.due_date = due_date;
   }
 
@@ -29,14 +26,20 @@ class BriefInfo {
       : title = json['title'],
         type = json['type'],
         course_id = json['course_id'],
-        description = json['description'];
+        description = json['description'],
+        update_at = json['update_at'],
+        url = json['url'],
+        due_date = json['due_date'];
 
   Map<String, dynamic> toJson() {
     return {
       'title': title,
       'type': type,
       'course_id': course_id,
-      'description': description
+      'description': description,
+      'update_at': update_at,
+      'url': url,
+      'due_date': due_date
     };
   }
 }
@@ -123,10 +126,12 @@ BriefInfo aggregateFromPlanner(
   // only deal with announcements
   var title = '$course_name 通知: ${planner.plannable.title}';
   var res = BriefInfo(title, 'announcements', planner.courseId);
+  var description = planner.plannable.message ?? '';
   res.fillInfo(
-      description: planner.plannable.message,
-      url: planner.htmlUrl,
-      upload_date: planner.plannableDate);
+    description,
+    planner.plannableDate,
+    url: planner.htmlUrl,
+  );
 
   return res;
 }
@@ -138,10 +143,10 @@ BriefInfo aggregateFromAssignment(
     title = '$course_name 课程作业: ${assignment.name} 已布置';
   }
   var res = BriefInfo(title, 'assignment', course_id);
-  res.fillInfo(
-      description: assignment.description,
-      url: assignment.htmlUrl,
-      due_date: assignment.dueAt);
+  var description = assignment.description ?? '';
+  var update_time = assignment.updatedAt ?? assignment.createdAt;
+  res.fillInfo(description, update_time!,
+      url: assignment.htmlUrl, due_date: assignment.dueAt);
 
   return res;
 }
@@ -149,10 +154,7 @@ BriefInfo aggregateFromAssignment(
 BriefInfo aggregateFromFile(File file, int course_id, String course_name) {
   var res =
       BriefInfo('$course_name 课程上传文件: ${file.displayName}', 'file', course_id);
-  res.fillInfo(
-      description: file.displayName,
-      url: file.url,
-      upload_date: file.updatedAt);
+  res.fillInfo(file.displayName, file.updatedAt, url: file.url);
 
   return res;
 }
@@ -176,7 +178,7 @@ BriefInfo aggregateFromSubmission(
     }
   }
 
-  res.fillInfo(description: description, url: submission.previewUrl);
+  res.fillInfo(description, submission.gradedAt!, url: submission.previewUrl);
 
   return res;
 }
