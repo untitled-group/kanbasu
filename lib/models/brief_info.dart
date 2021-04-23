@@ -30,9 +30,6 @@ abstract class BriefInfo implements Built<BriefInfo, BriefInfoBuilder> {
 
   factory BriefInfo([Function(BriefInfoBuilder b) updates]) = _$BriefInfo;
 
-  @BuiltValueField(wireName: 'id')
-  int get id;
-
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(BriefInfo.serializer, this)!
         as Map<String, dynamic>;

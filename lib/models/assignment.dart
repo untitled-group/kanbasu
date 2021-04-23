@@ -22,7 +22,7 @@ abstract class Assignment implements Built<Assignment, AssignmentBuilder> {
   @BuiltValueField(wireName: 'updated_at')
   DateTime? get updatedAt;
   @BuiltValueField(wireName: 'created_at')
-  DateTime get createdAt;
+  DateTime? get createdAt;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(Assignment.serializer, this)!
