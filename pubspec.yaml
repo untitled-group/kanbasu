@@ -49,6 +49,7 @@ dependencies:
   timeago: ^3.0.2
   # tuple: ^2.0.0
   url_launcher: ^6.0.2
+  html: ^0.15.0
 
 dev_dependencies:
   build_runner: any

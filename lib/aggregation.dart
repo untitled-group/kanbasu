@@ -4,6 +4,7 @@ import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/planner.dart';
 import 'package:kanbasu/models/submission.dart';
 import 'package:kanbasu/models/brief_info.dart';
+import 'package:html/parser.dart' show parse;
 
 Future<List> getListDataFromApi(Stream stream, bool useOnlineData) async {
   if (useOnlineData) {
@@ -87,7 +88,7 @@ BriefInfo aggregateFromPlanner(
     Planner planner, int course_id, String course_name) {
   // only deal with announcements
   final title = '$course_name 通知: ${planner.plannable.title}';
-  final description = planner.plannable.message ?? '';
+  final description = parse(planner.plannable.message ?? '').text ?? '';
 
   return BriefInfo((i) => i
     ..title = title
@@ -106,7 +107,7 @@ BriefInfo aggregateFromAssignment(
   } else {
     title = '$course_name 课程作业已布置';
   }
-  final description = assignment.description ?? '';
+  final description = parse(assignment.description ?? '').text ?? '';
   final updatedAt = assignment.updatedAt ?? assignment.createdAt;
 
   return BriefInfo((i) => i
