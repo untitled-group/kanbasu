@@ -29,12 +29,19 @@ abstract class Course implements Built<Course, CourseBuilder> {
   @BuiltValueField(wireName: 'time_zone')
   String? get timeZone;
 
+  /// only available when requesting exactly course
   @BuiltValueField(wireName: 'syllabus_body')
   String? get syllabusBody;
+
+  /// only available when requesting exactly course
   @BuiltValueField(wireName: 'term')
-  Term get term;
+  Term? get term;
+
+  /// only available when requesting exactly course
   @BuiltValueField(wireName: 'teachers')
-  BuiltList<UserDisplay> get teachers;
+  BuiltList<UserDisplay>? get teachers;
+
+  /// only available when requesting exactly course
   @BuiltValueField(wireName: 'image_download_url')
   String? get imageUrl;
 
