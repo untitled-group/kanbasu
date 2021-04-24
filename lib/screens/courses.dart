@@ -15,9 +15,7 @@ class _CoursesView extends RefreshableStreamListWidget<Course> {
   @override
   Stream<Stream<Course>> getStreamStream() =>
       Provider.of<Model>(useContext()).canvas.getCourses().map((courseList) {
-        final latestTerm = courseList
-            .map((c) => c.term?.id ?? 0)
-            .fold(0, (int a, int b) => max(a, b));
+        final latestTerm = courseList.map((c) => c.term?.id ?? 0).fold(0, max);
         final latestCourses =
             courseList.where((c) => (c.term?.id ?? 0) >= latestTerm).toList();
         return Stream.fromIterable(latestCourses);
