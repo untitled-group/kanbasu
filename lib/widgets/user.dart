@@ -23,13 +23,12 @@ class UserWidget extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.network(
-                user.avatarUrl,
-                width: 80,
-                height: 80,
+              CircleAvatar(
+                backgroundImage: NetworkImage(user.avatarUrl),
+                radius: 30,
               ),
               SizedBox(
-                width: 10,
+                width: 20,
               ),
               Expanded(
                 child: SeparatedColumn(
