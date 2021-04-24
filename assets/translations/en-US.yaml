@@ -36,3 +36,6 @@ overview:
   more: More
 actions:
   open_in_browser: Open in browser
+assignment:
+  due_time_is: 'Due time:'
+  no_due_time: No due time provided

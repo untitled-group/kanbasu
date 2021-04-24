@@ -36,3 +36,6 @@ overview:
   more: 更多
 actions:
   open_in_browser: 用浏览器打开
+assignment:
+  due_time_is: 截止时间：
+  no_due_time: 没有截止时间
