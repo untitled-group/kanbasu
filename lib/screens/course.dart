@@ -1,6 +1,5 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/models/tab.dart' as t;
@@ -17,8 +16,8 @@ class _CourseMockTabView extends RefreshableStreamWidget<void> {
   _CourseMockTabView(this.tab);
 
   @override
-  Widget buildWidget(void data) {
-    final model = Provider.of<Model>(useContext());
+  Widget buildWidget(context, void data) {
+    final model = Provider.of<Model>(context);
     final mockHome = ListView.builder(
         itemCount: 20,
         itemBuilder: (BuildContext context, int index) {
@@ -215,11 +214,11 @@ class _CourseMockTabView extends RefreshableStreamWidget<void> {
 
     return tab.position == 1
         ? mockHome
-        : Center(child: Text("It's cloudy here"));
+        : Center(child: Text('${tab.position}'));
   }
 
   @override
-  Stream<void> getStream() => Stream.empty();
+  Stream<void> getStream(context) => Stream.empty();
 }
 
 class _CourseMeta {
@@ -240,7 +239,7 @@ class CourseScreen extends StreamWidget<_CourseMeta> {
   }
 
   @override
-  Widget buildWidget(_CourseMeta? data) {
+  Widget buildWidget(context, _CourseMeta? data) {
     final course = data?.course;
     final tabs = data?.tabs;
 
@@ -264,8 +263,12 @@ class CourseScreen extends StreamWidget<_CourseMeta> {
         ),
       );
     } else {
+      final validTabs = tabs
+          .where((t) => t.type != 'external' && t.visibility == 'public')
+          .toList();
+
       final tabBar = TabBar(
-        tabs: tabs.map((t) => Tab(text: t.label)).toList(),
+        tabs: validTabs.map((t) => Tab(text: t.label)).toList(),
         isScrollable: true,
       );
       final scaffold = Scaffold(
@@ -275,15 +278,15 @@ class CourseScreen extends StreamWidget<_CourseMeta> {
             bottom: tabBar,
           ),
           body: TabBarView(
-            children: tabs.map((t) => _CourseMockTabView(t)).toList(),
+            children: validTabs.map((t) => _CourseMockTabView(t)).toList(),
           ));
-      return DefaultTabController(length: tabs.length, child: scaffold);
+      return DefaultTabController(length: validTabs.length, child: scaffold);
     }
   }
 
   @override
-  Stream<_CourseMeta> getStream() {
-    final canvas = Provider.of<Model>(useContext()).canvas;
+  Stream<_CourseMeta> getStream(context) {
+    final canvas = Provider.of<Model>(context).canvas;
     return ZipStream.zip2(
         canvas.getCourse(courseId),
         canvas.getTabs(courseId), // should we yield the last?

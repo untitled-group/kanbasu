@@ -27,13 +27,13 @@ class TestStruct {
 // ignore: deprecated_member_use_from_same_package
 class TestListScreen extends RefreshableStreamListWidget<TestStruct> {
   @override
-  Stream<Stream<TestStruct>> getStreamStream() => Stream.fromIterable([
+  Stream<Stream<TestStruct>> getStreamStream(context) => Stream.fromIterable([
         Stream.fromIterable([TestStruct('old')]),
         Stream.fromIterable([TestStruct('new')])
       ]);
 
   @override
-  Widget buildItem(TestStruct item) => Text(item.data);
+  Widget buildItem(context, TestStruct item) => Text(item.data);
 }
 
 void main() {

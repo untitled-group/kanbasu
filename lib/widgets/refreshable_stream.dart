@@ -9,9 +9,9 @@ import 'package:kanbasu/widgets/snack.dart';
 import 'package:rxdart/rxdart.dart';
 
 abstract class RefreshableStreamWidget<T> extends HookWidget {
-  Stream<T> getStream();
+  Stream<T> getStream(BuildContext context);
 
-  Widget buildWidget(T? data);
+  Widget buildWidget(BuildContext context, T? data);
 
   bool showLoadingWidget() => false;
 
@@ -23,7 +23,7 @@ abstract class RefreshableStreamWidget<T> extends HookWidget {
 
       final itemStream = useMemoized(
         () {
-          final stream = getStream().doOnDone(() {
+          final stream = getStream(context).doOnDone(() {
             triggerRefresh.value.complete();
           }).handleError((error, _) {
             showErrorSnack(context, error);
@@ -42,7 +42,7 @@ abstract class RefreshableStreamWidget<T> extends HookWidget {
       final widget =
           data == null && snapshot.error == null && showLoadingWidget()
               ? LoadingWidget(isMore: true)
-              : buildWidget(data);
+              : buildWidget(context, data);
 
       final refreshIndicator = RefreshIndicator(
         onRefresh: () async {

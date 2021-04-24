@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/model.dart';
@@ -17,7 +16,7 @@ class _FilesTitle extends StreamWidget<Course?> {
   _FilesTitle(this.courseId);
 
   @override
-  Widget buildWidget(Course? data) => Column(
+  Widget buildWidget(context, Course? data) => Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: data == null
@@ -30,8 +29,8 @@ class _FilesTitle extends StreamWidget<Course?> {
             ]);
 
   @override
-  Stream<Course?> getStream() =>
-      Provider.of<Model>(useContext()).canvas.getCourse(courseId);
+  Stream<Course?> getStream(context) =>
+      Provider.of<Model>(context).canvas.getCourse(courseId);
 }
 
 class _FilesView extends RefreshableStreamListWidget<File> {
@@ -40,11 +39,11 @@ class _FilesView extends RefreshableStreamListWidget<File> {
   _FilesView(this.courseId);
 
   @override
-  Stream<Stream<File>> getStreamStream() =>
-      Provider.of<Model>(useContext()).canvas.getFiles(courseId);
+  Stream<Stream<File>> getStreamStream(context) =>
+      Provider.of<Model>(context).canvas.getFiles(courseId);
 
   @override
-  Widget buildItem(File item) => Link(
+  Widget buildItem(context, File item) => Link(
       path: item.url,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),

@@ -60,14 +60,14 @@ class _StreamListView<T> extends HookWidget {
 
 abstract class RefreshableStreamListWidget<T>
     extends RefreshableStreamWidget<Stream<T>> {
-  Stream<Stream<T>> getStreamStream();
+  Stream<Stream<T>> getStreamStream(BuildContext context);
 
-  Widget buildItem(T item);
+  Widget buildItem(BuildContext context, T item);
 
   @override
-  Stream<Stream<T>> getStream() {
+  Stream<Stream<T>> getStream(BuildContext context) {
     final context = useContext();
-    return getStreamStream()
+    return getStreamStream(context)
         // The stream may be subscribed multiple times by children,
         // so we need to replay it, with the help of RxDart extension.
         .map((s) => s
@@ -78,9 +78,9 @@ abstract class RefreshableStreamListWidget<T>
   }
 
   @override
-  Widget buildWidget(Stream<T>? data) {
+  Widget buildWidget(BuildContext context, Stream<T>? data) {
     return _StreamListView<T>(
-      itemBuilder: buildItem,
+      itemBuilder: (item) => buildItem(context, item),
       itemStream: data ?? Stream<T>.empty(),
     );
   }

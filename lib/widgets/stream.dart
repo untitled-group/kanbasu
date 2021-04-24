@@ -7,9 +7,9 @@ import 'package:rxdart/rxdart.dart';
 import 'loading.dart';
 
 abstract class StreamWidget<T> extends HookWidget {
-  Stream<T> getStream();
+  Stream<T> getStream(BuildContext context);
 
-  Widget buildWidget(T? data);
+  Widget buildWidget(BuildContext context, T? data);
 
   bool showLoadingWidget() => false;
 
@@ -19,7 +19,7 @@ abstract class StreamWidget<T> extends HookWidget {
       final triggerRefresh = useState(Completer());
 
       final itemStream = useMemoized(
-          () => getStream().doOnDone(() {
+          () => getStream(context).doOnDone(() {
                 triggerRefresh.value.complete();
               }).handleError((error, _) {
                 triggerRefresh.value.complete();
@@ -32,7 +32,7 @@ abstract class StreamWidget<T> extends HookWidget {
       final widget =
           data == null && snapshot.error == null && showLoadingWidget()
               ? LoadingWidget(isMore: true)
-              : buildWidget(data);
+              : buildWidget(context, data);
       return widget;
     });
   }

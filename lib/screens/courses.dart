@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/course.dart';
@@ -13,8 +12,8 @@ import 'package:easy_localization/easy_localization.dart';
 
 class _CoursesView extends RefreshableStreamListWidget<Course> {
   @override
-  Stream<Stream<Course>> getStreamStream() =>
-      Provider.of<Model>(useContext()).canvas.getCourses().map((courseList) {
+  Stream<Stream<Course>> getStreamStream(context) =>
+      Provider.of<Model>(context).canvas.getCourses().map((courseList) {
         final latestTerm = courseList.map((c) => c.term?.id ?? 0).fold(0, max);
         final latestCourses =
             courseList.where((c) => (c.term?.id ?? 0) >= latestTerm).toList();
@@ -22,7 +21,7 @@ class _CoursesView extends RefreshableStreamListWidget<Course> {
       });
 
   @override
-  Widget buildItem(Course item) =>
+  Widget buildItem(context, Course item) =>
       Link(path: '/course/${item.id}', child: CourseWidget(item));
 }
 

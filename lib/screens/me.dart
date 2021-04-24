@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:kanbasu/models/user.dart';
 import 'package:kanbasu/resolver/resolver_main.dart';
@@ -18,12 +17,12 @@ import 'package:kanbasu/aggregation.dart';
 
 class _MeView extends StreamWidget<User?> {
   @override
-  Widget buildWidget(User? data) =>
+  Widget buildWidget(context, User? data) =>
       data == null ? Container() : UserWidget(data);
 
   @override
-  Stream<User?> getStream() =>
-      Provider.of<Model>(useContext()).canvas.getCurrentUser();
+  Stream<User?> getStream(context) =>
+      Provider.of<Model>(context).canvas.getCurrentUser();
 }
 
 class MeScreen extends HookWidget {
