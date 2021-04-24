@@ -10,7 +10,7 @@ abstract class LockInfo implements Built<LockInfo, LockInfoBuilder> {
   factory LockInfo([Function(LockInfoBuilder b) updates]) = _$LockInfo;
 
   @BuiltValueField(wireName: 'lock_at')
-  String get lockAt;
+  DateTime? get lockAt;
   @BuiltValueField(wireName: 'can_view')
   bool get canView;
   @BuiltValueField(wireName: 'asset_string')

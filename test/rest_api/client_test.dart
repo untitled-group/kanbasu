@@ -110,5 +110,10 @@ void main() {
       final submissions = await api.getSubmissions(23333);
       expect(submissions.data[0].id, equals(3463087));
     });
+
+    test('should get announcements for course', () async {
+      final announcements = await api.getAnnouncements(['course_23333']);
+      expect(announcements.data[0].id, 66394);
+    });
   });
 }
