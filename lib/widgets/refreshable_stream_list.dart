@@ -64,6 +64,8 @@ abstract class RefreshableStreamListWidget<T>
 
   Widget buildItem(BuildContext context, T item);
 
+  int atLeast() => 10;
+
   @override
   Stream<Stream<T>> getStream(BuildContext context) {
     final context = useContext();
@@ -74,7 +76,7 @@ abstract class RefreshableStreamListWidget<T>
             .handleError((error) => showErrorSnack(context, error))
             .shareReplay())
         // Wait until there are enough elements to fill the screen
-        .asyncMap(waitFor<T>(10));
+        .asyncMap(waitFor<T>(atLeast()));
   }
 
   @override

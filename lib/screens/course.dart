@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/models/tab.dart' as t;
-import 'package:kanbasu/router.dart';
 import 'package:kanbasu/screens/course/announcements.dart';
+import 'package:kanbasu/screens/course/files.dart';
 import 'package:kanbasu/screens/course/home.dart';
 import 'package:kanbasu/screens/course/syllabus.dart';
 import 'package:kanbasu/widgets/refreshable_stream.dart';
@@ -32,6 +32,8 @@ class _CourseTabView extends RefreshableStreamWidget<void> {
         return CourseHomeScreen();
       case 'announcements':
         return CourseAnnouncementsScreen(courseId);
+      case 'files':
+        return CourseFilesScreen(courseId);
       case 'syllabus':
         return course != null ? CourseSyllabusScreen(course!) : Container();
       default:
@@ -67,26 +69,21 @@ class CourseScreen extends StreamWidget<_CourseMeta> {
     final tabs = data?.tabs;
 
     final title = Text(course?.name ?? 'title.course'.tr());
-    final action = course == null
-        ? null
-        : IconButton(
-            icon: Icon(Icons.folder),
-            tooltip: 'tabs.file'.tr(),
-            onPressed: () async {
-              final path = '/course/${course.id}/files';
-              await navigateTo(path);
-            },
-          );
 
     if (tabs == null) {
       return Scaffold(
-        appBar: AppBar(
-          title: title,
-          actions: [action].whereType<Widget>().toList(),
-        ),
+        appBar: AppBar(title: title),
       );
     } else {
       final validTabs = _filterTabs(tabs);
+
+      final action = course == null
+          ? null
+          : IconButton(
+              icon: Icon(Icons.folder),
+              tooltip: 'tabs.file'.tr(),
+              onPressed: () {},
+            );
 
       final tabBar = TabBar(
         tabs: validTabs.map((t) => Tab(text: t.label)).toList(),

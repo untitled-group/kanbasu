@@ -10,6 +10,7 @@ import 'package:kanbasu/widgets/stream.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+// ignore: unused_element
 class _FilesTitle extends StreamWidget<Course?> {
   final int courseId;
 
@@ -39,39 +40,40 @@ class _FilesView extends RefreshableStreamListWidget<File> {
   _FilesView(this.courseId);
 
   @override
+  int atLeast() => 20;
+
+  @override
   Stream<Stream<File>> getStreamStream(context) =>
       Provider.of<Model>(context).canvas.getFiles(courseId);
 
   @override
   Widget buildItem(context, File item) => Link(
-      path: item.url,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [Text(item.displayName)]),
-            Expanded(
-                child: Align(
-              alignment: Alignment.centerRight,
-              child: Icon(Icons.open_in_new),
-            )),
-          ],
+        path: item.url,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [Text(item.displayName)]),
+              Expanded(
+                  child: Align(
+                alignment: Alignment.centerRight,
+                child: Icon(Icons.open_in_new),
+              )),
+            ],
+          ),
         ),
-      ));
+      );
 }
 
-class FilesScreen extends StatelessWidget {
+class CourseFilesScreen extends StatelessWidget {
   final int courseId;
 
-  FilesScreen({required this.courseId});
+  CourseFilesScreen(this.courseId);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: _FilesTitle(courseId)),
-      body: _FilesView(courseId),
-    );
+    return _FilesView(courseId);
   }
 }
