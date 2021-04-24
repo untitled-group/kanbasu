@@ -28,7 +28,7 @@ class AnnouncementWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleAvatar(
-                backgroundImage: NetworkImage(item.author.avatarImageUrl),
+                backgroundImage: NetworkImage(item.author.avatarImageUrl ?? ''),
               ),
               SizedBox(width: 10),
               Expanded(
@@ -53,10 +53,13 @@ class AnnouncementWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          timeago.format(
-                            item.postedAt,
-                            locale: context.locale.toStringWithSeparator(),
-                          ),
+                          item.postedAt != null
+                              ? timeago.format(
+                                  item.postedAt!,
+                                  locale:
+                                      context.locale.toStringWithSeparator(),
+                                )
+                              : '',
                           style: TextStyle(
                               fontSize: 14, color: theme.tertiaryText),
                         ),
@@ -70,7 +73,7 @@ class AnnouncementWidget extends StatelessWidget {
                         ),
                         Spacer(),
                         Text(
-                          item.author.displayName,
+                          item.author.displayName ?? 'Unknown',
                           style: TextStyle(
                               fontSize: 14, color: theme.tertiaryText),
                         ),

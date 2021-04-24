@@ -5,11 +5,13 @@ import 'package:kanbasu/utils/logging.dart';
 
 void showErrorSnack(BuildContext context, dynamic e) {
   final String error;
+  final logger = createLogger();
   if (e is DioError) {
     error = e.error.toString();
   } else {
     error = e.runtimeType.toString();
   }
+  logger.e(e);
   showSnack(context, 'error.check_net_api'.tr(args: [error]));
 
   final logger = createLogger();
