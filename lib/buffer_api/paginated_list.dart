@@ -13,7 +13,8 @@ Map<String, String>? getRelLink(String linkHeader, String rel) {
       if (url == null) {
         continue;
       }
-      return url.queryParameters;
+      return Map.fromEntries(url.queryParameters.entries
+          .where((e) => ['page', 'per_page'].contains(e.key)));
     }
   }
   return null;
