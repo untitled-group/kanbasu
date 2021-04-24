@@ -160,6 +160,9 @@ abstract class CanvasRestClient {
   /// List announcements for some context codes.
   @GET('/announcements')
   Future<HttpResponse<List<DiscussionTopic>>> getAnnouncements(
-      @Query('context_codes[]') List<String> contextCodes,
-      {@Queries() Map<String, dynamic>? queries});
+    @Query('context_codes[]') List<String> contextCodes, {
+    @Query('start_date') String startDate = '1970-01-01',
+    @Query('end_date') String endDate = '9999-01-01',
+    @Queries() Map<String, dynamic>? queries,
+  });
 }
