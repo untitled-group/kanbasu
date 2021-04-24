@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:kanbasu/models/discussion_topic.dart';
 import 'package:kanbasu/models/model.dart';
+import 'package:kanbasu/router.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:separated_column/separated_column.dart';
@@ -26,6 +27,10 @@ class AnnouncementWidget extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              CircleAvatar(
+                backgroundImage: NetworkImage(item.author.avatarImageUrl),
+              ),
+              SizedBox(width: 10),
               Expanded(
                 child: SeparatedColumn(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +98,12 @@ class AnnouncementContentWidget extends StatelessWidget {
       shrinkWrap: true,
       children: [
         AnnouncementWidget(item),
-        Html(data: item.message),
+        Html(
+          data: item.message,
+          onLinkTap: (url, _, __, ___) {
+            if (url != null) navigateTo(url);
+          },
+        ),
       ],
     );
   }
