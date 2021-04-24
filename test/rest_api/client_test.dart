@@ -114,6 +114,7 @@ void main() {
     test('should get announcements for course', () async {
       final announcements = await api.getAnnouncements(['course_23333']);
       expect(announcements.data[0].id, equals(66394));
+    });
 
     test('should get info about all submissions of a course with queries',
         () async {
