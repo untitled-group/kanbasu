@@ -13,9 +13,6 @@ void showErrorSnack(BuildContext context, dynamic e) {
   }
   logger.e(e);
   showSnack(context, 'error.check_net_api'.tr(args: [error]));
-
-  final logger = createLogger();
-  logger.e(e);
 }
 
 void showSnack(BuildContext context, String text) {

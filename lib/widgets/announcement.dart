@@ -52,17 +52,15 @@ class AnnouncementWidget extends StatelessWidget {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          item.postedAt != null
-                              ? timeago.format(
-                                  item.postedAt!,
-                                  locale:
-                                      context.locale.toStringWithSeparator(),
-                                )
-                              : '',
-                          style: TextStyle(
-                              fontSize: 14, color: theme.tertiaryText),
-                        ),
+                        if (item.postedAt != null)
+                          Text(
+                            timeago.format(
+                              item.postedAt!,
+                              locale: context.locale.toStringWithSeparator(),
+                            ),
+                            style: TextStyle(
+                                fontSize: 14, color: theme.tertiaryText),
+                          ),
                         SizedBox(
                           width: 5,
                         ),
@@ -73,7 +71,7 @@ class AnnouncementWidget extends StatelessWidget {
                         ),
                         Spacer(),
                         Text(
-                          item.author.displayName ?? 'Unknown',
+                          item.author.displayName ?? '',
                           style: TextStyle(
                               fontSize: 14, color: theme.tertiaryText),
                         ),
@@ -103,6 +101,7 @@ class AnnouncementContentWidget extends StatelessWidget {
         AnnouncementWidget(item),
         Html(
           data: item.message,
+          shrinkWrap: true,
           onLinkTap: (url, _, __, ___) {
             if (url != null) navigateTo(url);
           },
