@@ -19,8 +19,8 @@ class AssignmentWidget extends StatelessWidget {
     if (item.dueAt != null) {
       dueTimeString = 'assignment.due_time_is'.tr() +
           (dueTimeDetails
-              ? item.dueAt!.toString().substring(0, 19)
-              : item.dueAt!.toString().substring(0, 10));
+              ? item.dueAt!.toLocal().toString().substring(0, 19)
+              : item.dueAt!.toLocal().toString().substring(0, 10));
     } else {
       dueTimeString = 'assignment.no_due_time'.tr();
     }
