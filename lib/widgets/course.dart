@@ -53,6 +53,11 @@ class CourseWidget extends StatelessWidget {
                   ],
                 ),
               ),
+              Icon(
+                Icons.arrow_forward,
+                color: theme.tertiaryText,
+                size: 18,
+              ),
             ],
           ),
         ],

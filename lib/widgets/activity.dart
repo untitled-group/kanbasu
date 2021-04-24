@@ -56,9 +56,11 @@ class ActivityWidget extends StatelessWidget {
                             TextSpan(text: item.title.trim()),
                             //* add more span here
                           ]),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
                     ),
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           timeago.format(
@@ -80,6 +82,11 @@ class ActivityWidget extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
+              Icon(
+                Icons.arrow_forward,
+                color: theme.tertiaryText,
+                size: 18,
               ),
             ],
           ),
