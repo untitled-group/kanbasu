@@ -1,6 +1,5 @@
 import 'package:get/route_manager.dart';
 import 'package:kanbasu/screens/course.dart';
-import 'package:kanbasu/screens/files.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final getPages = [
@@ -9,8 +8,11 @@ final getPages = [
     page: () => CourseScreen(courseId: int.parse(Get.parameters['courseId']!)),
   ),
   GetPage(
-    name: '/course/:courseId/files',
-    page: () => FilesScreen(courseId: int.parse(Get.parameters['courseId']!)),
+    name: '/course/:courseId/:initialTabId',
+    page: () => CourseScreen(
+      courseId: int.parse(Get.parameters['courseId']!),
+      initialTabId: Get.parameters['initialTabId'],
+    ),
   ),
 ];
 

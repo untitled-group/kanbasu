@@ -44,14 +44,21 @@ class CourseWidget extends StatelessWidget {
                             //* add more span here
                           ]),
                     ),
-                    Text(
-                      item.courseCode.trim(),
-                      style: TextStyle(fontSize: 14, color: theme.tertiaryText),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
+                    if (item.teachers != null)
+                      Text(
+                        item.teachers!.map((t) => t.displayName).join(' '),
+                        style:
+                            TextStyle(fontSize: 14, color: theme.tertiaryText),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
                   ],
                 ),
+              ),
+              Icon(
+                Icons.arrow_forward,
+                color: theme.tertiaryText,
+                size: 18,
               ),
             ],
           ),

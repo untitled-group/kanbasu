@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:kanbasu/models/activity_item.dart';
+import 'package:flutter/src/widgets/framework.dart';
+import 'package:kanbasu/models/discussion_topic.dart';
 import 'package:kanbasu/models/model.dart';
+import 'package:kanbasu/router.dart';
 import 'package:provider/provider.dart';
-import 'package:timeago/timeago.dart' as timeago;
+import 'package:flutter_html/flutter_html.dart';
 import 'package:separated_column/separated_column.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import 'package:easy_localization/easy_localization.dart';
 
-class ActivityWidget extends StatelessWidget {
-  final ActivityItem item;
+class AnnouncementWidget extends StatelessWidget {
+  final DiscussionTopic item;
 
-  ActivityWidget(this.item);
+  AnnouncementWidget(this.item);
 
-  Widget _buildItems(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     final theme = Provider.of<Model>(context).theme;
-    final isDone = item.readState || item.workflowState == 'graded';
+    final isRead = item.readState == 'read';
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -24,37 +28,23 @@ class ActivityWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleAvatar(
-                backgroundColor: theme.primary,
-                foregroundColor: theme.background,
-                child: Text('activity.short_type.${item.type}'.tr()),
+                backgroundImage: NetworkImage(item.author.avatarImageUrl ?? ''),
               ),
-              SizedBox(
-                width: 10,
-              ),
+              SizedBox(width: 10),
               Expanded(
                 child: SeparatedColumn(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   separatorBuilder: (context, index) => SizedBox(height: 1),
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.course?.name ?? item.courseId.toString(),
-                          style: TextStyle(fontSize: 14, color: theme.primary),
-                        )
-                      ],
-                    ),
                     Text.rich(
                       TextSpan(
                           style: TextStyle(
                             fontSize: 17,
                             color: theme.text,
-                            fontWeight: isDone ? null : FontWeight.bold,
+                            fontWeight: isRead ? null : FontWeight.bold,
                           ),
                           children: [
                             TextSpan(text: item.title.trim()),
-                            //* add more span here
                           ]),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
@@ -62,31 +52,33 @@ class ActivityWidget extends StatelessWidget {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          timeago.format(
-                            item.updatedAt,
-                            locale: context.locale.toStringWithSeparator(),
+                        if (item.postedAt != null)
+                          Text(
+                            timeago.format(
+                              item.postedAt!,
+                              locale: context.locale.toStringWithSeparator(),
+                            ),
+                            style: TextStyle(
+                                fontSize: 14, color: theme.tertiaryText),
                           ),
-                          style: TextStyle(
-                              fontSize: 14, color: theme.tertiaryText),
-                        ),
                         SizedBox(
                           width: 5,
                         ),
                         Icon(
-                          isDone ? Icons.done : null,
+                          isRead ? Icons.done : null,
                           color: theme.primary,
                           size: 15,
-                        )
+                        ),
+                        Spacer(),
+                        Text(
+                          item.author.displayName ?? '',
+                          style: TextStyle(
+                              fontSize: 14, color: theme.tertiaryText),
+                        ),
                       ],
                     ),
                   ],
                 ),
-              ),
-              Icon(
-                Icons.arrow_forward,
-                color: theme.tertiaryText,
-                size: 18,
               ),
             ],
           ),
@@ -94,9 +86,27 @@ class ActivityWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+class AnnouncementContentWidget extends StatelessWidget {
+  final DiscussionTopic item;
+
+  AnnouncementContentWidget(this.item);
 
   @override
   Widget build(BuildContext context) {
-    return _buildItems(context);
+    return ListView(
+      shrinkWrap: true,
+      children: [
+        AnnouncementWidget(item),
+        Html(
+          data: item.message,
+          shrinkWrap: true,
+          onLinkTap: (url, _, __, ___) {
+            if (url != null) navigateTo(url);
+          },
+        ),
+      ],
+    );
   }
 }

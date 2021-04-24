@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/model.dart';
@@ -11,13 +10,14 @@ import 'package:kanbasu/widgets/stream.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+// ignore: unused_element
 class _FilesTitle extends StreamWidget<Course?> {
   final int courseId;
 
   _FilesTitle(this.courseId);
 
   @override
-  Widget buildWidget(Course? data) => Column(
+  Widget buildWidget(context, Course? data) => Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: data == null
@@ -30,8 +30,8 @@ class _FilesTitle extends StreamWidget<Course?> {
             ]);
 
   @override
-  Stream<Course?> getStream() =>
-      Provider.of<Model>(useContext()).canvas.getCourse(courseId);
+  Stream<Course?> getStream(context) =>
+      Provider.of<Model>(context).canvas.getCourse(courseId);
 }
 
 class _FilesView extends RefreshableStreamListWidget<File> {
@@ -40,39 +40,40 @@ class _FilesView extends RefreshableStreamListWidget<File> {
   _FilesView(this.courseId);
 
   @override
-  Stream<Stream<File>> getStreamStream() =>
-      Provider.of<Model>(useContext()).canvas.getFiles(courseId);
+  int atLeast() => 20;
 
   @override
-  Widget buildItem(File item) => Link(
-      path: item.url,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [Text(item.displayName)]),
-            Expanded(
-                child: Align(
-              alignment: Alignment.centerRight,
-              child: Icon(Icons.open_in_new),
-            )),
-          ],
+  Stream<Stream<File>> getStreamStream(context) =>
+      Provider.of<Model>(context).canvas.getFiles(courseId);
+
+  @override
+  Widget buildItem(context, File item) => Link(
+        path: item.url,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [Text(item.displayName)]),
+              Expanded(
+                  child: Align(
+                alignment: Alignment.centerRight,
+                child: Icon(Icons.open_in_new),
+              )),
+            ],
+          ),
         ),
-      ));
+      );
 }
 
-class FilesScreen extends StatelessWidget {
+class CourseFilesScreen extends StatelessWidget {
   final int courseId;
 
-  FilesScreen({required this.courseId});
+  CourseFilesScreen(this.courseId);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: _FilesTitle(courseId)),
-      body: _FilesView(courseId),
-    );
+    return _FilesView(courseId);
   }
 }

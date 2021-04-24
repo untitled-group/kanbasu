@@ -20,9 +20,9 @@ abstract class DiscussionTopic
   @BuiltValueField(wireName: 'title')
   String get title;
   @BuiltValueField(wireName: 'last_reply_at')
-  DateTime get lastReplyAt;
+  DateTime? get lastReplyAt;
   @BuiltValueField(wireName: 'posted_at')
-  DateTime get postedAt;
+  DateTime? get postedAt;
   @BuiltValueField(wireName: 'assignment_id')
   int? get assignmentId;
   @BuiltValueField(wireName: 'root_topic_id')
@@ -32,7 +32,7 @@ abstract class DiscussionTopic
   @BuiltValueField(wireName: 'lock_at')
   DateTime? get lockAt;
   @BuiltValueField(wireName: 'user_name')
-  String get userName;
+  String? get userName;
   @BuiltValueField(wireName: 'discussion_subentry_count')
   int get discussionSubentryCount;
   @BuiltValueField(wireName: 'read_state')

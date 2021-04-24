@@ -10,6 +10,8 @@ abstract class Tab implements Built<Tab, TabBuilder> {
 
   factory Tab([Function(TabBuilder b) updates]) = _$Tab;
 
+  /// possible values: `home`, `announcements`, `assignments`, `discussions`,
+  /// `grades`, `people`, `files`, `syllabus`, `modules`
   @BuiltValueField(wireName: 'id')
   String get id;
 

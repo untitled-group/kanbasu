@@ -12,13 +12,13 @@ abstract class UserDisplay implements Built<UserDisplay, UserDisplayBuilder> {
   factory UserDisplay([Function(UserDisplayBuilder b) updates]) = _$UserDisplay;
 
   @BuiltValueField(wireName: 'id')
-  int get id;
+  int? get id;
   @BuiltValueField(wireName: 'display_name')
-  String get displayName;
+  String? get displayName;
   @BuiltValueField(wireName: 'avatar_image_url')
-  String get avatarImageUrl;
+  String? get avatarImageUrl;
   @BuiltValueField(wireName: 'html_url')
-  String get htmlUrl;
+  String? get htmlUrl;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(UserDisplay.serializer, this)!
