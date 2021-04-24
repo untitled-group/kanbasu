@@ -83,9 +83,7 @@ class CourseScreen extends StreamWidget<_CourseMeta> {
         ),
       );
     } else {
-      final validTabs = tabs
-          .where((t) => t.type != 'external' && t.visibility == 'public')
-          .toList();
+      final validTabs = _filterTabs(tabs);
 
       final tabBar = TabBar(
         tabs: validTabs.map((t) => Tab(text: t.label)).toList(),
@@ -124,4 +122,14 @@ class CourseScreen extends StreamWidget<_CourseMeta> {
         canvas.getTabs(courseId), // should we yield the last?
         (a, b) => _CourseMeta(a as Course?, b as List<t.Tab>));
   }
+}
+
+List<t.Tab> _filterTabs(List<t.Tab> ts) {
+  final excludeIds = ['people', 'grades'];
+  return ts
+      .where((t) =>
+          t.type != 'external' &&
+          t.visibility == 'public' &&
+          !excludeIds.contains(t.id))
+      .toList();
 }
