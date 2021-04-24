@@ -3,6 +3,8 @@ import 'package:built_value/serializer.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/json_object.dart';
+import 'package:kanbasu/models/author.dart';
+import 'package:kanbasu/models/discussion_topic.dart';
 
 import 'assignment.dart';
 import 'lock_info.dart';
@@ -38,7 +40,9 @@ part 'serializers.g.dart';
   Page,
   Planner,
   Folder,
-  BriefInfo
+  Author,
+  DiscussionTopic,
+  BriefInfo,
 ])
 final Serializers serializers = (_$serializers.toBuilder()
       ..add(Iso8601DateTimeSerializer())

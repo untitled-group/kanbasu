@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:kanbasu/buffer_api/kvstore.dart';
 import 'package:kanbasu/models/activity_item.dart';
+import 'package:kanbasu/models/discussion_topic.dart';
 import 'package:kanbasu/models/module.dart';
 import 'package:kanbasu/models/module_item.dart';
 import 'package:kanbasu/models/assignment.dart';
@@ -429,5 +430,19 @@ class CanvasBufferClient {
         (e) => Folder.fromJson(e),
         (e) => e.toJson(),
         () => _restClient.getFolder(course_id, folder_id));
+  }
+
+  String _getAnnouncementsPrefix(course_id) =>
+      'courses/$course_id/announcements/by_id/';
+
+  /// List announcements for a course.
+  Stream<Stream<DiscussionTopic>> getAnnouncements(int course_id) {
+    return _getPaginatedStreamStream(
+        _getAnnouncementsPrefix(course_id),
+        (e) => DiscussionTopic.fromJson(e),
+        (e) => e.toJson(),
+        ({queries}) => _restClient
+            .getAnnouncements(['course_$course_id'], queries: queries),
+        (e) => e.id.toString());
   }
 }

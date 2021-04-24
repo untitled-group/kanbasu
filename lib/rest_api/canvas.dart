@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:kanbasu/models/discussion_topic.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 
@@ -139,5 +140,11 @@ abstract class CanvasRestClient {
   /// Returns the current user's global activity stream, paginated
   @GET('/users/self/activity_stream')
   Future<HttpResponse<List<ActivityItem>>> getCurrentUserActivityStream(
+      {@Queries() Map<String, dynamic>? queries});
+
+  /// List announcements for some context codes.
+  @GET('/announcements')
+  Future<HttpResponse<List<DiscussionTopic>>> getAnnouncements(
+      @Query('context_codes[]') List<String> contextCodes,
       {@Queries() Map<String, dynamic>? queries});
 }
