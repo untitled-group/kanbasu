@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -12,10 +13,15 @@ import 'package:easy_localization/easy_localization.dart';
 
 class _CoursesView extends RefreshableStreamListWidget<Course> {
   @override
-  Stream<Stream<Course>> getStreamStream() => Provider.of<Model>(useContext())
-      .canvas
-      .getCourses()
-      .map((courseList) => Stream.fromIterable(courseList));
+  Stream<Stream<Course>> getStreamStream() =>
+      Provider.of<Model>(useContext()).canvas.getCourses().map((courseList) {
+        final latestTerm = courseList
+            .map((c) => c.term?.id ?? 0)
+            .fold(0, (int a, int b) => max(a, b));
+        final latestCourses =
+            courseList.where((c) => (c.term?.id ?? 0) >= latestTerm).toList();
+        return Stream.fromIterable(latestCourses);
+      });
 
   @override
   Widget buildItem(Course item) =>

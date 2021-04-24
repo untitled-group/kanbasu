@@ -35,7 +35,7 @@ class _StreamListView<T> extends HookWidget {
       final itemsSnapshot = useStream(stream, initialData: List<T>.empty());
 
       final Widget list;
-      final items = itemsSnapshot.data!;
+      final items = itemsSnapshot.data!.where((i) => i != null).toList();
       final itemsLength = items.length;
 
       final buildItem = (BuildContext context, int index) {
