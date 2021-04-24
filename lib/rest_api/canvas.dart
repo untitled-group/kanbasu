@@ -27,12 +27,27 @@ abstract class CanvasRestClient {
 
   /// Returns the paginated list of active courses for the current user.
   @GET('/courses')
-  Future<HttpResponse<List<MaybeCourse>>> getCourses(
-      {@Queries() Map<String, dynamic>? queries});
+  Future<HttpResponse<List<MaybeCourse>>> getCourses({
+    @Query('include[]') List<String> includes = const [
+      'syllabus_body',
+      'term',
+      'course_image',
+      'teachers',
+    ],
+    @Queries() Map<String, dynamic>? queries,
+  });
 
   /// Returns information on a single course.
   @GET('/courses/{id}')
-  Future<HttpResponse<Course>> getCourse(@Path() int id);
+  Future<HttpResponse<Course>> getCourse(
+    @Path() int id, {
+    @Query('include[]') List<String> includes = const [
+      'syllabus_body',
+      'term',
+      'course_image',
+      'teachers',
+    ],
+  });
 
   /// List available tabs for a course or group.
   @GET('/courses/{id}/tabs')
