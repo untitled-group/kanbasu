@@ -12,6 +12,13 @@ final getPages = [
     name: '/course/:courseId/files',
     page: () => FilesScreen(courseId: int.parse(Get.parameters['courseId']!)),
   ),
+  GetPage(
+    name: '/course/:courseId/:initialTabId',
+    page: () => CourseScreen(
+      courseId: int.parse(Get.parameters['courseId']!),
+      initialTabId: Get.parameters['initialTabId'],
+    ),
+  ),
 ];
 
 Future<void> navigateTo(
