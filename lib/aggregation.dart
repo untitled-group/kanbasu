@@ -6,6 +6,11 @@ import 'package:kanbasu/models/submission.dart';
 import 'package:kanbasu/models/brief_info.dart';
 import 'package:html/parser.dart' show parse;
 
+String getPlainText(String htmlData) {
+  final bodyText = parse(htmlData).body?.text;
+  return bodyText ?? '';
+}
+
 Future<List> getListDataFromApi(Stream stream, bool useOnlineData) async {
   if (useOnlineData) {
     final data = (await stream.last).toList();
@@ -88,7 +93,7 @@ BriefInfo aggregateFromPlanner(
     Planner planner, int course_id, String course_name) {
   // only deal with announcements
   final title = '$course_name 通知: ${planner.plannable.title}';
-  final description = parse(planner.plannable.message ?? '').text ?? '';
+  final description = getPlainText(planner.plannable.message ?? '');
 
   return BriefInfo((i) => i
     ..title = title
@@ -107,7 +112,7 @@ BriefInfo aggregateFromAssignment(
   } else {
     title = '$course_name 课程作业已布置';
   }
-  final description = parse(assignment.description ?? '').text ?? '';
+  final description = getPlainText(assignment.description ?? '');
   final updatedAt = assignment.updatedAt ?? assignment.createdAt;
 
   return BriefInfo((i) => i
