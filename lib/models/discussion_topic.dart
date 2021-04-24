@@ -2,7 +2,7 @@ library discussion_topic;
 
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:kanbasu/models/author.dart';
+import 'package:kanbasu/models/user_display.dart';
 import 'package:kanbasu/models/lock_info.dart';
 import 'serializers.dart';
 
@@ -48,7 +48,7 @@ abstract class DiscussionTopic
   @BuiltValueField(wireName: 'comments_disabled')
   bool get commentsDisabled;
   @BuiltValueField(wireName: 'author')
-  Author get author;
+  UserDisplay get author;
   @BuiltValueField(wireName: 'html_url')
   String get htmlUrl;
   @BuiltValueField(wireName: 'url')

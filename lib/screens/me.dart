@@ -11,6 +11,7 @@ import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/stream.dart';
 import 'package:kanbasu/widgets/user.dart';
 import 'package:provider/provider.dart';
+import 'package:separated_column/separated_column.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:kanbasu/aggregation.dart';
@@ -25,7 +26,7 @@ class _MeView extends StreamWidget<User?> {
       Provider.of<Model>(useContext()).canvas.getCurrentUser();
 }
 
-class MeScreen extends StatelessWidget {
+class MeScreen extends HookWidget {
   void _pushSettings(context) async {
     final model = Provider.of<Model>(context, listen: false);
     final prefs = await SharedPreferences.getInstance();
@@ -88,50 +89,77 @@ class MeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final model = Provider.of<Model>(context, listen: false);
+    final tapped = useState(0);
+
+    final developerTools = Container(
+      padding: EdgeInsets.all(15),
+      child: SeparatedColumn(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        separatorBuilder: (context, index) => SizedBox(height: 5),
+        children: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.grey, // background
+              onPrimary: Colors.white, // foreground
+            ),
+            onPressed: () {
+              final logger = createLogger();
+              logger.i('Aggregator!');
+              final aggregation = aggregate(
+                  Provider.of<Model>(context, listen: false).canvas,
+                  useOnlineData: true);
+              aggregation.then((data) => {logger.i(data)});
+              logger.i('Finish aggregator');
+            },
+            child: Text('运行 Aggregator'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.grey, // background
+              onPrimary: Colors.white, // foreground
+            ),
+            onPressed: () {
+              resolverMain();
+            },
+            child: Text('运行 Resolver'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.grey, // background
+              onPrimary: Colors.white, // foreground
+            ),
+            onPressed: () async {
+              await model.deleteKv();
+              Phoenix.rebirth(context);
+            },
+            child: Text('清空 KV'),
+          )
+        ],
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text('title.settings'.tr()),
         actions: [
           IconButton(
-              icon: Icon(Icons.settings),
-              tooltip: 'title.settings'.tr(),
-              onPressed: () {
-                _pushSettings(context);
-              })
+            icon: Icon(Icons.settings),
+            tooltip: 'title.settings'.tr(),
+            onPressed: () {
+              _pushSettings(context);
+            },
+          )
         ],
       ),
       body: ListView(children: [
-        _MeView(),
-        Divider(),
-        Text('开发者工具'),
-        SizedBox(height: 5),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            primary: Colors.grey, // background
-            onPrimary: Colors.white, // foreground
-          ),
-          onPressed: () {
-            final logger = createLogger();
-            logger.i('Aggregator!');
-            final aggregation = aggregate(
-                Provider.of<Model>(context, listen: false).canvas,
-                useOnlineData: true);
-            aggregation.then((data) => {logger.i(data)});
-            logger.i('Finish aggregator');
+        InkWell(
+          onTap: () {
+            tapped.value += 1;
           },
-          child: Text('运行 Aggregator'),
+          child: _MeView(),
         ),
-        SizedBox(height: 5),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            primary: Colors.grey, // background
-            onPrimary: Colors.white, // foreground
-          ),
-          onPressed: () {
-            resolverMain();
-          },
-          child: Text('运行 Resolver'),
-        )
+        if (tapped.value >= 5) developerTools,
       ]),
     );
   }

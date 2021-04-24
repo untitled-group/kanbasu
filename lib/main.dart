@@ -22,21 +22,23 @@ Future<void> main() async {
   final model = Model();
   await Future.wait([model.init()]);
 
-  return runApp(EasyLocalization(
-    supportedLocales: [
-      Locale('zh', 'CN'),
-      Locale('en', 'US'),
-    ],
-    startLocale: Locale('zh', 'CN'),
-    fallbackLocale: Locale('en', 'US'),
-    useFallbackTranslations: true,
-    path: 'assets/translations',
-    assetLoader: YamlAssetLoader(),
-    child: ChangeNotifierProvider(
-      create: (context) => model,
-      child: Phoenix(child: MyApp()), // for rebirthing the app
+  return runApp(
+    EasyLocalization(
+      supportedLocales: [
+        Locale('zh', 'CN'),
+        Locale('en', 'US'),
+      ],
+      startLocale: Locale('zh', 'CN'),
+      fallbackLocale: Locale('en', 'US'),
+      useFallbackTranslations: true,
+      path: 'assets/translations',
+      assetLoader: YamlAssetLoader(),
+      child: ChangeNotifierProvider(
+        create: (context) => model,
+        child: Phoenix(child: MyApp()), // for rebirthing the app
+      ),
     ),
-  ));
+  );
 }
 
 class MyApp extends StatelessWidget {

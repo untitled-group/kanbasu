@@ -61,6 +61,16 @@ class KvStore {
     return db.close();
   }
 
+  /// Delete all data from the database
+  Future<void> delete() async {
+    final db = await _database;
+    try {
+      await db.delete(_tableName);
+    } catch (e) {
+      createLogger().w('During deleting database: $e');
+    }
+  }
+
   /// Set [key] to [value] in database.
   Future<void> setItem(String key, String value) async {
     final db = await _database;

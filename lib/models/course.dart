@@ -1,5 +1,8 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:kanbasu/models/user_display.dart';
+import 'package:kanbasu/models/term.dart';
 import 'serializers.dart';
 
 part 'course.g.dart';
@@ -25,6 +28,26 @@ abstract class Course implements Built<Course, CourseBuilder> {
   DateTime? get endAt;
   @BuiltValueField(wireName: 'time_zone')
   String? get timeZone;
+
+  /// only available when requesting exactly course
+  @BuiltValueField(wireName: 'syllabus_body')
+  String? get syllabusBody;
+
+  /// only available when requesting exactly course
+  @BuiltValueField(wireName: 'term')
+  Term? get term;
+
+  /// only available when requesting exactly course
+  @BuiltValueField(wireName: 'teachers')
+  BuiltList<UserDisplay>? get teachers;
+
+  /// only available when requesting exactly course
+  @BuiltValueField(wireName: 'image_download_url')
+  String? get imageUrl;
+
+  /// one of 'unpublished', 'available', 'completed', or 'deleted'
+  @BuiltValueField(wireName: 'workflow_state')
+  String get workflowState;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(Course.serializer, this)!

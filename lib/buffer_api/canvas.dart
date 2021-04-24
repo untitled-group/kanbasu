@@ -48,6 +48,8 @@ class CanvasBufferClient {
 
   CanvasBufferClient(this._restClient, [this._kvStore]);
 
+  KvStore? get kvStore => _kvStore;
+
   /// Enable offline mode
   void enableOffline() {
     _offline = true;

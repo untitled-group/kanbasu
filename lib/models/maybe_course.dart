@@ -1,5 +1,8 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:kanbasu/models/term.dart';
+import 'package:kanbasu/models/user_display.dart';
 import 'serializers.dart';
 import 'course.dart';
 
@@ -26,6 +29,19 @@ abstract class MaybeCourse implements Built<MaybeCourse, MaybeCourseBuilder> {
   DateTime? get endAt;
   @BuiltValueField(wireName: 'time_zone')
   String? get timeZone;
+
+  @BuiltValueField(wireName: 'syllabus_body')
+  String? get syllabusBody;
+  @BuiltValueField(wireName: 'term')
+  Term? get term;
+  @BuiltValueField(wireName: 'teachers')
+  BuiltList<UserDisplay>? get teachers;
+  @BuiltValueField(wireName: 'image_download_url')
+  String? get imageUrl;
+
+  /// one of 'unpublished', 'available', 'completed', or 'deleted'
+  @BuiltValueField(wireName: 'workflow_state')
+  String? get workflowState;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(MaybeCourse.serializer, this)!
