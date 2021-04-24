@@ -1,5 +1,8 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
+import 'package:built_value/json_object.dart';
 import 'package:built_value/serializer.dart';
+import 'assignment.dart';
 import 'serializers.dart';
 
 part 'submission.g.dart';
@@ -51,6 +54,10 @@ abstract class Submission implements Built<Submission, SubmissionBuilder> {
   bool get missing;
   @BuiltValueField(wireName: 'preview_url')
   String? get previewUrl;
+  @BuiltValueField(wireName: 'submission_comments')
+  BuiltList<BuiltMap<String, JsonObject>>? get submissionComments;
+  @BuiltValueField(wireName: 'assignment')
+  Assignment? get assignment;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(Submission.serializer, this)!
