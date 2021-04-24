@@ -88,6 +88,8 @@ class MeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final model = Provider.of<Model>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('title.settings'.tr()),
@@ -131,6 +133,18 @@ class MeScreen extends StatelessWidget {
             resolverMain();
           },
           child: Text('运行 Resolver'),
+        ),
+        SizedBox(height: 5),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: Colors.grey, // background
+            onPrimary: Colors.white, // foreground
+          ),
+          onPressed: () async {
+            await model.deleteKv();
+            Phoenix.rebirth(context);
+          },
+          child: Text('清空 KV'),
         )
       ]),
     );

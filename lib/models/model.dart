@@ -84,6 +84,10 @@ class Model with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> deleteKv() async {
+    await _canvas.kvStore?.delete();
+  }
+
   Future<void> init() async {
     await updateCanvasClient();
   }
