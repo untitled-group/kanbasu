@@ -5,6 +5,7 @@ import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/models/tab.dart' as t;
 import 'package:kanbasu/router.dart';
+import 'package:kanbasu/screens/course/announcements.dart';
 import 'package:kanbasu/screens/course/home.dart';
 import 'package:kanbasu/widgets/refreshable_stream.dart';
 import 'package:kanbasu/widgets/stream.dart';
@@ -12,16 +13,27 @@ import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:rxdart/rxdart.dart';
 
-class _CourseMockTabView extends RefreshableStreamWidget<void> {
+class _CourseTabView extends RefreshableStreamWidget<void> {
+  final int courseId;
+  final Course? course;
   final t.Tab tab;
 
-  _CourseMockTabView(this.tab);
+  _CourseTabView(
+    this.courseId,
+    this.course,
+    this.tab,
+  );
 
   @override
   Widget buildWidget(context, void data) {
-    return tab.position == 1
-        ? CourseHomeScreen()
-        : Center(child: Text('It\'s ${tab.id} here'));
+    switch (tab.id) {
+      case 'home':
+        return CourseHomeScreen();
+      case 'announcements':
+        return CourseAnnouncementsScreen(courseId);
+      default:
+        return Center(child: Text('It\'s ${tab.id} here'));
+    }
   }
 
   @override
@@ -87,7 +99,9 @@ class CourseScreen extends StreamWidget<_CourseMeta> {
             bottom: tabBar,
           ),
           body: TabBarView(
-            children: validTabs.map((t) => _CourseMockTabView(t)).toList(),
+            children: validTabs
+                .map((t) => _CourseTabView(courseId, course, t))
+                .toList(),
           ));
 
       final initialIndex = initialTabId == null
