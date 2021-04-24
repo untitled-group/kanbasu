@@ -16,16 +16,25 @@ class AssignmentWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String dueTimeString;
+    final bool passDue;
+    final TextStyle dueTimeStyle;
+    final theme = Provider.of<Model>(context).theme;
     if (item.dueAt != null) {
       dueTimeString = 'assignment.due_time_is'.tr() +
           (dueTimeDetails
               ? item.dueAt!.toLocal().toString().substring(0, 19)
               : item.dueAt!.toLocal().toString().substring(0, 10));
+      passDue = DateTime.now().isAfter(item.dueAt!);
     } else {
       dueTimeString = 'assignment.no_due_time'.tr();
+      passDue = false;
+    }
+    if (passDue) {
+      dueTimeStyle = TextStyle(fontSize: 14, color: theme.primary);
+    } else {
+      dueTimeStyle = TextStyle(fontSize: 14, color: theme.succeed);
     }
 
-    final theme = Provider.of<Model>(context).theme;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Column(
@@ -69,7 +78,7 @@ class AssignmentWidget extends StatelessWidget {
                         Spacer(),
                         Text(
                           dueTimeString,
-                          style: TextStyle(fontSize: 14, color: theme.succeed),
+                          style: dueTimeStyle,
                         ),
                       ],
                     ),
