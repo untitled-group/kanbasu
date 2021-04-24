@@ -3,42 +3,12 @@ import 'package:kanbasu/models/assignment.dart';
 import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/planner.dart';
 import 'package:kanbasu/models/submission.dart';
+import 'package:kanbasu/models/brief_info.dart';
+import 'package:html/parser.dart' show parse;
 
-class BriefInfo {
-  String? title; // in practice, it will never be null
-  String type; // also create a struct?
-  int course_id; // or String?
-  String? description;
-  String? url;
-  DateTime? upload_date;
-  DateTime? due_date;
-
-  BriefInfo(this.title, this.type, this.course_id);
-  void fillInfo(
-      {String? description,
-      String? url,
-      DateTime? upload_date,
-      DateTime? due_date}) {
-    this.description = description;
-    this.url = url;
-    this.upload_date = upload_date;
-    this.due_date = due_date;
-  }
-
-  BriefInfo.fromJson(Map<String, dynamic> json)
-      : title = json['title'],
-        type = json['type'],
-        course_id = json['course_id'],
-        description = json['description'];
-
-  Map<String, dynamic> toJson() {
-    return {
-      'title': title,
-      'type': type,
-      'course_id': course_id,
-      'description': description
-    };
-  }
+String getPlainText(String htmlData) {
+  final bodyText = parse(htmlData).body?.text;
+  return bodyText ?? '';
 }
 
 Future<List> getListDataFromApi(Stream stream, bool useOnlineData) async {
@@ -68,50 +38,51 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
   // ignore: omit_local_variable_types
   Map<int, String> course_id_name = {};
 
-  var available_courses = [];
-  var courses = await getListDataFromApi(api.getCourses(), useOnlineData);
+  final available_courses = [];
+  final courses = await getListDataFromApi(api.getCourses(), useOnlineData);
 
-  for (var course in courses) {
+  for (final course in courses) {
     available_courses.add(course.id);
     course_id_name[course.id] = course.name;
   }
 
   // info about assignment, file and grading
-  for (var course_id in available_courses) {
-    var course_name = course_id_name[course_id] ?? 'null course';
+  for (final course_id in available_courses) {
+    final course_name = course_id_name[course_id] ?? 'null course';
 
     final assignments =
         await getListDataFromApi(api.getAssignments(course_id), useOnlineData);
-    for (var assignment in assignments) {
-      var assignment_id = assignment.id;
-      var assignment_name = assignment.name;
-      var new_agg = aggregateFromAssignment(assignment, course_id, course_name);
+    for (final assignment in assignments) {
+      final new_agg =
+          aggregateFromAssignment(assignment, course_id, course_name);
       aggregations.add(new_agg);
+    }
 
-      var submission = await getItemDataFromApi(
-          api.getSubmission(course_id, assignment_id), useOnlineData);
+    final submissions =
+        await getListDataFromApi(api.getSubmissions(course_id), useOnlineData);
+    for (final submission in submissions) {
       if (submission.grade != null) {
-        var new_agg = aggregateFromSubmisson(
-            submission, course_id, course_name, assignment_name);
+        final new_agg =
+            aggregateFromSubmission(submission, course_id, course_name);
         aggregations.add(new_agg);
       }
     }
 
     final files =
         await getListDataFromApi(api.getFiles(course_id), useOnlineData);
-    for (var file in files) {
-      var new_agg = aggregateFromFile(file, course_id, course_name);
+    for (final file in files) {
+      final new_agg = aggregateFromFile(file, course_id, course_name);
       aggregations.add(new_agg);
     }
   }
 
   // info about announcement
   final planners = await getListDataFromApi(api.getPlanners(), useOnlineData);
-  for (var planner in planners) {
+  for (final planner in planners) {
     if (planner.plannableType != 'announcements') continue;
-    var course_id = planner.courseId;
-    var course_name = course_id_name[course_id] ?? 'course null';
-    var new_agg = aggregateFromPlanner(planner, course_id, course_name);
+    final course_id = planner.courseId;
+    final course_name = course_id_name[course_id] ?? 'course null';
+    final new_agg = aggregateFromPlanner(planner, course_id, course_name);
     aggregations.add(new_agg);
   }
 
@@ -121,54 +92,74 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
 BriefInfo aggregateFromPlanner(
     Planner planner, int course_id, String course_name) {
   // only deal with announcements
-  var title = '$course_name 通知: ${planner.plannable.title}';
-  var res = BriefInfo(title, 'announcements', planner.courseId);
-  res.fillInfo(
-      description: planner.plannable.message,
-      url: planner.htmlUrl,
-      upload_date: planner.plannableDate);
+  final title = '$course_name 通知: ${planner.plannable.title}';
+  final description = getPlainText(planner.plannable.message ?? '');
 
-  return res;
+  return BriefInfo((i) => i
+    ..title = title
+    ..description = description
+    ..url = planner.htmlUrl
+    ..updatedAt = planner.plannableDate
+    ..type = 'announcements'
+    ..courseId = course_id);
 }
 
 BriefInfo aggregateFromAssignment(
     Assignment assignment, int course_id, String course_name) {
-  var title = '$course_name 课程作业已布置';
+  final title;
   if (assignment.name != null) {
     title = '$course_name 课程作业: ${assignment.name} 已布置';
+  } else {
+    title = '$course_name 课程作业已布置';
   }
-  var res = BriefInfo(title, 'assignment',
-      course_id); // need a little change, because we don not know the format of assignment.name
-  res.fillInfo(
-      description: assignment.description,
-      url: assignment.htmlUrl,
-      due_date: assignment.dueAt);
+  final description = getPlainText(assignment.description ?? '');
+  final updatedAt = assignment.updatedAt ?? assignment.createdAt;
 
-  return res;
+  return BriefInfo((i) => i
+    ..title = title
+    ..description = description
+    ..url = assignment.htmlUrl
+    ..updatedAt = updatedAt
+    ..dueDate = assignment.dueAt
+    ..type = 'assignment'
+    ..courseId = course_id);
 }
 
 BriefInfo aggregateFromFile(File file, int course_id, String course_name) {
-  var res =
-      BriefInfo('$course_name 课程上传文件: ${file.displayName}', 'file', course_id);
-  res.fillInfo(
-      description: file.displayName,
-      url: file.url,
-      upload_date: file.updatedAt);
-
-  return res;
+  return BriefInfo((i) => i
+    ..title = '$course_name 课程上传文件: ${file.displayName}'
+    ..description = file.displayName
+    ..url = file.url
+    ..updatedAt = file.updatedAt
+    ..type = 'file'
+    ..courseId = course_id);
 }
 
-BriefInfo aggregateFromSubmisson(Submission submission, int course_id,
-    String course_name, String? assignment_name) {
-  var title = '$course_name 课程作业已批改';
-  if (assignment_name != null) {
-    title = '$course_name 课程作业: $assignment_name 已批改';
+BriefInfo aggregateFromSubmission(
+    Submission submission, int course_id, String course_name) {
+  final title;
+  final assignment = submission.assignment;
+  if (assignment != null) {
+    title = '$course_name 课程作业: ${assignment.name} 已批改';
+  } else {
+    title = '$course_name 课程作业已评分';
   }
 
-  var res = BriefInfo(title, 'grading', course_id);
-  res.fillInfo(
-      description: '{submission.grade} / {submission.score}',
-      url: submission.url); // or previewUrl?
+  var description = '分数: ${submission.grade}';
 
-  return res;
+  if (submission.submissionComments != null &&
+      submission.submissionComments!.isNotEmpty) {
+    var comment = submission.submissionComments![0]['comments'];
+    if (comment != null) {
+      description = '分数: ${submission.grade}, [$comment]';
+    }
+  }
+
+  return BriefInfo((i) => i
+    ..title = title
+    ..description = description
+    ..url = submission.previewUrl
+    ..updatedAt = submission.gradedAt!
+    ..type = 'grading'
+    ..courseId = course_id);
 }

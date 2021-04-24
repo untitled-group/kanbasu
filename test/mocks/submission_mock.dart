@@ -8,3 +8,7 @@ String get submissionResponse => json.encode(_$submissionResponseJsonLiteral);
 
 @JsonLiteral('data/submissions.json')
 String get submissionsResponse => json.encode(_$submissionsResponseJsonLiteral);
+
+@JsonLiteral('data/submissions_with_queries.json')
+String get submissionsWithQueriesResponse =>
+    json.encode(_$submissionsWithQueriesResponseJsonLiteral);
