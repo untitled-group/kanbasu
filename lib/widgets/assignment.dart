@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:kanbasu/models/assignment.dart';
@@ -10,38 +12,56 @@ import 'package:easy_localization/easy_localization.dart';
 
 class AssignmentWidget extends StatelessWidget {
   final Assignment item;
-  final bool dueTimeDetails;
-  AssignmentWidget(this.item, this.dueTimeDetails);
+  final bool showDetails;
+  AssignmentWidget(this.item, this.showDetails);
 
   @override
   Widget build(BuildContext context) {
     final String dueTimeString;
-    final bool passDue;
-    final bool submitted;
+    final bool _passDue;
+    final bool _submitted;
+    final bool _late;
+    final bool successfulSubmission;
+    final bool lateSubmission;
+    final bool waitForSubmission;
+    final bool failedSubmission;
     final TextStyle dueTimeStyle;
     final theme = Provider.of<Model>(context).theme;
 
+    stdout.write(item.submission);
     if (item.dueAt != null) {
       dueTimeString = 'assignment.due_time_is'.tr() +
-          (dueTimeDetails
+          (showDetails
               ? item.dueAt!.toLocal().toString().substring(0, 19)
               : item.dueAt!.toLocal().toString().substring(0, 10));
-      passDue = DateTime.now().isAfter(item.dueAt!);
+      _passDue = DateTime.now().isAfter(item.dueAt!);
     } else {
       dueTimeString = 'assignment.no_due_time'.tr();
-      passDue = false;
+      _passDue = false;
     }
-    if (passDue) {
+    if (_passDue) {
       dueTimeStyle = TextStyle(fontSize: 14, color: theme.primary);
     } else {
       dueTimeStyle = TextStyle(fontSize: 14, color: theme.succeed);
     }
 
-    if (item.submission != null) {
-      submitted = true;
+    if (item.submission == null) {
+      _submitted = false;
+      _late = false;
     } else {
-      submitted = false;
+      _submitted = item.submission!.attempt != null ? item.submission!.attempt! >= 1 : false;
+      _late = item.submission!.late;
     }
+
+    //submission state:
+    // 1. failed submission
+    // 2. late submission
+    // 3. waiting for submission
+    // 4. successful submission
+    failedSubmission = !_submitted && _passDue;
+    lateSubmission = _late;
+    waitForSubmission = !_passDue && !_submitted;
+    successfulSubmission = _submitted && !_late;
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -84,20 +104,40 @@ class AssignmentWidget extends StatelessWidget {
                           width: 5,
                         ),
                         Spacer(),
-                        Text(
-                          dueTimeString,
-                          style: dueTimeStyle,
+                        if (!successfulSubmission)
+                          Text(
+                            dueTimeString,
+                            style: dueTimeStyle,
+                          ),
+                        SizedBox(
+                          width: 5,
                         ),
-                        Icon(
-                          submitted ? Icons.done : Icons.error,
-                          color: theme.succeed,
-                          size: 15,
-                        ),
-                        // Icon(
-                        //   submitted ? Icons.error,
-                        //   color: theme.primary,
-                        //   size: 15,
-                        // ),
+                        if (successfulSubmission)
+                          Icon(
+                            Icons.done,
+                            color: theme.succeed,
+                            size: 15,
+                          ),
+                        if (successfulSubmission && showDetails)
+                          Text('assignment.submission.successful'.tr()),
+                        if (failedSubmission || lateSubmission)
+                          Icon(
+                            Icons.error,
+                            color: theme.primary,
+                            size: 15,
+                          ),
+                        if (failedSubmission && showDetails)
+                          Text('assignment.submission.failed'.tr()),
+                        if (lateSubmission && showDetails)
+                          Text('assignment.submission.late'.tr()),
+                        if (waitForSubmission)
+                          Icon(
+                            Icons.warning,
+                            color: theme.warning,
+                            size: 15,
+                          ),
+                        if (waitForSubmission && showDetails)
+                          Text('assignment.submission.waiting'.tr()),
                       ],
                     ),
                   ],

@@ -17,6 +17,7 @@ class Palette {
   final Color grayBackground;
   final Color border;
   final Color succeed;
+  final Color warning;
 
   const Palette({
     required this.primary,
@@ -27,6 +28,7 @@ class Palette {
     required this.grayBackground,
     required this.border,
     required this.succeed,
+    required this.warning,
   });
 }
 
@@ -40,6 +42,7 @@ class Model with ChangeNotifier {
     grayBackground: Colors.grey.shade50,
     border: Colors.grey.shade300,
     succeed: Colors.green,
+    warning: Colors.yellow,
   );
 
   final _themeDark = Palette(
@@ -51,6 +54,7 @@ class Model with ChangeNotifier {
     grayBackground: Colors.grey.shade900,
     border: Colors.grey.shade700,
     succeed: Colors.green,
+    warning: Colors.yellow,
   );
 
   var _brightness = Brightness.light;
