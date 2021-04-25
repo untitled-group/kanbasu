@@ -6,6 +6,7 @@ import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/models/tab.dart' as t;
 import 'package:kanbasu/screens/course/announcements.dart';
 import 'package:kanbasu/screens/course/files.dart';
+import 'package:kanbasu/screens/course/assignments.dart';
 import 'package:kanbasu/screens/course/home.dart';
 import 'package:kanbasu/screens/course/syllabus.dart';
 import 'package:kanbasu/widgets/refreshable_stream.dart';
@@ -36,6 +37,8 @@ class _CourseTabView extends RefreshableStreamWidget<void> {
         return CourseFilesScreen(courseId);
       case 'syllabus':
         return course != null ? CourseSyllabusScreen(course!) : Container();
+      case 'assignments':
+        return CourseAssignmentsScreen(courseId);
       default:
         return Center(child: Text('It\'s ${tab.id} here'));
     }

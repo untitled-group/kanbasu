@@ -1,5 +1,6 @@
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:kanbasu/models/submission.dart';
 import 'serializers.dart';
 
 part 'assignment.g.dart';
@@ -23,6 +24,8 @@ abstract class Assignment implements Built<Assignment, AssignmentBuilder> {
   DateTime? get updatedAt;
   @BuiltValueField(wireName: 'created_at')
   DateTime? get createdAt;
+  @BuiltValueField(wireName: 'submission')
+  Submission? get submission;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(Assignment.serializer, this)!
