@@ -14,9 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Check PR label
-        if: contains(github.event.pull_request.labels.*.name, 'wip')
-        run: exit 1
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: "2.0.x"
@@ -32,3 +29,6 @@ jobs:
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check PR label
+        if: contains(github.event.pull_request.labels.*.name, 'wip')
+        run: exit 1
