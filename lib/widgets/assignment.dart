@@ -17,8 +17,10 @@ class AssignmentWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final String dueTimeString;
     final bool passDue;
+    final bool submitted;
     final TextStyle dueTimeStyle;
     final theme = Provider.of<Model>(context).theme;
+
     if (item.dueAt != null) {
       dueTimeString = 'assignment.due_time_is'.tr() +
           (dueTimeDetails
@@ -33,6 +35,12 @@ class AssignmentWidget extends StatelessWidget {
       dueTimeStyle = TextStyle(fontSize: 14, color: theme.primary);
     } else {
       dueTimeStyle = TextStyle(fontSize: 14, color: theme.succeed);
+    }
+
+    if (item.submission != null) {
+      submitted = true;
+    } else {
+      submitted = false;
     }
 
     return Container(
@@ -72,6 +80,16 @@ class AssignmentWidget extends StatelessWidget {
                             style: TextStyle(
                                 fontSize: 14, color: theme.tertiaryText),
                           ),
+                        Icon(
+                          submitted ? Icons.done : null,
+                          color: theme.succeed,
+                          size: 15,
+                        ),
+                        // Icon(
+                        //   submitted == null and passDue ? Icon.notDone : null,
+                        //   color: theme.primary,
+                        //   size: 15,
+                        // ),
                         SizedBox(
                           width: 5,
                         ),
