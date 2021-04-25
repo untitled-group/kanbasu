@@ -80,16 +80,6 @@ class AssignmentWidget extends StatelessWidget {
                             style: TextStyle(
                                 fontSize: 14, color: theme.tertiaryText),
                           ),
-                        Icon(
-                          submitted ? Icons.done : null,
-                          color: theme.succeed,
-                          size: 15,
-                        ),
-                        // Icon(
-                        //   submitted == null and passDue ? Icon.notDone : null,
-                        //   color: theme.primary,
-                        //   size: 15,
-                        // ),
                         SizedBox(
                           width: 5,
                         ),
@@ -98,6 +88,16 @@ class AssignmentWidget extends StatelessWidget {
                           dueTimeString,
                           style: dueTimeStyle,
                         ),
+                        Icon(
+                          submitted ? Icons.done : Icons.error,
+                          color: theme.succeed,
+                          size: 15,
+                        ),
+                        // Icon(
+                        //   submitted ? Icons.error,
+                        //   color: theme.primary,
+                        //   size: 15,
+                        // ),
                       ],
                     ),
                   ],
