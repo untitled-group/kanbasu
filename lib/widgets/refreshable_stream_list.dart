@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/utils/stream_op.dart';
 import 'package:kanbasu/widgets/border.dart';
+import 'package:kanbasu/widgets/loading.dart';
 import 'package:kanbasu/widgets/refreshable_stream.dart';
 import 'package:kanbasu/widgets/snack.dart';
 import 'package:rxdart/rxdart.dart';
@@ -13,10 +14,12 @@ import 'package:rxdart/rxdart.dart';
 class _StreamListView<T> extends HookWidget {
   final Widget Function(T payload) itemBuilder;
   final Stream<T> itemStream;
+  final bool showLoadingWidget;
 
   _StreamListView({
     required this.itemBuilder,
     required this.itemStream,
+    required this.showLoadingWidget,
   });
 
   @override
@@ -32,10 +35,14 @@ class _StreamListView<T> extends HookWidget {
         }).throttleTime(Duration(milliseconds: 200)),
         [itemStream],
       );
-      final itemsSnapshot = useStream(stream, initialData: List<T>.empty());
+      final itemsSnapshot = useStream(stream, initialData: null);
+      final data = itemsSnapshot.data;
 
-      final Widget list;
-      final items = itemsSnapshot.data!.where((i) => i != null).toList();
+      if (data == null && showLoadingWidget) {
+        return LoadingWidget(isMore: false);
+      }
+
+      final items = (data ?? List.empty()).where((i) => i != null).toList();
       final itemsLength = items.length;
 
       final buildItem = (BuildContext context, int index) {
@@ -48,7 +55,7 @@ class _StreamListView<T> extends HookWidget {
         }
       };
 
-      list = ListView.builder(
+      final list = ListView.builder(
         itemBuilder: buildItem,
         itemCount: items.length * 2 + 1,
       );
@@ -65,6 +72,9 @@ abstract class RefreshableStreamListWidget<T>
   Widget buildItem(BuildContext context, T item);
 
   int atLeast() => 10;
+
+  @override
+  bool showLoadingWidget() => true;
 
   @override
   Stream<Stream<T>> getStream(BuildContext context) {
@@ -84,6 +94,7 @@ abstract class RefreshableStreamListWidget<T>
     return _StreamListView<T>(
       itemBuilder: (item) => buildItem(context, item),
       itemStream: data ?? Stream<T>.empty(),
+      showLoadingWidget: showLoadingWidget(),
     );
   }
 }
