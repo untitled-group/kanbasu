@@ -39,8 +39,9 @@ actions:
 assignment:
   due_time_is: 截止时间：
   no_due_time: 没有截止时间
+  no_details: 暂无详情
   submission:
-    failed: 逾期 
+    failed: 逾期
     successful: 已提交
     late: 迟交
     waiting: 待提交

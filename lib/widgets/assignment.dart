@@ -49,7 +49,9 @@ class AssignmentWidget extends StatelessWidget {
       _submitted = false;
       _late = false;
     } else {
-      _submitted = item.submission!.attempt != null ? item.submission!.attempt! >= 1 : false;
+      _submitted = item.submission!.attempt != null
+          ? item.submission!.attempt! >= 1
+          : false;
       _late = item.submission!.late;
     }
 
@@ -162,7 +164,9 @@ class AssignmentContentWidget extends StatelessWidget {
       shrinkWrap: true,
       children: [
         AssignmentWidget(item, true),
-        Html(data: item.description ?? '<h1> 暂无详情 </h1>'),
+        Html(
+            data: item.description ??
+                '<h3> ${'assignment.no_details'.tr()} </h3>'),
       ],
     );
   }
