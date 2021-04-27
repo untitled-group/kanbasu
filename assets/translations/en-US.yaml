@@ -23,6 +23,12 @@ activity:
     Message: Mes
     Conversation: Con
     DiscussionTopic: Dis
+aggregate:
+  short_type:
+    file: File
+    announcements: Ann
+    assignment: Ass
+    grading: Gra
 tabs:
   overview: Overview
   announcement: Announcements

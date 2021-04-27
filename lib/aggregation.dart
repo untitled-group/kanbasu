@@ -85,8 +85,8 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
     final new_agg = aggregateFromPlanner(planner, course_id, course_name);
     aggregations.add(new_agg);
   }
-
-  return aggregations;
+  aggregations.sort((a, b) => a.updatedAt.compareTo(b.updatedAt));
+  return aggregations.reversed.toList();
 }
 
 BriefInfo aggregateFromPlanner(
