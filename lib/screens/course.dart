@@ -62,9 +62,7 @@ class CourseScreen extends StreamWidget<_CourseMeta> {
   CourseScreen({required this.courseId, this.initialTabId});
 
   @override
-  bool showLoadingWidget() {
-    return true;
-  }
+  bool showLoadingWidget() => true;
 
   @override
   Widget buildWidget(context, _CourseMeta? data) {
