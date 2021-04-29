@@ -45,7 +45,7 @@ class _CourseTabView extends RefreshableStreamWidget<void> {
   }
 
   @override
-  Stream<void> getStream(context) => Stream.empty();
+  List<void> getStream(context) => List.empty();
 }
 
 class _CourseMeta {
@@ -116,7 +116,7 @@ class CourseScreen extends StreamWidget<_CourseMeta> {
   }
 
   @override
-  Stream<_CourseMeta> getStream(context) {
+  List<Future<_CourseMeta>> getStream(context) {
     final canvas = Provider.of<Model>(context).canvas;
     return ZipStream.zip2(
         canvas.getCourse(courseId),

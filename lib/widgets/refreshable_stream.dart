@@ -9,7 +9,7 @@ import 'package:kanbasu/widgets/snack.dart';
 import 'package:rxdart/rxdart.dart';
 
 abstract class RefreshableStreamWidget<T> extends HookWidget {
-  Stream<T> getStream(BuildContext context);
+  List<T> getStream(BuildContext context);
 
   Widget buildWidget(BuildContext context, T? data);
 

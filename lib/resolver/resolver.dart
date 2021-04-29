@@ -49,33 +49,21 @@ class Resolver {
   Stream<ResolveProgress> visit() async* {
     _logger.i('[Visitor] Root');
 
+    yield ofCurrent('解析课程数据', 0, 1);
+    final courses = await _api.getCourses().last.handleError(onError).toList();
+    await for (final progress in visitCourses(courses)) {
+      yield progress;
+    }
+
     yield ofCurrent('解析用户日程', 1, 1);
-    final planners = await _api.getPlanners().last;
-    await for (final _ in visitPlanners(planners)) {}
+    await _api.getPlanners().last.handleError(onError).toList();
 
     yield ofCurrent('解析用户动态', 1, 1);
-    final activities = await _api.getCurrentUserActivityStream().last;
-    await for (final _ in visitActivities(activities)) {}
-
-    // final courses = await _api.getCourses().last;
-    // await for (final progress in visitCourses(courses)) {
-    //   yield progress;
-    // }
-  }
-
-  /// Visit Stream of [ActivityItem].
-  Stream<ResolveProgress> visitActivities(
-      Stream<ActivityItem> activities) async* {
-    _logger.i('[Visitor] Activities');
-
-    await activities.handleError(onError).toList();
-  }
-
-  /// Visit Stream of [Planner].
-  Stream<ResolveProgress> visitPlanners(Stream<Planner> planners) async* {
-    _logger.i('[Visitor] Planners');
-
-    await planners.handleError(onError).toList();
+    await _api
+        .getCurrentUserActivityStream()
+        .last
+        .handleError(onError)
+        .toList();
   }
 
   /// Visit List of [Course].
@@ -98,25 +86,29 @@ class Resolver {
 
     final total = 4;
 
-    final folders = await _api.getFolders(course.id).last;
+    final folders =
+        await _api.getFolders(course.id).last.handleError(onError).toList();
     yield ofCurrent('解析文件夹', 0, total);
     await for (final progress in visitFolders(folders)) {
       yield ofTotal(progress.prepend('文件夹'), 0, total);
     }
 
-    final files = await _api.getFiles(course.id).last;
+    final files =
+        await _api.getFiles(course.id).last.handleError(onError).toList();
     yield ofCurrent('解析文件', 0, total);
     await for (final progress in visitFiles(files)) {
       yield ofTotal(progress.prepend('文件'), 1, total);
     }
 
-    final assignments = await _api.getAssignments(course.id).last;
+    final assignments =
+        await _api.getAssignments(course.id).last.handleError(onError).toList();
     yield ofCurrent('解析作业', 0, total);
     await for (final progress in visitAssignments(assignments)) {
       yield ofTotal(progress.prepend('作业'), 2, total);
     }
 
-    final modules = await _api.getModules(course.id).last;
+    final modules =
+        await _api.getModules(course.id).last.handleError(onError).toList();
     yield ofCurrent('解析单元', 0, total);
     await for (final progress in visitModules(course, modules)) {
       yield ofTotal(progress.prepend('单元'), 3, total);
@@ -124,33 +116,33 @@ class Resolver {
   }
 
   /// Visit stream of [File].
-  Stream<ResolveProgress> visitFiles(Stream<File> files) async* {
+  Stream<ResolveProgress> visitFiles(List<File> files) async* {
     _logger.i('[Visitor] Files');
 
-    await files.handleError(onError).toList();
+    // await files.handleError(onError).toList();
   }
 
   /// Visit stream of [Folder].
-  Stream<ResolveProgress> visitFolders(Stream<Folder> folders) async* {
+  Stream<ResolveProgress> visitFolders(List<Folder> folders) async* {
     _logger.i('[Visitor] Folders');
 
-    await folders.handleError(onError).toList();
+    // await folders.handleError(onError).toList();
   }
 
   /// Visit stream of [Assignment].
   Stream<ResolveProgress> visitAssignments(
-      Stream<Assignment> assignments) async* {
+      List<Assignment> assignments) async* {
     _logger.i('[Visitor] Assignments');
 
-    await assignments.handleError(onError).toList();
+    // await assignments.handleError(onError).toList();
   }
 
   /// Visit stream of [Module].
   Stream<ResolveProgress> visitModules(
-      Course course, Stream<Module> modules) async* {
+      Course course, List<Module> modules) async* {
     _logger.i('[Visitor] Modules');
 
-    await for (final module in modules) {
+    for (final module in modules) {
       yield ofCurrent(module.name, 0, 1);
       await for (final progress in visitModule(course, module)) {
         yield progress;
@@ -162,6 +154,7 @@ class Resolver {
   Stream<ResolveProgress> visitModule(Course course, Module module) async* {
     await _api
         .getModuleItems(course.id, module.id)
+        .last
         .handleError(onError)
         .toList();
   }

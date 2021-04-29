@@ -30,7 +30,7 @@ class _FilesTitle extends StreamWidget<Course?> {
             ]);
 
   @override
-  Stream<Course?> getStream(context) =>
+  List<Future<Course?>> getStream(context) =>
       Provider.of<Model>(context).canvas.getCourse(courseId);
 }
 
@@ -43,7 +43,7 @@ class _FilesView extends RefreshableStreamListWidget<File> {
   int atLeast() => 20;
 
   @override
-  Stream<Stream<File>> getStreamStream(context) =>
+  List<Stream<File>> getStreamStream(context) =>
       Provider.of<Model>(context).canvas.getFiles(courseId);
 
   @override

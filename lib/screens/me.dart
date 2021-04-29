@@ -22,7 +22,7 @@ class _MeView extends StreamWidget<User?> {
       data == null ? Container() : UserWidget(data);
 
   @override
-  Stream<User?> getStream(context) =>
+  List<Future<User?>> getStream(context) =>
       Provider.of<Model>(context).canvas.getCurrentUser();
 }
 

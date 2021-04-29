@@ -13,7 +13,7 @@ class CourseAnnouncementsScreen
   CourseAnnouncementsScreen(this.courseId);
 
   @override
-  Stream<Stream<DiscussionTopic>> getStreamStream(context) =>
+  List<Stream<DiscussionTopic>> getStreamStream(context) =>
       Provider.of<Model>(context).canvas.getAnnouncements(courseId);
 
   @override

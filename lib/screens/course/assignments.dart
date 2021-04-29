@@ -6,14 +6,13 @@ import 'package:kanbasu/widgets/assignment.dart';
 import 'package:kanbasu/widgets/refreshable_stream_list.dart';
 import 'package:provider/provider.dart';
 
-class CourseAssignmentsScreen
-    extends RefreshableStreamListWidget<Assignment> {
+class CourseAssignmentsScreen extends RefreshableStreamListWidget<Assignment> {
   final int courseId;
 
   CourseAssignmentsScreen(this.courseId);
 
   @override
-  Stream<Stream<Assignment>> getStreamStream(context) =>
+  List<Stream<Assignment>> getStreamStream(context) =>
       Provider.of<Model>(context).canvas.getAssignments(courseId);
 
   @override

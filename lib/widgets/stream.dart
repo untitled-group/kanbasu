@@ -7,7 +7,7 @@ import 'package:rxdart/rxdart.dart';
 import 'loading.dart';
 
 abstract class StreamWidget<T> extends HookWidget {
-  Stream<T> getStream(BuildContext context);
+  List<Future<T>> getStream(BuildContext context);
 
   Widget buildWidget(BuildContext context, T? data);
 

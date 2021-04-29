@@ -27,7 +27,7 @@ class TestStruct {
 // ignore: deprecated_member_use_from_same_package
 class TestListScreen extends RefreshableStreamListWidget<TestStruct> {
   @override
-  Stream<Stream<TestStruct>> getStreamStream(context) => Stream.fromIterable([
+  List<Stream<TestStruct>> getStreamStream(context) => List.of([
         Stream.fromIterable([TestStruct('old')]),
         Stream.fromIterable([TestStruct('new')])
       ]);

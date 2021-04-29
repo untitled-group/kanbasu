@@ -67,7 +67,7 @@ class _StreamListView<T> extends HookWidget {
 
 abstract class RefreshableStreamListWidget<T>
     extends RefreshableStreamWidget<Stream<T>> {
-  Stream<Stream<T>> getStreamStream(BuildContext context);
+  List<Stream<T>> getStreamStream(BuildContext context);
 
   Widget buildItem(BuildContext context, T item);
 
@@ -77,7 +77,7 @@ abstract class RefreshableStreamListWidget<T>
   bool showLoadingWidget() => true;
 
   @override
-  Stream<Stream<T>> getStream(BuildContext context) {
+  List<Stream<T>> getStream(BuildContext context) {
     final context = useContext();
     return getStreamStream(context)
         // The stream may be subscribed multiple times by children,

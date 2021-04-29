@@ -11,7 +11,7 @@ import 'package:easy_localization/easy_localization.dart';
 
 class _ActivitiesView extends RefreshableStreamListWidget<ActivityItem> {
   @override
-  Stream<Stream<ActivityItem>> getStreamStream(context) =>
+  List<Stream<ActivityItem>> getStreamStream(context) =>
       Provider.of<Model>(context).canvas.getCurrentUserActivityStream();
 
   @override

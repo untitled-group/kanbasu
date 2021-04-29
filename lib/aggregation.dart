@@ -11,12 +11,12 @@ String getPlainText(String htmlData) {
   return bodyText ?? '';
 }
 
-Future<List> getListDataFromApi(Stream stream, bool useOnlineData) async {
+Future<List> getListDataFromApi(List stream, bool useOnlineData) async {
   if (useOnlineData) {
-    final data = (await stream.last).toList();
+    final data = await (stream.last).toList();
     return data;
   } else {
-    final data = (await stream.first).toList();
+    final data = await (stream.first).toList();
     return data;
   }
 }
