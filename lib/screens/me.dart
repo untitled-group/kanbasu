@@ -8,7 +8,6 @@ import 'package:kanbasu/resolver/resolver_main.dart';
 import 'package:kanbasu/utils/logging.dart';
 import 'package:kanbasu/utils/persistence.dart';
 import 'package:kanbasu/models/model.dart';
-import 'package:kanbasu/widgets/refreshable_stream.dart';
 import 'package:kanbasu/widgets/stream.dart';
 import 'package:kanbasu/widgets/user.dart';
 import 'package:provider/provider.dart';
