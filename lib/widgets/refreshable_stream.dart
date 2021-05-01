@@ -3,17 +3,48 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:kanbasu/utils/stream_op.dart';
 import 'package:kanbasu/widgets/loading.dart';
 import 'package:kanbasu/widgets/snack.dart';
-import 'package:rxdart/rxdart.dart';
+
+class FutureSnapshot<T> {
+  T? data;
+  Object? error;
+  FutureSnapshot(this.data, this.error);
+}
+
+FutureSnapshot<T> useFutureCombination<T>(
+    List<Future<T>> futures, bool refreshWidget,
+    {T? initialData}) {
+  // return last future with data fetched
+  var data;
+  var error;
+  for (final future in futures.reversed) {
+    final snapshot =
+        useFuture(future, initialData: initialData, preserveState: true);
+    if (snapshot.data != null) {
+      data = snapshot.data;
+      break;
+    }
+    if (snapshot.error != null) {
+      error = snapshot.error;
+    }
+    if (refreshWidget) {
+      break;
+    }
+  }
+  return FutureSnapshot(data, error);
+}
 
 abstract class RefreshableStreamWidget<T> extends HookWidget {
-  List<T> getStream(BuildContext context);
+  List<Future<T>> getFutures(BuildContext context);
 
   Widget buildWidget(BuildContext context, T? data);
 
   bool showLoadingWidget() => false;
+
+  void onError(BuildContext context, Object? error) {
+    showErrorSnack(context, error);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,28 +52,41 @@ abstract class RefreshableStreamWidget<T> extends HookWidget {
       final manualRefresh = useState(false);
       final triggerRefresh = useState(Completer());
 
-      final itemStream = useMemoized(
+      final itemFutures = useMemoized(
         () {
-          final stream = getStream(context).doOnDone(() {
-            triggerRefresh.value.complete();
-          }).handleError((error, _) {
-            showErrorSnack(context, error);
-            triggerRefresh.value.complete();
-          });
+          var hasCompleted = false;
+          final completion = triggerRefresh.value;
 
-          // if manually refresh, return only latest result
-          return manualRefresh.value ? yieldLast(stream) : stream;
+          // rewrite futures to catch errors inside
+          final items = getFutures(context).map((future) async {
+            try {
+              final result = await future;
+              if (!hasCompleted) {
+                triggerRefresh.value.complete();
+                hasCompleted = true;
+              }
+              return result;
+            } catch (error) {
+              onError(context, error);
+              if (!hasCompleted) {
+                completion.complete();
+                hasCompleted = true;
+              }
+            }
+            return null;
+          });
+          return items.toList();
         },
-        [manualRefresh.value, triggerRefresh.value],
+        [triggerRefresh.value],
       );
 
-      final snapshot = useStream(itemStream, initialData: null);
-      final data = snapshot.data;
+      final snapshot = useFutureCombination(itemFutures, manualRefresh.value,
+          initialData: null);
 
       final widget =
-          data == null && snapshot.error == null && showLoadingWidget()
+          snapshot.data == null && snapshot.error == null && showLoadingWidget()
               ? LoadingWidget(isMore: true)
-              : buildWidget(context, data);
+              : buildWidget(context, snapshot.data);
 
       final refreshIndicator = RefreshIndicator(
         onRefresh: () async {

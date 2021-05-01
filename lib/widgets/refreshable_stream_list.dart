@@ -1,48 +1,36 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:kanbasu/utils/stream_op.dart';
 import 'package:kanbasu/widgets/border.dart';
 import 'package:kanbasu/widgets/loading.dart';
-import 'package:kanbasu/widgets/refreshable_stream.dart';
 import 'package:kanbasu/widgets/snack.dart';
 import 'package:rxdart/rxdart.dart';
 
-/// [_StreamListView] takes `Stream<T>` and display the items in view.
+/// [_StreamListView] takes `List<T>` and display the items in view.
 /// This scaffold supports batch-update and on-demand-showing stream items.
 class _StreamListView<T> extends HookWidget {
   final Widget Function(T payload) itemBuilder;
-  final Stream<T> itemStream;
+  final List<T>? itemList;
   final bool showLoadingWidget;
 
   _StreamListView({
     required this.itemBuilder,
-    required this.itemStream,
+    required this.itemList,
     required this.showLoadingWidget,
   });
 
   @override
   Widget build(BuildContext context) {
     return HookBuilder(builder: (context) {
-      final stream = useMemoized(
-        () => itemStream
-            .handleError((error, _) => showErrorSnack(context, error))
-            .scan((List<T>? acc, T s, _) {
-          final list = acc ?? List<T>.empty(growable: true);
-          list.add(s);
-          return list;
-        }).throttleTime(Duration(milliseconds: 200)),
-        [itemStream],
-      );
-      final itemsSnapshot = useStream(stream, initialData: null);
-      final data = itemsSnapshot.data;
+      final data = itemList;
 
       if (data == null && showLoadingWidget) {
         return LoadingWidget(isMore: false);
       }
 
-      final items = (data ?? List.empty()).where((i) => i != null).toList();
+      final items = (data ?? []).where((i) => i != null).toList();
       final itemsLength = items.length;
 
       final buildItem = (BuildContext context, int index) {
@@ -65,36 +53,115 @@ class _StreamListView<T> extends HookWidget {
   }
 }
 
-abstract class RefreshableStreamListWidget<T>
-    extends RefreshableStreamWidget<Stream<T>> {
-  List<Stream<T>> getStreamStream(BuildContext context);
+class StreamSnapshot<T> {
+  List<T>? data;
+  Object? error;
+  StreamSnapshot(this.data, this.error);
+}
+
+StreamSnapshot<T> useStreamCombination<T>(
+    List<Stream<List<T>>> streams, int atLeast, bool refreshWidget,
+    {List<T>? initialData}) {
+  // return last future with data fetched
+  var data;
+  var error;
+  for (final stream in streams.reversed) {
+    final snapshot =
+        useStream(stream, initialData: initialData, preserveState: true);
+    final snapshotData = snapshot.data;
+    if (snapshotData != null &&
+        (snapshot.connectionState == ConnectionState.done ||
+            snapshotData.length >= atLeast ||
+            refreshWidget)) {
+      data = snapshotData;
+      break;
+    }
+    if (snapshot.error != null) {
+      error = snapshot.error;
+    }
+    if (refreshWidget) {
+      break;
+    }
+  }
+  return StreamSnapshot(data, error);
+}
+
+abstract class RefreshableStreamListWidget<T> extends HookWidget {
+  List<Stream<T>> getStreams(BuildContext context);
 
   Widget buildItem(BuildContext context, T item);
 
   int atLeast() => 10;
 
-  @override
   bool showLoadingWidget() => true;
 
-  @override
-  List<Stream<T>> getStream(BuildContext context) {
-    final context = useContext();
-    return getStreamStream(context)
-        // The stream may be subscribed multiple times by children,
-        // so we need to replay it, with the help of RxDart extension.
-        .map((s) => s
-            .handleError((error) => showErrorSnack(context, error))
-            .shareReplay())
-        // Wait until there are enough elements to fill the screen
-        .asyncMap(waitFor<T>(atLeast()));
+  Widget buildWidget(BuildContext context, List<T>? data) {
+    return _StreamListView<T>(
+      itemBuilder: (item) => buildItem(context, item),
+      itemList: data,
+      showLoadingWidget: showLoadingWidget(),
+    );
+  }
+
+  void onError(BuildContext context, Object? error) {
+    showErrorSnack(context, error);
   }
 
   @override
-  Widget buildWidget(BuildContext context, Stream<T>? data) {
-    return _StreamListView<T>(
-      itemBuilder: (item) => buildItem(context, item),
-      itemStream: data ?? Stream<T>.empty(),
-      showLoadingWidget: showLoadingWidget(),
-    );
+  Widget build(BuildContext context) {
+    return HookBuilder(builder: (context) {
+      final manualRefresh = useState(false);
+      final triggerRefresh = useState(Completer());
+      final itemStreams = useMemoized(
+        () {
+          var hasCompleted = false;
+          final completion = triggerRefresh.value;
+          // rewrite streams to catch errors inside
+          final items = getStreams(context)
+              .map((itemStream) => itemStream.handleError((error, _) {
+                    onError(context, error);
+                    if (!hasCompleted) {
+                      completion.complete();
+                      hasCompleted = true;
+                    }
+                  }).doOnDone(() {
+                    if (!hasCompleted) {
+                      completion.complete();
+                      hasCompleted = true;
+                    }
+                  }).scan((List<T>? acc, T s, _) {
+                    final list = acc ?? List<T>.empty(growable: true);
+                    list.add(s);
+                    return list;
+                  }).throttleTime(Duration(milliseconds: 50)));
+          return items.toList();
+        },
+        [triggerRefresh.value],
+      );
+
+      final snapshot = useStreamCombination(
+        itemStreams,
+        atLeast(),
+        manualRefresh.value,
+        initialData: null,
+      );
+
+      final widget =
+          snapshot.data == null && snapshot.error == null && showLoadingWidget()
+              ? LoadingWidget(isMore: true)
+              : buildWidget(context, snapshot.data);
+
+      final refreshIndicator = RefreshIndicator(
+        onRefresh: () async {
+          manualRefresh.value = true;
+          final completer = Completer();
+          triggerRefresh.value = completer;
+          await Future.wait([completer.future, HapticFeedback.mediumImpact()]);
+        },
+        child: widget,
+      );
+
+      return refreshIndicator;
+    });
   }
 }

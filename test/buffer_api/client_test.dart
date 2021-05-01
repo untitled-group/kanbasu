@@ -1,8 +1,6 @@
-import 'dart:async';
 import 'dart:convert';
 import 'package:kanbasu/buffer_api/canvas.dart';
 import 'package:kanbasu/buffer_api/kvstore.dart';
-import 'package:kanbasu/models/course.dart';
 import 'package:test/test.dart';
 import 'package:dio/dio.dart';
 import 'package:kanbasu/rest_api/canvas.dart';

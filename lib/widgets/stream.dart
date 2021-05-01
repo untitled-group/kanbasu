@@ -2,37 +2,48 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:rxdart/rxdart.dart';
-
-import 'loading.dart';
+import 'package:kanbasu/widgets/loading.dart';
+import 'package:kanbasu/widgets/snack.dart';
+import 'package:kanbasu/widgets/refreshable_stream.dart';
 
 abstract class StreamWidget<T> extends HookWidget {
-  List<Future<T>> getStream(BuildContext context);
+  List<Future<T>> getFutures(BuildContext context);
 
   Widget buildWidget(BuildContext context, T? data);
 
   bool showLoadingWidget() => false;
 
+  void onError(BuildContext context, Object? error) {
+    showErrorSnack(context, error);
+  }
+
   @override
   Widget build(BuildContext context) {
     return HookBuilder(builder: (context) {
-      final triggerRefresh = useState(Completer());
+      final itemFutures = useMemoized(
+        () {
+          // rewrite futures to catch errors inside
+          final items = getFutures(context).map((future) async {
+            try {
+              return await future;
+            } catch (error) {
+              onError(context, error);
+            }
+            return null;
+          });
+          return items.toList();
+        },
+        [],
+      );
 
-      final itemStream = useMemoized(
-          () => getStream(context).doOnDone(() {
-                triggerRefresh.value.complete();
-              }).handleError((error, _) {
-                triggerRefresh.value.complete();
-              }),
-          [triggerRefresh.value]);
-
-      final snapshot = useStream(itemStream, initialData: null);
-      final data = snapshot.data;
+      final snapshot =
+          useFutureCombination(itemFutures, false, initialData: null);
 
       final widget =
-          data == null && snapshot.error == null && showLoadingWidget()
+          snapshot.data == null && snapshot.error == null && showLoadingWidget()
               ? LoadingWidget(isMore: true)
-              : buildWidget(context, data);
+              : buildWidget(context, snapshot.data);
+
       return widget;
     });
   }

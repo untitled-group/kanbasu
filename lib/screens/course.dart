@@ -13,9 +13,8 @@ import 'package:kanbasu/widgets/refreshable_stream.dart';
 import 'package:kanbasu/widgets/stream.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:rxdart/rxdart.dart';
 
-class _CourseTabView extends RefreshableStreamWidget<void> {
+class _CourseTabView extends StreamWidget<void> {
   final int courseId;
   final Course? course;
   final t.Tab tab;
@@ -45,7 +44,7 @@ class _CourseTabView extends RefreshableStreamWidget<void> {
   }
 
   @override
-  List<void> getStream(context) => List.empty();
+  List<Future<void>> getFutures(context) => [];
 }
 
 class _CourseMeta {
@@ -55,7 +54,7 @@ class _CourseMeta {
   _CourseMeta(this.course, this.tabs);
 }
 
-class CourseScreen extends StreamWidget<_CourseMeta> {
+class CourseScreen extends RefreshableStreamWidget<_CourseMeta> {
   final int courseId;
   final String? initialTabId;
 
@@ -115,13 +114,22 @@ class CourseScreen extends StreamWidget<_CourseMeta> {
     }
   }
 
+  Iterable<Future<_CourseMeta>> zip2(
+      Iterable<Future<Course?>> a, Iterable<Future<List<t.Tab>>> b) sync* {
+    final ita = a.iterator;
+    final itb = b.iterator;
+    while (ita.moveNext() && itb.moveNext()) {
+      yield (a, b) async {
+        return _CourseMeta(await a, await b);
+      }(ita.current, itb.current);
+    }
+  }
+
   @override
-  List<Future<_CourseMeta>> getStream(context) {
+  List<Future<_CourseMeta>> getFutures(context) {
     final canvas = Provider.of<Model>(context).canvas;
-    return ZipStream.zip2(
-        canvas.getCourse(courseId),
-        canvas.getTabs(courseId), // should we yield the last?
-        (a, b) => _CourseMeta(a as Course?, b as List<t.Tab>));
+    return zip2(canvas.getCourse(courseId),
+        canvas.getTabs(courseId).map((stream) => stream.toList())).toList();
   }
 }
 

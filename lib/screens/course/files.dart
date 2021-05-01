@@ -1,38 +1,35 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/link.dart';
 import 'package:kanbasu/widgets/refreshable_stream_list.dart';
-import 'package:kanbasu/widgets/stream.dart';
 import 'package:provider/provider.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 // ignore: unused_element
-class _FilesTitle extends StreamWidget<Course?> {
-  final int courseId;
+// class _FilesTitle extends StreamWidget<Course?> {
+//   final int courseId;
 
-  _FilesTitle(this.courseId);
+//   _FilesTitle(this.courseId);
 
-  @override
-  Widget buildWidget(context, Course? data) => Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: data == null
-          ? [
-              Text('tabs.file'.tr()),
-            ]
-          : [
-              Text('tabs.file'.tr(), style: TextStyle(fontSize: 20.0)),
-              Text(data.name, style: TextStyle(fontSize: 12.0)),
-            ]);
+//   @override
+//   Widget buildWidget(context, Course? data) => Column(
+//       mainAxisAlignment: MainAxisAlignment.center,
+//       crossAxisAlignment: CrossAxisAlignment.center,
+//       children: data == null
+//           ? [
+//               Text('tabs.file'.tr()),
+//             ]
+//           : [
+//               Text('tabs.file'.tr(), style: TextStyle(fontSize: 20.0)),
+//               Text(data.name, style: TextStyle(fontSize: 12.0)),
+//             ]);
 
-  @override
-  List<Future<Course?>> getStream(context) =>
-      Provider.of<Model>(context).canvas.getCourse(courseId);
-}
+//   @override
+//   List<Future<Course?>> getStream(context) =>
+//       Provider.of<Model>(context).canvas.getCourse(courseId);
+// }
 
 class _FilesView extends RefreshableStreamListWidget<File> {
   final int courseId;
@@ -43,7 +40,7 @@ class _FilesView extends RefreshableStreamListWidget<File> {
   int atLeast() => 20;
 
   @override
-  List<Stream<File>> getStreamStream(context) =>
+  List<Stream<File>> getStreams(context) =>
       Provider.of<Model>(context).canvas.getFiles(courseId);
 
   @override

@@ -1,12 +1,10 @@
 import 'package:kanbasu/buffer_api/canvas.dart';
 import 'package:kanbasu/buffer_api/kvstore.dart';
-import 'package:kanbasu/models/activity_item.dart';
 import 'package:kanbasu/models/assignment.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/folder.dart';
 import 'package:kanbasu/models/module.dart';
-import 'package:kanbasu/models/planner.dart';
 import 'package:kanbasu/rest_api/canvas.dart';
 import 'package:logger/logger.dart';
 
