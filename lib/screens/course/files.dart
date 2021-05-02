@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/link.dart';
-import 'package:kanbasu/widgets/refreshable_stream_list.dart';
+import 'package:kanbasu/widgets/common/refreshable_stream_list.dart';
 import 'package:provider/provider.dart';
 
 // ignore: unused_element

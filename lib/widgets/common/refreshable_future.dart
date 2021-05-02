@@ -35,7 +35,7 @@ FutureSnapshot<T> useFutureCombination<T>(
   return FutureSnapshot(data, error);
 }
 
-abstract class RefreshableStreamWidget<T> extends HookWidget {
+abstract class RefreshableListWidget<T> extends HookWidget {
   List<Future<T>> getFutures(BuildContext context);
 
   Widget buildWidget(BuildContext context, T? data);

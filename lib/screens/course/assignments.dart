@@ -3,7 +3,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:kanbasu/models/assignment.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/assignment.dart';
-import 'package:kanbasu/widgets/refreshable_stream_list.dart';
+import 'package:kanbasu/widgets/common/refreshable_stream_list.dart';
 import 'package:provider/provider.dart';
 
 class CourseAssignmentsScreen extends RefreshableStreamListWidget<Assignment> {

@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/widgets/loading.dart';
 import 'package:kanbasu/widgets/snack.dart';
-import 'package:kanbasu/widgets/refreshable_stream.dart';
+import 'package:kanbasu/widgets/common/refreshable_future.dart';
 
-abstract class StreamWidget<T> extends HookWidget {
+abstract class FutureWidget<T> extends HookWidget {
   List<Future<T>> getFutures(BuildContext context);
 
   Widget buildWidget(BuildContext context, T? data);

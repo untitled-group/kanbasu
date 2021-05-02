@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kanbasu/models/model.dart';
-import 'package:kanbasu/widgets/refreshable_stream.dart';
-import 'package:kanbasu/widgets/refreshable_stream_list.dart';
+import 'package:kanbasu/widgets/common/refreshable_future.dart';
+import 'package:kanbasu/widgets/common/refreshable_stream_list.dart';
 import 'package:provider/provider.dart';
 
 Widget wrapWidgetForTest(Widget child) {
@@ -30,7 +30,7 @@ class TestStruct {
 //   Widget buildItem(context, TestStruct item) => Text(item.data);
 // }
 
-class TestFutureScreen extends RefreshableStreamWidget<TestStruct> {
+class TestFutureScreen extends RefreshableListWidget<TestStruct> {
   @override
   List<Future<TestStruct>> getFutures(context) =>
       [Future.value(TestStruct('old')), Future.value(TestStruct('new'))];
@@ -46,7 +46,7 @@ class TestFutureScreen extends RefreshableStreamWidget<TestStruct> {
 }
 
 // ignore: must_be_immutable
-class TestFutureScreenError extends RefreshableStreamWidget<TestStruct> {
+class TestFutureScreenError extends RefreshableListWidget<TestStruct> {
   @override
   List<Future<TestStruct>> getFutures(context) =>
       List.of([Future.value(TestStruct('old')), Future.error('Test Error')]);

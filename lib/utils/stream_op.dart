@@ -25,3 +25,17 @@ Future<Stream<T>> Function(ReplayStream<T>) waitFor<T>(int N) {
     return stream;
   };
 }
+
+Iterable<Future<C>> zip2<A, B, C>(
+  Iterable<Future<A>> a,
+  Iterable<Future<B>> b,
+  C Function(A, B) combinator,
+) sync* {
+  final ita = a.iterator;
+  final itb = b.iterator;
+  while (ita.moveNext() && itb.moveNext()) {
+    yield (Future<A> a, Future<B> b) async {
+      return combinator(await a, await b);
+    }(ita.current, itb.current);
+  }
+}

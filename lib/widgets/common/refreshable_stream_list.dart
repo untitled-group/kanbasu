@@ -8,14 +8,14 @@ import 'package:kanbasu/widgets/loading.dart';
 import 'package:kanbasu/widgets/snack.dart';
 import 'package:rxdart/rxdart.dart';
 
-/// [_StreamListView] takes `List<T>` and display the items in view.
+/// [CommonListView] takes `List<T>` and display the items in view.
 /// This scaffold supports batch-update and on-demand-showing stream items.
-class _StreamListView<T> extends HookWidget {
+class CommonListView<T> extends HookWidget {
   final Widget Function(T payload) itemBuilder;
   final List<T>? itemList;
   final bool showLoadingWidget;
 
-  _StreamListView({
+  CommonListView({
     required this.itemBuilder,
     required this.itemList,
     required this.showLoadingWidget,
@@ -98,7 +98,7 @@ abstract class RefreshableStreamListWidget<T> extends HookWidget {
   bool showLoadingWidget() => true;
 
   Widget buildWidget(BuildContext context, List<T>? data) {
-    return _StreamListView<T>(
+    return CommonListView<T>(
       itemBuilder: (item) => buildItem(context, item),
       itemList: data,
       showLoadingWidget: showLoadingWidget(),
