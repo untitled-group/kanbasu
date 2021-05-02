@@ -21,6 +21,7 @@ import 'package:kanbasu/models/user.dart';
 import 'package:kanbasu/types.dart';
 import 'package:kanbasu/utils/logging.dart';
 import 'paginated_list.dart';
+import 'package:rxdart/rxdart.dart';
 
 /// [toResponse] transform an HTTP response to corresponding object.
 Future<T> toResponse<T>(
@@ -134,19 +135,25 @@ class CanvasBufferClient {
   }
 
   /// Fetch a [PaginatedList] sequentially from [KvStore] and
-  /// [CanvasRestClient], and produce two streams of type `Stream<T>`.
-  Stream<Stream<T>> _getPaginatedStreamStream<T>(
+  /// [CanvasRestClient], and produce a two-item list of type `Stream<T>`.
+  List<Stream<T>> _getPaginatedStreamStream<T>(
       String prefix,
       FromJson<T> fromJson,
       ToJson<T> toJson,
       ListPaginated<T> listPaginated,
       GetId getId,
       {ScanOrder? order,
-      bool purge = false}) async* {
+      bool purge = false}) {
     // First, yield results from database
-    final kvStoreResult = await scanPrefix(prefix, fromJson, order: order);
-    _logger.v('[KvStore] scan $prefix => ${kvStoreResult.length} entries');
-    yield Stream.fromIterable(kvStoreResult);
+
+    final kvStream = () async* {
+      final kvStoreResult = await scanPrefix(prefix, fromJson, order: order);
+      _logger.v('[KvStore] scan $prefix => ${kvStoreResult.length} entries');
+      for (final item in kvStoreResult) {
+        yield item;
+      }
+    };
+
     if (!_offline) {
       final stream = () async* {
         var itemCount = 0;
@@ -161,72 +168,57 @@ class CanvasBufferClient {
         // batch add into KvStore
         await putPrefix<T>(prefix, items, getId, toJson, purge: purge);
       };
-      yield stream();
+      return List.of([kvStream(), stream()], growable: false);
     }
-  }
-
-  /// Fetch a [PaginatedList] sequentially from [KvStore] and
-  /// [CanvasRestClient], and produce a stream of type `List<T>`.
-  Stream<List<T>> _getPaginatedListStream<T>(
-      String prefix,
-      FromJson<T> fromJson,
-      ToJson<T> toJson,
-      ListPaginated<T> listPaginated,
-      GetId getId,
-      {ScanOrder? order,
-      bool purge = false}) async* {
-    // First, yield results from database
-    final kvStoreResult = await scanPrefix(prefix, fromJson, order: order);
-    _logger.v('[KvStore] scan $prefix => ${kvStoreResult.length} entries');
-    yield kvStoreResult;
-    if (!_offline) {
-      // Then, yield return from REST API and put them back into database
-      final restResult = await PaginatedList<T>(listPaginated).all().toList();
-      _logger.v('[REST] scan $prefix => ${restResult.length} entries');
-      yield restResult;
-      await putPrefix(prefix, restResult, getId, toJson, purge: purge);
-    }
+    return List.of([kvStream()], growable: false);
   }
 
   /// Fetch an item sequentially from [KvStore] and [CanvasRestClient],
   /// and produce a stream of type `T?`.
-  Stream<T?> _getItemStream<T>(String key, FromJson<T> fromJson,
-      ToJson<T> toJson, GetItem<T> getItem) async* {
-    final kvStoreResult = await getObject(key, fromJson);
-    _logger.v('[KvStore] get $key');
-    yield kvStoreResult;
+  List<Future<T?>> _getItemStream<T>(
+      String key, FromJson<T> fromJson, ToJson<T> toJson, GetItem<T> getItem) {
+    final kvFuture = () async {
+      final kvStoreResult = await getObject(key, fromJson);
+      _logger.v('[KvStore] get $key');
+      return kvStoreResult;
+    };
     if (!_offline) {
-      final restResult = await toResponse(_logger, getItem);
-      _logger.v('[REST] get $key');
-      yield restResult;
-      await putObject(key, restResult, toJson);
+      final restFuture = () async {
+        final restResult = await toResponse(_logger, getItem);
+        _logger.v('[REST] get $key');
+        await putObject(key, restResult, toJson);
+        return restResult;
+      };
+      return List.of([kvFuture(), restFuture()], growable: false);
     }
+    return List.of([kvFuture()], growable: false);
   }
 
   // **************************************************************************
   // Add new REST APIs below
   // **************************************************************************
 
-  List<Course> listToCourse(List<MaybeCourse> courseList) {
-    return courseList.map((e) => e.toCourse()).whereType<Course>().toList();
+  Stream<Course> onlyCourse(Stream<MaybeCourse> courseList) {
+    return courseList.map((e) => e.toCourse()).whereType<Course>();
   }
 
   /// Returns a stream of active courses for the current user.
-  Stream<List<Course>> getCourses() {
-    return _getPaginatedListStream<MaybeCourse>(
+  List<Stream<Course>> getCourses() {
+    return _getPaginatedStreamStream<MaybeCourse>(
             'courses/by_id/',
             (e) => MaybeCourse.fromJson(e),
             (e) => e.toJson(),
             _restClient.getCourses,
             (e) => e.id.toString(),
             purge: true)
-        .map(listToCourse);
+        .map(onlyCourse)
+        .toList(growable: false);
   }
 
   String _getCoursePrefix(id) => 'courses/by_id/$id';
 
   /// Returns information on a single course.
-  Stream<Course?> getCourse(int id) {
+  List<Future<Course?>> getCourse(int id) {
     return _getItemStream(_getCoursePrefix(id), (e) => Course.fromJson(e),
         (e) => e.toJson(), () => _restClient.getCourse(id));
   }
@@ -234,8 +226,8 @@ class CanvasBufferClient {
   String _getTabPrefix(id) => 'courses/$id/tabs/';
 
   /// List available tabs for a course or group.
-  Stream<List<Tab>> getTabs(int id) {
-    return _getPaginatedListStream(
+  List<Stream<Tab>> getTabs(int id) {
+    return _getPaginatedStreamStream(
         _getTabPrefix(id),
         (e) => Tab.fromJson(e),
         (e) => e.toJson(),
@@ -244,13 +236,13 @@ class CanvasBufferClient {
   }
 
   /// Returns current user.
-  Stream<User?> getCurrentUser() {
+  List<Future<User?>> getCurrentUser() {
     return _getItemStream('users/self', (e) => User.fromJson(e),
         (e) => e.toJson(), _restClient.getCurrentUser);
   }
 
   /// Returns the current user's global activity stream
-  Stream<Stream<ActivityItem>> getCurrentUserActivityStream() {
+  List<Stream<ActivityItem>> getCurrentUserActivityStream() {
     return _getPaginatedStreamStream(
         'activity_stream/by_id/',
         (e) => ActivityItem.fromJson(e),
@@ -264,7 +256,7 @@ class CanvasBufferClient {
   String _getModulesPrefix(id) => 'courses/$id/modules/by_id/';
 
   /// List available modules for a course.
-  Stream<Stream<Module>> getModules(int id) {
+  List<Stream<Module>> getModules(int id) {
     return _getPaginatedStreamStream(
         _getModulesPrefix(id),
         (e) => Module.fromJson(e),
@@ -277,7 +269,7 @@ class CanvasBufferClient {
       'courses/$course_id/modules/by_id/$module_id';
 
   /// List single module for a course.
-  Stream<Module?> getModule(int course_id, int module_id) {
+  List<Future<Module?>> getModule(int course_id, int module_id) {
     return _getItemStream(
         _getModulePrefix(course_id, module_id),
         (e) => Module.fromJson(e),
@@ -289,7 +281,7 @@ class CanvasBufferClient {
       'courses/$course_id/modules/$module_id/items/by_id/';
 
   /// List single module for a course.
-  Stream<Stream<ModuleItem>> getModuleItems(int course_id, int module_id) {
+  List<Stream<ModuleItem>> getModuleItems(int course_id, int module_id) {
     return _getPaginatedStreamStream(
         _getModuleItemsPrefix(course_id, module_id),
         (e) => ModuleItem.fromJson(e),
@@ -303,7 +295,8 @@ class CanvasBufferClient {
       'courses/$course_id/modules/$module_id/items/by_id/$item_id';
 
   /// List single module for a course.
-  Stream<ModuleItem?> getModuleItem(int course_id, int module_id, item_id) {
+  List<Future<ModuleItem?>> getModuleItem(
+      int course_id, int module_id, item_id) {
     return _getItemStream(
         _getModuleItemPrefix(course_id, module_id, item_id),
         (e) => ModuleItem.fromJson(e),
@@ -314,7 +307,7 @@ class CanvasBufferClient {
   String _getAssignmentPrefix(id) => 'courses/$id/assignments/by_id/';
 
   /// List available assignments for a course.
-  Stream<Stream<Assignment>> getAssignments(int id) {
+  List<Stream<Assignment>> getAssignments(int id) {
     return _getPaginatedStreamStream(
         _getAssignmentPrefix(id),
         (e) => Assignment.fromJson(e),
@@ -327,7 +320,7 @@ class CanvasBufferClient {
       'courses/$course_id/assignments/$assignment_id/submissions/$user_id';
 
   /// Get available submission for an assignment.
-  Stream<Submission?> getSubmission(int course_id, int assignment_id,
+  List<Future<Submission?>> getSubmission(int course_id, int assignment_id,
       [String user_id = 'self']) {
     return _getItemStream(
         _getSubmissionPrefix(course_id, assignment_id, user_id),
@@ -341,7 +334,7 @@ class CanvasBufferClient {
       'courses/$course_id/submissions/by_id/';
 
   /// List available submissions for an assignment.
-  Stream<Stream<Submission>> getSubmissions(int course_id) {
+  List<Stream<Submission>> getSubmissions(int course_id) {
     return _getPaginatedStreamStream(
         _getSubmissionsPrefix(course_id),
         (e) => Submission.fromJson(e),
@@ -353,7 +346,7 @@ class CanvasBufferClient {
   String _getFilesPrefix(course_id) => 'courses/$course_id/files/by_id/';
 
   /// List available files for a course.
-  Stream<Stream<File>> getFiles(int course_id) {
+  List<Stream<File>> getFiles(int course_id) {
     return _getPaginatedStreamStream(
         _getFilesPrefix(course_id),
         (e) => File.fromJson(e),
@@ -366,7 +359,7 @@ class CanvasBufferClient {
       'courses/$course_id/files/by_id/$file_id';
 
   /// List a specific file.
-  Stream<File?> getFile(int course_id, int file_id) {
+  List<Future<File?>> getFile(int course_id, int file_id) {
     return _getItemStream(
         _getFilePrefix(course_id, file_id),
         (e) => File.fromJson(e),
@@ -377,7 +370,7 @@ class CanvasBufferClient {
   String _getPagesPrefix(course_id) => 'courses/$course_id/pages/by_id/';
 
   /// List available pages for a course.
-  Stream<Stream<Page>> getPages(int course_id) {
+  List<Stream<Page>> getPages(int course_id) {
     return _getPaginatedStreamStream(
         _getPagesPrefix(course_id),
         (e) => Page.fromJson(e),
@@ -390,7 +383,7 @@ class CanvasBufferClient {
       'courses/$course_id/pages/by_id/$page_id';
 
   /// List a specific page.
-  Stream<Page?> getPage(int course_id, int page_id) {
+  List<Future<Page?>> getPage(int course_id, int page_id) {
     return _getItemStream(
         _getPagePrefix(course_id, page_id),
         (e) => Page.fromJson(e),
@@ -401,7 +394,7 @@ class CanvasBufferClient {
   String _getPlannersPrefix() => 'planners/by_id/';
 
   /// List available planners for a course.
-  Stream<Stream<Planner>> getPlanners() {
+  List<Stream<Planner>> getPlanners() {
     return _getPaginatedStreamStream(
         _getPlannersPrefix(),
         (e) => Planner.fromJson(e),
@@ -413,7 +406,7 @@ class CanvasBufferClient {
   String _getFoldersPrefix(course_id) => 'courses/$course_id/folders/by_id/';
 
   /// List available folders for a course.
-  Stream<Stream<Folder>> getFolders(int course_id) {
+  List<Stream<Folder>> getFolders(int course_id) {
     return _getPaginatedStreamStream(
         _getFoldersPrefix(course_id),
         (e) => Folder.fromJson(e),
@@ -426,7 +419,7 @@ class CanvasBufferClient {
       'courses/$course_id/folders/by_id/$folder_id';
 
   /// List a specific file.
-  Stream<Folder?> getFolder(int course_id, int folder_id) {
+  List<Future<Folder?>> getFolder(int course_id, int folder_id) {
     return _getItemStream(
         _getFolderPrefix(course_id, folder_id),
         (e) => Folder.fromJson(e),
@@ -438,7 +431,7 @@ class CanvasBufferClient {
       'courses/$course_id/announcements/by_id/';
 
   /// List announcements for a course.
-  Stream<Stream<DiscussionTopic>> getAnnouncements(int course_id) {
+  List<Stream<DiscussionTopic>> getAnnouncements(int course_id) {
     return _getPaginatedStreamStream(
         _getAnnouncementsPrefix(course_id),
         (e) => DiscussionTopic.fromJson(e),

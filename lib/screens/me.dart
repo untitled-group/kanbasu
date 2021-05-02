@@ -8,7 +8,7 @@ import 'package:kanbasu/resolver/resolver_main.dart';
 import 'package:kanbasu/utils/logging.dart';
 import 'package:kanbasu/utils/persistence.dart';
 import 'package:kanbasu/models/model.dart';
-import 'package:kanbasu/widgets/stream.dart';
+import 'package:kanbasu/widgets/common/future.dart';
 import 'package:kanbasu/widgets/user.dart';
 import 'package:provider/provider.dart';
 import 'package:separated_column/separated_column.dart';
@@ -16,13 +16,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:kanbasu/aggregation.dart';
 
-class _MeView extends StreamWidget<User?> {
+class _MeView extends FutureWidget<User?> {
   @override
   Widget buildWidget(context, User? data) =>
       data == null ? Container() : UserWidget(data);
 
   @override
-  Stream<User?> getStream(context) =>
+  List<Future<User?>> getFutures(context) =>
       Provider.of<Model>(context).canvas.getCurrentUser();
 }
 

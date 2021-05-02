@@ -3,7 +3,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:kanbasu/models/discussion_topic.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/announcement.dart';
-import 'package:kanbasu/widgets/refreshable_stream_list.dart';
+import 'package:kanbasu/widgets/common/refreshable_stream_list.dart';
 import 'package:provider/provider.dart';
 
 class CourseAnnouncementsScreen
@@ -13,7 +13,7 @@ class CourseAnnouncementsScreen
   CourseAnnouncementsScreen(this.courseId);
 
   @override
-  Stream<Stream<DiscussionTopic>> getStreamStream(context) =>
+  List<Stream<DiscussionTopic>> getStreams(context) =>
       Provider.of<Model>(context).canvas.getAnnouncements(courseId);
 
   @override

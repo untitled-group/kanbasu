@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:kanbasu/models/assignment.dart';
@@ -28,7 +26,6 @@ class AssignmentWidget extends StatelessWidget {
     final TextStyle dueTimeStyle;
     final theme = Provider.of<Model>(context).theme;
 
-    stdout.write(item.submission);
     if (item.dueAt != null) {
       dueTimeString = 'assignment.due_time_is'.tr() +
           (showDetails

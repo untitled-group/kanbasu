@@ -16,7 +16,7 @@ void main() {
     final api = CanvasBufferClient(restClient, null);
 
     test('should get course list', () async {
-      final data = (await api.getCourses().last).toList();
+      final data = await (api.getCourses().last).toList();
       expect(data.length, equals(2));
       expect(data[0].courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
       expect(data[1].id, equals(318720));
@@ -29,17 +29,30 @@ void main() {
 
     test('should catch inner error when 404', () async {
       var errCount = 0;
-      await api.getCourse(23334).handleError((_) => errCount += 1).toList();
+
+      final result = api.getCourse(23334);
+      expect(await result.first, isNull);
+      // https://github.com/dart-lang/sdk/issues/44386
+      try {
+        expect(await result.last, isNull);
+      } catch (err) {
+        errCount += 1;
+      }
       expect(errCount, equals(1));
     });
 
     test('should catch listing inner error when 404', () async {
       var errCount = 0;
-      final result = await api
-          .getTabs(23333333)
-          .handleError((_) => errCount += 1)
-          .toList();
-      expect(result.length, equals(1));
+      final result = api.getTabs(23333333);
+      final onError = (Object err, StackTrace st) {
+        errCount += 1;
+        return null;
+      };
+
+      expect(result.length, equals(2));
+      await result[0].handleError(onError).toList();
+      await result[1].handleError(onError).toList();
+
       expect(errCount, equals(1));
     });
   });
@@ -58,40 +71,40 @@ void main() {
     });
 
     tearDown(() {
-      api.close();
+      // api.close();
       restClient = null;
       kvStore = null;
       api = null;
     });
 
     test('should get current user', () async {
-      final data = await api.getCurrentUser().toList();
+      final data = await api.getCurrentUser();
       expect(data.length, equals(2));
-      expect(data[1].id, equals(23334));
+      expect((await data[1]).id, equals(23334));
     });
 
     test('should return only one item in offline mode', () async {
       api.enableOffline();
-      final data = await api.getCurrentUser().toList();
+      final data = await api.getCurrentUser();
       expect(data.length, equals(1));
-      expect(data[0], isNull);
+      expect(await data[0], isNull);
     });
 
     test('should get course list multiple times with cache', () async {
-      await api.getCourses().last;
-      await api.getCourses().last;
-      final data = await api.getCourses().last;
+      await api.getCourses().last.toList();
+      await api.getCourses().last.toList();
+      final data = await api.getCourses().first.toList();
       expect(data.length, equals(2));
       expect(data[0].courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
       expect(data[1].id, equals(318720));
     });
 
     test('should get course in offline mode', () async {
-      final onlineData = await api.getCourses().toList();
-      expect(onlineData[0].length, equals(0));
-      expect(onlineData[1].length, equals(2));
+      final onlineData = await api.getCourses();
+      expect((await onlineData[0].toList()).length, equals(0));
+      expect((await onlineData[1].toList()).length, equals(2));
       api.enableOffline();
-      final data = await api.getCourses().last;
+      final data = await api.getCourses().last.toList();
       expect(data.length, equals(2));
       expect(data[0].courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
       expect(data[1].id, equals(318720));
@@ -101,17 +114,17 @@ void main() {
     });
 
     test('should fill course cache when listing', () async {
-      await api.getCourses().toList();
+      await api.getCourses().last.toList();
       final data = await api.getCourse(23333).first;
       expect(data!.courseCode, equals('(2019-2020-1)-MA119-4-概率统计'));
     });
 
     test('should get tabs in offline mode', () async {
-      final onlineData = await api.getTabs(23333).toList();
-      expect(onlineData[0].length, equals(0));
-      expect(onlineData[1].length, equals(9));
+      final onlineData = api.getTabs(23333);
+      expect(await onlineData[0].length, equals(0));
+      expect(await onlineData[1].length, equals(9));
       api.enableOffline();
-      final data = await api.getTabs(23333).last;
+      final data = await api.getTabs(23333).last.toList();
       expect(data.length, equals(9));
       expect(data[0].id, equals('home'));
     });

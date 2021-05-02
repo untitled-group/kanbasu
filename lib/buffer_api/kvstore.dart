@@ -51,7 +51,7 @@ class KvStore {
   /// Open a in-memory [KvStore].
   static KvStore openInMemory() {
     final database =
-        openDatabase(inMemoryDatabasePath, onCreate: _initDatabase, version: 1);
+        openDatabase(inMemoryDatabasePath, onCreate: _initDatabase, version: 1, singleInstance: false);
     return KvStore(database);
   }
 
