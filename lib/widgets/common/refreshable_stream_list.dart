@@ -93,7 +93,7 @@ abstract class RefreshableStreamListWidget<T> extends HookWidget {
 
   int atLeast() => 10;
 
-  int refreshInterval() => 200;
+  Duration refreshInterval() => Duration(milliseconds: 50);
 
   bool showLoadingWidget() => true;
 
@@ -119,7 +119,7 @@ abstract class RefreshableStreamListWidget<T> extends HookWidget {
           var hasCompleted = false;
           final completion = triggerRefresh.value;
           // rewrite streams to catch errors inside
-          var items = getStreams(context)
+          var streams = getStreams(context)
               .map((itemStream) => itemStream.handleError((error, _) {
                     onError(context, error);
                     if (!hasCompleted) {
@@ -132,19 +132,18 @@ abstract class RefreshableStreamListWidget<T> extends HookWidget {
                       hasCompleted = true;
                     }
                   }).scan((List<T>? acc, T s, _) {
-                    final list = acc ?? List<T>.empty(growable: true);
+                    final list = acc ?? <T>[];
                     list.add(s);
                     return list;
                   }));
 
           final interval = refreshInterval();
 
-          if (interval != 0) {
-            items = items.map((stream) =>
-                stream.throttleTime(Duration(milliseconds: interval)));
+          if (interval.inMilliseconds > 0) {
+            streams = streams.map((stream) => stream.throttleTime(interval));
           }
 
-          return items.toList();
+          return streams.toList();
         },
         [triggerRefresh.value],
       );
