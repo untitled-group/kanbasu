@@ -190,13 +190,6 @@ packages:
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
     version: "3.0.1"
-  css_colors:
-    dependency: transitive
-    description:
-      name: css_colors
-      url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
-    source: hosted
-    version: "1.1.0"
   csslib:
     dependency: transitive
     description:
@@ -224,7 +217,7 @@ packages:
       name: dart_style
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
-    version: "2.0.0"
+    version: "2.0.1"
   dio:
     dependency: "direct main"
     description:
@@ -299,7 +292,7 @@ packages:
       name: flutter_html
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
-    version: "2.0.0-nullsafety.0"
+    version: "2.0.0-nullsafety.1"
   flutter_layout_grid:
     dependency: transitive
     description:
@@ -312,6 +305,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_math_fork:
+    dependency: transitive
+    description:
+      name: flutter_math_fork
+      url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
+    source: hosted
+    version: "0.3.2+1"
   flutter_phoenix:
     dependency: "direct main"
     description:
@@ -325,7 +325,7 @@ packages:
       name: flutter_svg
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
-    version: "0.21.0+1"
+    version: "0.22.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -370,7 +370,7 @@ packages:
       name: http
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
-    version: "0.13.1"
+    version: "0.13.2"
   http_multi_server:
     dependency: transitive
     description:
@@ -636,7 +636,7 @@ packages:
       name: separated_column
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
-    version: "1.1.0-nullsafety.0"
+    version: "2.0.0"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -767,7 +767,7 @@ packages:
       name: sqlite3
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
-    version: "1.0.0"
+    version: "1.1.1"
   stack_trace:
     dependency: transitive
     description:
@@ -1022,4 +1022,4 @@ packages:
     version: "3.1.0"
 sdks:
   dart: ">=2.12.0 <3.0.0"
-  flutter: ">=1.25.0"
+  flutter: ">=2.0.0"
