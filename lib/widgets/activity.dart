@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kanbasu/models/activity_item.dart';
+import 'package:kanbasu/models/brief_info.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -7,13 +7,13 @@ import 'package:separated_column/separated_column.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class ActivityWidget extends StatelessWidget {
-  final ActivityItem item;
+  final BriefInfo item;
 
   ActivityWidget(this.item);
 
   Widget _buildItems(BuildContext context) {
     final theme = Provider.of<Model>(context).theme;
-    final isDone = item.readState || item.workflowState == 'graded';
+    final isDone = true;
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -26,7 +26,7 @@ class ActivityWidget extends StatelessWidget {
               CircleAvatar(
                 backgroundColor: theme.primary,
                 foregroundColor: theme.background,
-                child: Text('activity.short_type.${item.type}'.tr()),
+                child: Text('aggregate.short_type.${item.type}'.tr()),
               ),
               SizedBox(
                 width: 10,
@@ -40,7 +40,7 @@ class ActivityWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          item.course?.name ?? item.courseId.toString(),
+                          item.title,
                           style: TextStyle(fontSize: 14, color: theme.primary),
                         )
                       ],
@@ -53,7 +53,7 @@ class ActivityWidget extends StatelessWidget {
                             fontWeight: isDone ? null : FontWeight.bold,
                           ),
                           children: [
-                            TextSpan(text: item.title.trim()),
+                            TextSpan(text: item.description),
                             //* add more span here
                           ]),
                       overflow: TextOverflow.ellipsis,

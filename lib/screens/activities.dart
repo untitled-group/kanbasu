@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:kanbasu/models/activity_item.dart';
+import 'package:kanbasu/aggregation.dart';
+import 'package:kanbasu/models/brief_info.dart';
 import 'package:kanbasu/widgets/activity.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/link.dart';
@@ -9,13 +10,24 @@ import 'package:kanbasu/widgets/common/refreshable_stream_list.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-class _ActivitiesView extends RefreshableStreamListWidget<ActivityItem> {
-  @override
-  List<Stream<ActivityItem>> getStreams(context) =>
-      Provider.of<Model>(context).canvas.getCurrentUserActivityStream();
+class _ActivitiesView extends RefreshableStreamListWidget<BriefInfo> {
+  Stream<BriefInfo> getAggregationStream(context, bool useOnlineData) async* {
+    final items = await aggregate(
+        Provider.of<Model>(context, listen: false).canvas,
+        useOnlineData: useOnlineData);
+    for (final item in items) {
+      yield item;
+    }
+  }
 
   @override
-  Widget buildItem(context, ActivityItem item) => Link(
+  List<Stream<BriefInfo>> getStreams(context) => [
+        getAggregationStream(context, false),
+        getAggregationStream(context, true)
+      ];
+
+  @override
+  Widget buildItem(context, BriefInfo item) => Link(
       path: '/course/${item.courseId}/${_typeToTabId[item.type] ?? ''}',
       child: ActivityWidget(item));
 }

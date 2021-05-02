@@ -110,9 +110,23 @@ class MeScreen extends HookWidget {
                   Provider.of<Model>(context, listen: false).canvas,
                   useOnlineData: true);
               aggregation.then((data) => {logger.i(data)});
-              logger.i('Finish aggregator');
             },
             child: Text('运行 Aggregator'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.grey, // background
+              onPrimary: Colors.white, // foreground
+            ),
+            onPressed: () {
+              final logger = createLogger();
+              logger.i('Aggregator!');
+              final aggregation = aggregate(
+                  Provider.of<Model>(context, listen: false).canvas,
+                  useOnlineData: false);
+              aggregation.then((data) => {logger.i(data)});
+            },
+            child: Text('运行 Aggregator (Offline)'),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(

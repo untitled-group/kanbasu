@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:kanbasu/buffer_api/canvas.dart';
 import 'package:kanbasu/models/assignment.dart';
 import 'package:kanbasu/models/file.dart';
@@ -11,23 +13,21 @@ String getPlainText(String htmlData) {
   return bodyText ?? '';
 }
 
-Future<List> getListDataFromApi(List stream, bool useOnlineData) async {
+Future<List<T>> getListDataFromApi<T>(
+    List<Stream<T>> stream, bool useOnlineData) async {
   if (useOnlineData) {
-    final data = await (stream.last).toList();
-    return data;
+    return await stream.last.toList();
   } else {
-    final data = await (stream.first).toList();
-    return data;
+    return await stream.first.toList();
   }
 }
 
-Future getItemDataFromApi(Stream stream, bool useOnlineData) async {
+Future<T> getItemDataFromApi<T>(
+    List<Future<T>> stream, bool useOnlineData) async {
   if (useOnlineData) {
-    final data = (await stream.last);
-    return data;
+    return (await stream.last);
   } else {
-    final data = (await stream.first);
-    return data;
+    return (await stream.first);
   }
 }
 
@@ -40,8 +40,11 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
 
   final available_courses = [];
   final courses = await getListDataFromApi(api.getCourses(), useOnlineData);
+  final latestTerm = courses.map((c) => c.term?.id ?? 0).fold(0, max);
+  final latestCourses =
+      courses.where((c) => (c.term?.id ?? 0) >= latestTerm).toList();
 
-  for (final course in courses) {
+  for (final course in latestCourses) {
     available_courses.add(course.id);
     course_id_name[course.id] = course.name;
   }
@@ -85,8 +88,8 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
     final new_agg = aggregateFromPlanner(planner, course_id, course_name);
     aggregations.add(new_agg);
   }
-
-  return aggregations;
+  aggregations.sort((a, b) => a.updatedAt.compareTo(b.updatedAt));
+  return aggregations.reversed.toList();
 }
 
 BriefInfo aggregateFromPlanner(
