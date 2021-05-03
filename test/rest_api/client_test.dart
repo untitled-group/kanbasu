@@ -128,13 +128,13 @@ void main() {
     });
 
     test('should get info about a discussion topic of a course', () async {
-      final topic = await api.getDiscussionTopic(23333, 24444);
+      final topic = await api.getDiscussionTopic(23333, 66394);
       expect(topic.data.id, equals(66394));
     });
 
     test('should get info about all discussion entries of a topic in a course',
         () async {
-      final entries = await api.getDiscussionEntries(23333, 24444);
+      final entries = await api.getDiscussionEntries(23333, 66394);
       expect(entries.data[0].id, equals(161846));
     });
   });

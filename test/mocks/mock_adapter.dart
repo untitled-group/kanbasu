@@ -94,9 +94,9 @@ class MockAdapter extends HttpClientAdapter {
           return jsonResponse(discussionTopicsResponse);
         case '/courses/23333/discussion_topics':
           return jsonResponse(discussionTopicsResponse);
-        case '/courses/23333/discussion_topics/24444':
+        case '/courses/23333/discussion_topics/66394':
           return jsonResponse(discussionTopicResponse);
-        case '/courses/23333/discussion_topics/24444/entries':
+        case '/courses/23333/discussion_topics/66394/entries':
           return jsonResponse(discussionEntriesResponse);
         default:
           return ResponseBody.fromString('Mock HTTP 404 Error', 404);
