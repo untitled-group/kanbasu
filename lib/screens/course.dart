@@ -130,7 +130,7 @@ class CourseScreen extends RefreshableListWidget<_CourseMeta> {
 }
 
 List<t.Tab> _filterTabs(List<t.Tab> ts) {
-  final excludeIds = ['people', 'grades'];
+  final excludeIds = ['people', 'grades', 'home'];
   return ts
       .where((t) =>
           t.type != 'external' &&
