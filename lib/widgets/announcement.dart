@@ -27,10 +27,12 @@ class AnnouncementWidget extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
-                backgroundImage: NetworkImage(item.author.avatarImageUrl ?? ''),
-              ),
-              SizedBox(width: 10),
+              if (item.author.avatarImageUrl != null) ...[
+                CircleAvatar(
+                  backgroundImage: NetworkImage(item.author.avatarImageUrl!),
+                ),
+                SizedBox(width: 10),
+              ],
               Expanded(
                 child: SeparatedColumn(
                   crossAxisAlignment: CrossAxisAlignment.start,
