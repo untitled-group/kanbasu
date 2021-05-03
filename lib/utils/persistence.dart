@@ -1,8 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesKeys {
-  static const apiKey = 'apiKey';
-  static const apiEndpoint = 'apiEndpoint';
+  static const apiKey = 'api_key';
+  static const apiEndpoint = 'api_endpoint';
 }
 
 class PreferencesDefaults {
