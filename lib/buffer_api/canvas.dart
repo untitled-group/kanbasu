@@ -457,7 +457,7 @@ class CanvasBufferClient {
   }
 
   String _getDiscussionTopicPrefix(course_id, topic_id) =>
-      'courses/$course_id/discussion_topics/$topic_id/';
+      'courses/$course_id/discussion_topics/by_id/$topic_id/';
 
   /// List a specific page.
   List<Future<DiscussionTopic?>> getDiscussionTopic(
