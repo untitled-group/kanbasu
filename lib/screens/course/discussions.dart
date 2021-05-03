@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:kanbasu/models/discussion_topic.dart';
 import 'package:kanbasu/models/model.dart';
-import 'package:kanbasu/widgets/announcement.dart';
 import 'package:kanbasu/widgets/common/refreshable_stream_list.dart';
 import 'package:kanbasu/widgets/discussion.dart';
 import 'package:provider/provider.dart';
