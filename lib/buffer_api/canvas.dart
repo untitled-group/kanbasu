@@ -11,6 +11,7 @@ import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/folder.dart';
 import 'package:kanbasu/models/page.dart';
 import 'package:kanbasu/models/planner.dart';
+import 'package:kanbasu/models/discussion_entry.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:logger/logger.dart';
 import 'package:kanbasu/rest_api/canvas.dart';
@@ -438,6 +439,48 @@ class CanvasBufferClient {
         (e) => e.toJson(),
         ({queries}) => _restClient
             .getAnnouncements(['course_$course_id'], queries: queries),
+        (e) => e.id.toString());
+  }
+
+  String _getDiscussionTopicsPrefix(course_id) =>
+      'courses/$course_id/discussion_topics/by_id/';
+
+  /// List available discussion topics for a course.
+  List<Stream<DiscussionTopic>> getDiscussionTopics(int course_id) {
+    return _getPaginatedStreamStream(
+        _getDiscussionTopicsPrefix(course_id),
+        (e) => DiscussionTopic.fromJson(e),
+        (e) => e.toJson(),
+        ({queries}) =>
+            _restClient.getDiscussionTopics(course_id, queries: queries),
+        (e) => e.id.toString());
+  }
+
+  String _getDiscussionTopicPrefix(course_id, topic_id) =>
+      'courses/$course_id/discussion_topics/$topic_id/';
+
+  /// List a specific page.
+  List<Future<DiscussionTopic?>> getDiscussionTopic(
+      int course_id, int topic_id) {
+    return _getItemStream(
+        _getDiscussionTopicPrefix(course_id, topic_id),
+        (e) => DiscussionTopic.fromJson(e),
+        (e) => e.toJson(),
+        () => _restClient.getDiscussionTopic(course_id, topic_id));
+  }
+
+  String _getDiscussionEntriesPrefix(course_id, topic_id) =>
+      'courses/$course_id/discussion_topics/$topic_id/entries/by_id/';
+
+  /// List available discussion topics for a course.
+  List<Stream<DiscussionEntry>> getDiscussionEntries(
+      int course_id, int topic_id) {
+    return _getPaginatedStreamStream(
+        _getDiscussionEntriesPrefix(course_id, topic_id),
+        (e) => DiscussionEntry.fromJson(e),
+        (e) => e.toJson(),
+        ({queries}) => _restClient.getDiscussionEntries(course_id, topic_id,
+            queries: queries),
         (e) => e.id.toString());
   }
 }

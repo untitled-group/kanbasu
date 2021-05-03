@@ -308,5 +308,32 @@ void main() {
       expect(dataJson.length, equals(offlineDataJson.length));
       expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
     });
+
+    test('should get info about all discussion topics in stream mode',
+        () async {
+      final data = await api.getDiscussionTopics(23333).last;
+      final dataJson = await data.toList();
+      final offlineData = await api.getDiscussionTopics(23333).first;
+      final offlineDataJson = await offlineData.toList();
+      expect(dataJson.length, equals(offlineDataJson.length));
+      expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
+    });
+
+    test('should get info about a single discussion topic in stream mode',
+        () async {
+      final data = await api.getDiscussionTopic(23333, 24444).last;
+      final offlineData = await api.getDiscussionTopic(23333, 24444).first;
+      expect(data!.id, equals(66394));
+      expect(json.encode(data), equals(json.encode(offlineData)));
+    });
+
+    test('should get info about discussion entries in stream mode', () async {
+      final data = await api.getDiscussionEntries(23333, 24444).last;
+      final dataJson = await data.toList();
+      final offlineData = await api.getDiscussionEntries(23333, 24444).first;
+      final offlineDataJson = await offlineData.toList();
+      expect(dataJson.length, equals(offlineDataJson.length));
+      expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
+    });
   });
 }

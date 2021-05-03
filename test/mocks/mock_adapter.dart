@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:dio/adapter.dart';
 
 import 'discussion_topic_mock.dart';
+import 'discussion_entry_mock.dart';
 import 'tab_mock.dart';
 import 'course_mock.dart';
 import 'user_mock.dart';
@@ -91,6 +92,12 @@ class MockAdapter extends HttpClientAdapter {
           return jsonResponse(folderResponse);
         case '/announcements':
           return jsonResponse(discussionTopicsResponse);
+        case '/courses/23333/discussion_topics':
+          return jsonResponse(discussionTopicsResponse);
+        case '/courses/23333/discussion_topics/24444':
+          return jsonResponse(discussionTopicResponse);
+        case '/courses/23333/discussion_topics/24444/entries':
+          return jsonResponse(discussionEntriesResponse);
         default:
           return ResponseBody.fromString('Mock HTTP 404 Error', 404);
       }

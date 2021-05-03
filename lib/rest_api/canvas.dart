@@ -16,6 +16,7 @@ import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/tab.dart';
 import 'package:kanbasu/models/user.dart';
 import 'package:kanbasu/models/activity_item.dart';
+import 'package:kanbasu/models/discussion_entry.dart';
 
 part 'canvas.g.dart';
 
@@ -166,4 +167,22 @@ abstract class CanvasRestClient {
     @Query('end_date') String endDate = '9999-01-01',
     @Queries() Map<String, dynamic>? queries,
   });
+
+  /// List discussion topics for a course.
+  @GET('/courses/{course_id}/discussion_topics')
+  Future<HttpResponse<List<DiscussionTopic>>> getDiscussionTopics(
+      @Path() int course_id,
+      {@Queries() Map<String, dynamic>? queries});
+
+  /// Get a discussion topic for a course.
+  @GET('/courses/{course_id}/discussion_topics/{topic_id}')
+  Future<HttpResponse<DiscussionTopic>> getDiscussionTopic(
+      @Path() int course_id, @Path() int topic_id,
+      {@Queries() Map<String, dynamic>? queries});
+
+  /// Get a discussion entry for a topic for a course.
+  @GET('/courses/{course_id}/discussion_topics/{topic_id}/entries')
+  Future<HttpResponse<List<DiscussionEntry>>> getDiscussionEntries(
+      @Path() int course_id, @Path() int topic_id,
+      {@Queries() Map<String, dynamic>? queries});
 }
