@@ -1,7 +1,6 @@
-import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
-import 'package:built_value/json_object.dart';
 import 'package:built_value/serializer.dart';
+import 'package:kanbasu/models/user_display.dart';
 import 'serializers.dart';
 
 part 'discussion_entry.g.dart';
@@ -28,7 +27,7 @@ abstract class DiscussionEntry
   @BuiltValueField(wireName: 'message')
   String get message;
   @BuiltValueField(wireName: 'user')
-  BuiltMap<String, JsonObject> get user;
+  UserDisplay get user;
   @BuiltValueField(wireName: 'read_state')
   String get readState;
   @BuiltValueField(wireName: 'forced_read_state')

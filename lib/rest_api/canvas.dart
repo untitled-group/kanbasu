@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:kanbasu/models/discussion_topic.dart';
+import 'package:kanbasu/utils/persistence.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 
@@ -20,7 +21,7 @@ import 'package:kanbasu/models/discussion_entry.dart';
 
 part 'canvas.g.dart';
 
-@RestApi(baseUrl: 'https://oc.sjtu.edu.cn/api/v1')
+@RestApi(baseUrl: PreferencesDefaults.apiEndpoint)
 abstract class CanvasRestClient {
   /// [CanvasRestClient] covers a subset of Canvas LMS Rest APIs.
 

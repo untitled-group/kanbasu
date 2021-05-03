@@ -12,9 +12,9 @@ abstract class LockInfo implements Built<LockInfo, LockInfoBuilder> {
   @BuiltValueField(wireName: 'lock_at')
   DateTime? get lockAt;
   @BuiltValueField(wireName: 'can_view')
-  bool get canView;
+  bool? get canView;
   @BuiltValueField(wireName: 'asset_string')
-  String get assetString;
+  String? get assetString;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(LockInfo.serializer, this)!

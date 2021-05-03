@@ -472,7 +472,7 @@ class CanvasBufferClient {
   String _getDiscussionEntriesPrefix(course_id, topic_id) =>
       'courses/$course_id/discussion_topics/$topic_id/entries/by_id/';
 
-  /// List available discussion topics for a course.
+  /// List discussion entries for a topic.
   List<Stream<DiscussionEntry>> getDiscussionEntries(
       int course_id, int topic_id) {
     return _getPaginatedStreamStream(
