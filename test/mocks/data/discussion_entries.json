@@ -1,0 +1,21 @@
+[
+    {
+        "id": 161846,
+        "user_id": 52462,
+        "parent_id": null,
+        "created_at": "2021-05-03T04:07:38Z",
+        "updated_at": "2021-05-03T04:07:38Z",
+        "rating_count": null,
+        "rating_sum": null,
+        "user_name": "xxx",
+        "message": "<p>[Canvas 手机版讨论区测试数据，请忽略此条消息]</p>\n<p>1. 什么是软件？什么推动着软件的发展？</p>\n<p>2. 软件的本质特性是什么？他们之间的关系</p>\n<p>3. 什么是软件工程？<span>软件工程的焦点是什么？为什么？</span></p>\n<p>4. 软件工程与计算机科学的区别？</p>",
+        "user": {
+            "id": 52462,
+            "display_name": "xxx",
+            "avatar_image_url": "https://oc.sjtu.edu.cn/xxx",
+            "html_url": "https://oc.sjtu.edu.cn/courses/31611/users/52462"
+        },
+        "read_state": "read",
+        "forced_read_state": false
+    }
+]

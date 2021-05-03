@@ -6,6 +6,7 @@ import 'package:built_value/json_object.dart';
 import 'package:kanbasu/models/term.dart';
 import 'package:kanbasu/models/user_display.dart';
 import 'package:kanbasu/models/discussion_topic.dart';
+import 'package:kanbasu/models/discussion_entry.dart';
 
 import 'assignment.dart';
 import 'lock_info.dart';
@@ -43,6 +44,7 @@ part 'serializers.g.dart';
   Folder,
   UserDisplay,
   DiscussionTopic,
+  DiscussionEntry,
   BriefInfo,
   Term,
 ])

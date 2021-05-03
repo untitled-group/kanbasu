@@ -282,7 +282,7 @@ void main() {
       expect(json.encode(data), equals(json.encode(offlineData)));
     });
 
-    test('should cache page when fetching all folders', () async {
+    test('should cache folder when fetching all folders', () async {
       final data = await api.getFolders(23333).toList();
       expect(await data[0].toList(), equals([]));
       await data[1].toList(); // ensure all REST APIs have been called
@@ -304,6 +304,43 @@ void main() {
       final data = await api.getSubmissions(23334).last;
       final dataJson = await data.toList();
       final offlineData = await api.getSubmissions(23334).first;
+      final offlineDataJson = await offlineData.toList();
+      expect(dataJson.length, equals(offlineDataJson.length));
+      expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
+    });
+
+    test('should get info about all discussion topics in stream mode',
+        () async {
+      final data = await api.getDiscussionTopics(23333).last;
+      final dataJson = await data.toList();
+      final offlineData = await api.getDiscussionTopics(23333).first;
+      final offlineDataJson = await offlineData.toList();
+      expect(dataJson.length, equals(offlineDataJson.length));
+      expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));
+    });
+
+    test('should get info about a single discussion topic in stream mode',
+        () async {
+      final data = await api.getDiscussionTopic(23333, 66394).last;
+      final offlineData = await api.getDiscussionTopic(23333, 66394).first;
+      expect(data!.id, equals(66394));
+      expect(json.encode(data), equals(json.encode(offlineData)));
+    });
+
+    test('should cache topic when fetching all discussion topics', () async {
+      final data = await api.getDiscussionTopics(23333).toList();
+      expect(await data[0].toList(), equals([]));
+      await data[1].toList(); // ensure all REST APIs have been called
+      // expect(await data[1].toList(), equals([]));
+      // expect(data[1][0]!.id, equals(66394));
+      final offlineData = await api.getDiscussionTopic(23333, 66394).first;
+      expect(offlineData!.id, equals(66394));
+    });
+
+    test('should get info about discussion entries in stream mode', () async {
+      final data = await api.getDiscussionEntries(23333, 66394).last;
+      final dataJson = await data.toList();
+      final offlineData = await api.getDiscussionEntries(23333, 66394).first;
       final offlineDataJson = await offlineData.toList();
       expect(dataJson.length, equals(offlineDataJson.length));
       expect(json.encode(dataJson), equals(json.encode(offlineDataJson)));

@@ -121,5 +121,21 @@ void main() {
       final submissions = await api.getSubmissions(23334);
       expect(submissions.data[0].id, equals(3904019));
     });
+
+    test('should get info about all discussion topics of a course', () async {
+      final topics = await api.getDiscussionTopics(23333);
+      expect(topics.data[0].id, equals(66394));
+    });
+
+    test('should get info about a discussion topic of a course', () async {
+      final topic = await api.getDiscussionTopic(23333, 66394);
+      expect(topic.data.id, equals(66394));
+    });
+
+    test('should get info about all discussion entries of a topic in a course',
+        () async {
+      final entries = await api.getDiscussionEntries(23333, 66394);
+      expect(entries.data[0].id, equals(161846));
+    });
   });
 }
