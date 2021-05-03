@@ -79,9 +79,14 @@ class MeScreen extends HookWidget {
     );
 
     if (result == true) {
-      await prefs.setString(PreferencesKeys.api_key, keyController.text);
       await prefs.setString(
-          PreferencesKeys.api_endpoint, endpointController.text);
+        PreferencesKeys.apiKey,
+        keyController.text,
+      );
+      await prefs.setString(
+        PreferencesKeys.apiEndpoint,
+        endpointController.text,
+      );
       await model.updateCanvasClient();
       Phoenix.rebirth(context);
     }
