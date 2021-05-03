@@ -44,7 +44,7 @@ dependencies:
   provider: ^5.0.0
   retrofit: ^2.0.0-beta1
   rxdart: ^0.26.0
-  separated_column: ^1.1.0-nullsafety.0
+  separated_column: ^2.0.0
   shared_preferences: ^2.0.5
   sqflite: ^2.0.0
   timeago: ^3.0.2
