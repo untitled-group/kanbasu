@@ -9,6 +9,7 @@ import 'package:kanbasu/utils/logging.dart';
 import 'package:kanbasu/utils/persistence.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/common/future.dart';
+import 'package:kanbasu/widgets/snack.dart';
 import 'package:kanbasu/widgets/user.dart';
 import 'package:provider/provider.dart';
 import 'package:separated_column/separated_column.dart';
@@ -114,7 +115,9 @@ class MeScreen extends HookWidget {
               final aggregation = aggregate(
                   Provider.of<Model>(context, listen: false).canvas,
                   useOnlineData: true);
-              aggregation.then((data) => {logger.i(data)});
+              aggregation.listen((data) => {logger.i(data)}).onDone(() {
+                showSnack(context, 'Done');
+              });
             },
             child: Text('运行 Aggregator'),
           ),
@@ -129,7 +132,9 @@ class MeScreen extends HookWidget {
               final aggregation = aggregate(
                   Provider.of<Model>(context, listen: false).canvas,
                   useOnlineData: false);
-              aggregation.then((data) => {logger.i(data)});
+              aggregation.listen((data) => {logger.i(data)}).onDone(() {
+                showSnack(context, 'Done');
+              });
             },
             child: Text('运行 Aggregator (Offline)'),
           ),

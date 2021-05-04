@@ -8,6 +8,7 @@ import 'package:kanbasu/models/brief_info.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:kanbasu/utils/courses.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:rxdart/rxdart.dart';
 
 String getPlainText(String htmlData) {
   final bodyText = parse(htmlData).body?.text;
@@ -32,9 +33,8 @@ Future<T> getItemDataFromApi<T>(
   }
 }
 
-Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
-    {bool useOnlineData = false}) async {
-  final aggregations = <BriefInfo>[];
+Stream<BriefInfo> aggregate(CanvasBufferClient api,
+    {bool useOnlineData = false}) async* {
   final latestCourses = toLatestCourses(
       await getListDataFromApi(api.getCourses(), useOnlineData));
   final idToCourse = {
@@ -42,7 +42,9 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
   };
 
   // info about assignment, file and grading
-  Future<void> processCourse(Course course) async {
+  Future<List<BriefInfo>> processCourse(Course course) async {
+    final aggregations = <BriefInfo>[];
+
     final assignments =
         await getListDataFromApi(api.getAssignments(course.id), useOnlineData);
     for (final assignment in assignments) {
@@ -65,10 +67,14 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
       final newAgg = aggregateFromFile(file, course);
       aggregations.add(newAgg);
     }
+
+    return aggregations;
   }
 
   // info about announcement
-  Future<void> processAnnouncements() async {
+  Future<List<BriefInfo>> processAnnouncements() async {
+    final aggregations = <BriefInfo>[];
+
     final planners = await getListDataFromApi(api.getPlanners(), useOnlineData);
     for (final planner in planners) {
       if (planner.plannableType != 'announcement') continue;
@@ -79,15 +85,26 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
         aggregations.add(newAgg);
       }
     }
+
+    return aggregations;
   }
 
-  await Future.wait([
-    for (final course in latestCourses) processCourse(course),
-    processAnnouncements(),
-  ]);
+  final subject = PublishSubject<List<BriefInfo>>();
 
-  aggregations.sort((a, b) => -a.updatedAt.compareTo(b.updatedAt));
-  return aggregations;
+  // ignore: unawaited_futures
+  () async {
+    await Future.wait([
+      for (final course in latestCourses)
+        processCourse(course).then((d) => subject.add(d)),
+      processAnnouncements().then((d) => subject.add(d)),
+    ]);
+    await subject.close();
+  }();
+
+  final stream = subject.stream.flatMap((value) => Stream.fromIterable(value));
+  await for (final items in stream) {
+    yield items;
+  }
 }
 
 BriefInfo aggregateFromPlanner(Planner planner, Course course) {

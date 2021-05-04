@@ -12,18 +12,33 @@ import 'package:easy_localization/easy_localization.dart';
 
 class _ActivitiesView extends RefreshableStreamListWidget<BriefInfo> {
   Stream<BriefInfo> getAggregationStream(context, bool useOnlineData) async* {
-    final items = await aggregate(
-        Provider.of<Model>(context, listen: false).canvas,
+    final stream = aggregate(Provider.of<Model>(context, listen: false).canvas,
         useOnlineData: useOnlineData);
-    for (final item in items) {
-      yield item;
+    if (useOnlineData) {
+      // TODO: do not buffer items, avoid unnecessary updates on ui part
+      final items = <BriefInfo>[];
+      await for (final item in stream) {
+        items.add(item);
+      }
+      for (final item in items) {
+        yield item;
+      }
+    } else {
+      await for (final item in stream) {
+        yield item;
+      }
     }
+  }
+
+  @override
+  void dataPostProcess(List<BriefInfo> data) {
+    data.sort((a, b) => -a.updatedAt.compareTo(b.updatedAt));
   }
 
   @override
   List<Stream<BriefInfo>> getStreams(context) => [
         getAggregationStream(context, false),
-        getAggregationStream(context, true)
+        getAggregationStream(context, true),
       ];
 
   @override
