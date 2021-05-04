@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:kanbasu/buffer_api/canvas.dart';
 import 'package:kanbasu/buffer_api/kvstore.dart';
 import 'package:kanbasu/models/assignment.dart';
@@ -23,12 +25,13 @@ class Resolver {
   /// [Resolver] will try accessing all available endpoint of Canvas LMS, and
   /// making Kanbasu offline-capable.
 
-  final KvStore keyspace;
+  final KvStore _keyspace;
+  final KvStore? _cache;
   final CanvasBufferClient _api;
   final Logger _logger;
 
-  Resolver(CanvasRestClient rest, this.keyspace, this._logger)
-      : _api = CanvasBufferClient(rest, keyspace);
+  Resolver(CanvasRestClient rest, this._keyspace, this._cache, this._logger)
+      : _api = CanvasBufferClient(rest, _keyspace);
 
   ResolveProgress ofCurrent(String message, int of, int current) =>
       ResolveProgress(
@@ -47,21 +50,35 @@ class Resolver {
   Stream<ResolveProgress> visit() async* {
     _logger.i('[Visitor] Root');
 
-    yield ofCurrent('解析课程数据', 0, 1);
+    yield ofCurrent('解析课程数据', 0, 10);
     final courses = await _api.getCourses().last.handleError(onError).toList();
-    await for (final progress in visitCourses(courses)) {
+    final latestTerm = courses.map((c) => c.term?.id ?? 0).fold(0, max);
+    final latestCourses =
+        courses.where((c) => (c.term?.id ?? 0) >= latestTerm).toList();
+
+    await for (final progress in visitCourses(latestCourses)) {
       yield progress;
     }
 
-    yield ofCurrent('解析用户日程', 1, 1);
+    yield ofCurrent('解析用户日程', 9, 10);
     await _api.getPlanners().last.handleError(onError).toList();
 
-    yield ofCurrent('解析用户动态', 1, 1);
+    yield ofCurrent('解析用户动态', 9, 10);
     await _api
         .getCurrentUserActivityStream()
         .last
         .handleError(onError)
         .toList();
+
+    yield ofCurrent('写入缓存', 10, 10);
+
+    final cache = _cache;
+    if (cache != null) {
+      final items = await _keyspace.scan('');
+      items.forEach((key, value) async {
+        await cache.setItem(key, value);
+      });
+    }
   }
 
   /// Visit List of [Course].
@@ -82,34 +99,37 @@ class Resolver {
   Stream<ResolveProgress> visitCourse(Course course) async* {
     _logger.i('[Visitor] Course ${course.name}');
 
-    final total = 4;
+    final total = 5;
 
+    yield ofCurrent('解析文件夹', 0, total);
     final folders =
         await _api.getFolders(course.id).last.handleError(onError).toList();
-    yield ofCurrent('解析文件夹', 0, total);
     await for (final progress in visitFolders(folders)) {
       yield ofTotal(progress.prepend('文件夹'), 0, total);
     }
 
+    yield ofCurrent('解析文件', 1, total);
     final files =
         await _api.getFiles(course.id).last.handleError(onError).toList();
-    yield ofCurrent('解析文件', 0, total);
     await for (final progress in visitFiles(files)) {
       yield ofTotal(progress.prepend('文件'), 1, total);
     }
 
+    yield ofCurrent('解析作业', 2, total);
     final assignments =
         await _api.getAssignments(course.id).last.handleError(onError).toList();
-    yield ofCurrent('解析作业', 0, total);
     await for (final progress in visitAssignments(assignments)) {
       yield ofTotal(progress.prepend('作业'), 2, total);
     }
 
+    yield ofCurrent('解析提交', 3, total);
+    await _api.getSubmissions(course.id).last.handleError(onError).toList();
+
+    yield ofCurrent('解析单元', 4, total);
     final modules =
         await _api.getModules(course.id).last.handleError(onError).toList();
-    yield ofCurrent('解析单元', 0, total);
     await for (final progress in visitModules(course, modules)) {
-      yield ofTotal(progress.prepend('单元'), 3, total);
+      yield ofTotal(progress.prepend('单元'), 4, total);
     }
   }
 

@@ -73,6 +73,12 @@ class Model with ChangeNotifier {
   late CanvasBufferClient _canvas;
   CanvasBufferClient get canvas => _canvas;
 
+  late CanvasRestClient _rest;
+  CanvasRestClient get rest => _rest;
+
+  late KvStore _kvs;
+  KvStore get kvs => _kvs;
+
   Future<void> updateCanvasClient() async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -87,6 +93,8 @@ class Model with ChangeNotifier {
     );
     final kvs = KvStore.open(KvStoreIdentifiers.main(api_key));
 
+    _rest = restCanvas;
+    _kvs = kvs;
     _canvas = CanvasBufferClient(restCanvas, kvs);
 
     notifyListeners();

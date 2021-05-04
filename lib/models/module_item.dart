@@ -24,11 +24,11 @@ abstract class ModuleItem implements Built<ModuleItem, ModuleItemBuilder> {
   @BuiltValueField(wireName: 'module_id')
   int get moduleId;
   @BuiltValueField(wireName: 'html_url')
-  String get htmlUrl;
+  String? get htmlUrl;
   @BuiltValueField(wireName: 'content_id')
-  int get contentId;
+  int? get contentId;
   @BuiltValueField(wireName: 'url')
-  String get url;
+  String? get url;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(ModuleItem.serializer, this)!
