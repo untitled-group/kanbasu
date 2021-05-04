@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:kanbasu/buffer_api/canvas.dart';
 import 'package:kanbasu/buffer_api/kvstore.dart';
 import 'package:kanbasu/models/assignment.dart';
@@ -8,6 +6,7 @@ import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/folder.dart';
 import 'package:kanbasu/models/module.dart';
 import 'package:kanbasu/rest_api/canvas.dart';
+import 'package:kanbasu/utils/courses.dart';
 import 'package:logger/logger.dart';
 
 class ResolveProgress {
@@ -52,9 +51,7 @@ class Resolver {
 
     yield ofCurrent('解析课程数据', 0, 10);
     final courses = await _api.getCourses().last.handleError(onError).toList();
-    final latestTerm = courses.map((c) => c.term?.id ?? 0).fold(0, max);
-    final latestCourses =
-        courses.where((c) => (c.term?.id ?? 0) >= latestTerm).toList();
+    final latestCourses = toLatestCourses(courses);
 
     await for (final progress in visitCourses(latestCourses)) {
       yield progress;
