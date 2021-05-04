@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:kanbasu/buffer_api/canvas.dart';
 import 'package:kanbasu/models/assignment.dart';
 import 'package:kanbasu/models/file.dart';
@@ -7,6 +5,7 @@ import 'package:kanbasu/models/planner.dart';
 import 'package:kanbasu/models/submission.dart';
 import 'package:kanbasu/models/brief_info.dart';
 import 'package:html/parser.dart' show parse;
+import 'package:kanbasu/utils/courses.dart';
 
 String getPlainText(String htmlData) {
   final bodyText = parse(htmlData).body?.text;
@@ -33,49 +32,40 @@ Future<T> getItemDataFromApi<T>(
 
 Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
     {bool useOnlineData = false}) async {
-  // ignore: omit_local_variable_types
-  List<BriefInfo> aggregations = [];
-  // ignore: omit_local_variable_types
-  Map<int, String> course_id_name = {};
-
-  final available_courses = [];
-  final courses = await getListDataFromApi(api.getCourses(), useOnlineData);
-  final latestTerm = courses.map((c) => c.term?.id ?? 0).fold(0, max);
-  final latestCourses =
-      courses.where((c) => (c.term?.id ?? 0) >= latestTerm).toList();
-
-  for (final course in latestCourses) {
-    available_courses.add(course.id);
-    course_id_name[course.id] = course.name;
-  }
+  final aggregations = <BriefInfo>[];
+  final latestCourses = toLatestCourses(
+      await getListDataFromApi(api.getCourses(), useOnlineData));
+  final idToName = {
+    for (final course in latestCourses) course.id: course.name,
+  };
 
   // info about assignment, file and grading
-  for (final course_id in available_courses) {
-    final course_name = course_id_name[course_id] ?? 'null course';
+  for (final course in latestCourses) {
+    final courseId = course.id;
+    final courseName = course.name;
 
     final assignments =
-        await getListDataFromApi(api.getAssignments(course_id), useOnlineData);
+        await getListDataFromApi(api.getAssignments(courseId), useOnlineData);
     for (final assignment in assignments) {
-      final new_agg =
-          aggregateFromAssignment(assignment, course_id, course_name);
-      aggregations.add(new_agg);
+      final newAgg = aggregateFromAssignment(assignment, courseId, courseName);
+      aggregations.add(newAgg);
     }
 
     final submissions =
-        await getListDataFromApi(api.getSubmissions(course_id), useOnlineData);
+        await getListDataFromApi(api.getSubmissions(courseId), useOnlineData);
     for (final submission in submissions) {
       if (submission.grade != null) {
-        final new_agg =
-            aggregateFromSubmission(submission, course_id, course_name);
-        aggregations.add(new_agg);
+        final newAgg =
+            aggregateFromSubmission(submission, courseId, courseName);
+        aggregations.add(newAgg);
       }
     }
 
     final files =
-        await getListDataFromApi(api.getFiles(course_id), useOnlineData);
+        await getListDataFromApi(api.getFiles(courseId), useOnlineData);
     for (final file in files) {
-      final new_agg = aggregateFromFile(file, course_id, course_name);
-      aggregations.add(new_agg);
+      final newAgg = aggregateFromFile(file, courseId, courseName);
+      aggregations.add(newAgg);
     }
   }
 
@@ -83,13 +73,16 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
   final planners = await getListDataFromApi(api.getPlanners(), useOnlineData);
   for (final planner in planners) {
     if (planner.plannableType != 'announcements') continue;
-    final course_id = planner.courseId;
-    final course_name = course_id_name[course_id] ?? 'course null';
-    final new_agg = aggregateFromPlanner(planner, course_id, course_name);
-    aggregations.add(new_agg);
+    final courseId = planner.courseId;
+    final courseName = idToName[courseId];
+    if (courseId != null && courseName != null) {
+      final newAgg = aggregateFromPlanner(planner, courseId, courseName);
+      aggregations.add(newAgg);
+    }
   }
-  aggregations.sort((a, b) => a.updatedAt.compareTo(b.updatedAt));
-  return aggregations.reversed.toList();
+
+  aggregations.sort((a, b) => -a.updatedAt.compareTo(b.updatedAt));
+  return aggregations;
 }
 
 BriefInfo aggregateFromPlanner(

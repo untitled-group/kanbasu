@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/model.dart';
+import 'package:kanbasu/utils/courses.dart';
 import 'package:kanbasu/widgets/course.dart';
 import 'package:kanbasu/widgets/link.dart';
 import 'package:kanbasu/widgets/common/refreshable_stream_list.dart';
@@ -16,10 +16,7 @@ class _CoursesView extends RefreshableStreamListWidget<Course> {
       Provider.of<Model>(context).canvas.getCourses().map((courseStream) {
         return () async* {
           final courseList = await courseStream.toList();
-          final latestTerm =
-              courseList.map((c) => c.term?.id ?? 0).fold(0, max);
-          final latestCourses =
-              courseList.where((c) => (c.term?.id ?? 0) >= latestTerm).toList();
+          final latestCourses = toLatestCourses(courseList);
           for (final course in latestCourses) {
             yield course;
           }

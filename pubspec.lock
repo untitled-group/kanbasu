@@ -225,6 +225,13 @@ packages:
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
     version: "2.0.1"
+  declarative_refresh_indicator:
+    dependency: "direct main"
+    description:
+      name: declarative_refresh_indicator
+      url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
+    source: hosted
+    version: "0.1.0"
   dio:
     dependency: "direct main"
     description:

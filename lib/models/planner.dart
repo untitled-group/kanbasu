@@ -17,7 +17,7 @@ abstract class Planner implements Built<Planner, PlannerBuilder> {
   @BuiltValueField(wireName: 'context_type')
   String get contextType;
   @BuiltValueField(wireName: 'course_id')
-  int get courseId;
+  int? get courseId;
   @BuiltValueField(wireName: 'plannable_id')
   int get plannableId;
   @BuiltValueField(wireName: 'planner_override')
