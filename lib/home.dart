@@ -99,7 +99,7 @@ class Home extends HookWidget {
       final activeTab = useState(0);
 
       final stack = useMemoized(() {
-        final screens = _ScreenKind.values.map(_buildScreen).toList();
+        final screens = _navigationItems.keys.map(_buildScreen).toList();
         return IndexedStack(
           index: activeTab.value,
           children: screens,
@@ -108,7 +108,7 @@ class Home extends HookWidget {
 
       if (Device.get().isPhone) {
         final navigationItems =
-            _ScreenKind.values.map(_buildNavigationItem).toList();
+            _navigationItems.keys.map(_buildNavigationItem).toList();
 
         return Scaffold(
           body: stack,
@@ -124,10 +124,8 @@ class Home extends HookWidget {
           ),
         );
       } else {
-        final sideTiles = _ScreenKind.values
-            .asMap()
-            .entries
-            .map((e) => _buildSideTile(e.value, activeTab))
+        final sideTiles = _navigationItems.keys
+            .map((s) => _buildSideTile(s, activeTab))
             .toList();
 
         return Row(
