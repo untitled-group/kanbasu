@@ -42,18 +42,16 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
   };
 
   // info about assignment, file and grading
-  for (final course in latestCourses) {
-    final courseId = course.id;
-
+  Future<void> processCourse(Course course) async {
     final assignments =
-        await getListDataFromApi(api.getAssignments(courseId), useOnlineData);
+        await getListDataFromApi(api.getAssignments(course.id), useOnlineData);
     for (final assignment in assignments) {
       final newAgg = aggregateFromAssignment(assignment, course);
       aggregations.add(newAgg);
     }
 
     final submissions =
-        await getListDataFromApi(api.getSubmissions(courseId), useOnlineData);
+        await getListDataFromApi(api.getSubmissions(course.id), useOnlineData);
     for (final submission in submissions) {
       if (submission.grade != null) {
         final newAgg = aggregateFromSubmission(submission, course);
@@ -62,7 +60,7 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
     }
 
     final files =
-        await getListDataFromApi(api.getFiles(courseId), useOnlineData);
+        await getListDataFromApi(api.getFiles(course.id), useOnlineData);
     for (final file in files) {
       final newAgg = aggregateFromFile(file, course);
       aggregations.add(newAgg);
@@ -70,16 +68,23 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
   }
 
   // info about announcement
-  final planners = await getListDataFromApi(api.getPlanners(), useOnlineData);
-  for (final planner in planners) {
-    if (planner.plannableType != 'announcement') continue;
-    final courseId = planner.courseId;
-    final course = idToCourse[courseId];
-    if (courseId != null && course != null) {
-      final newAgg = aggregateFromPlanner(planner, course);
-      aggregations.add(newAgg);
+  Future<void> processAnnouncements() async {
+    final planners = await getListDataFromApi(api.getPlanners(), useOnlineData);
+    for (final planner in planners) {
+      if (planner.plannableType != 'announcement') continue;
+      final courseId = planner.courseId;
+      final course = idToCourse[courseId];
+      if (courseId != null && course != null) {
+        final newAgg = aggregateFromPlanner(planner, course);
+        aggregations.add(newAgg);
+      }
     }
   }
+
+  await Future.wait([
+    for (final course in latestCourses) processCourse(course),
+    processAnnouncements(),
+  ]);
 
   aggregations.sort((a, b) => -a.updatedAt.compareTo(b.updatedAt));
   return aggregations;
