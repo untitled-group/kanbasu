@@ -24,11 +24,17 @@ activity:
     Conversation: 对话
     DiscussionTopic: 讨论
 aggregate:
-  short_type:
+  suffix:
+    published: 已发布
+    uploaded: 已上传
+    graded: 已评分
+  type:
     file: 文件
     announcements: 公告
     assignment: 作业
     grading: 评分
+  score: 分数
+  comment: 评论
 tabs:
   overview: 概览
   announcement: 公告

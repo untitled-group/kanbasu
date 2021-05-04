@@ -7,6 +7,7 @@ import 'package:kanbasu/models/submission.dart';
 import 'package:kanbasu/models/brief_info.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:kanbasu/utils/courses.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 String getPlainText(String htmlData) {
   final bodyText = parse(htmlData).body?.text;
@@ -72,7 +73,6 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
   final planners = await getListDataFromApi(api.getPlanners(), useOnlineData);
   for (final planner in planners) {
     if (planner.plannableType != 'announcement') continue;
-    print(planner);
     final courseId = planner.courseId;
     final course = idToCourse[courseId];
     if (courseId != null && course != null) {
@@ -105,14 +105,14 @@ BriefInfo aggregateFromAssignment(Assignment assignment, Course course) {
   if (assignment.name != null) {
     title = assignment.name!.trim();
   } else {
-    title = '作业';
+    title = 'aggregate.assignment'.tr();
   }
   final description = getPlainText(assignment.description ?? '');
   final updatedAt = assignment.updatedAt ?? assignment.createdAt;
 
   return BriefInfo((i) => i
     ..title = title
-    ..suffix = '已发布'
+    ..suffix = 'aggregate.suffix.published'.tr()
     ..description = description
     ..url = assignment.htmlUrl
     ..updatedAt = updatedAt
@@ -125,7 +125,7 @@ BriefInfo aggregateFromAssignment(Assignment assignment, Course course) {
 BriefInfo aggregateFromFile(File file, Course course) {
   return BriefInfo((i) => i
     ..title = '${file.displayName.trim()}'
-    ..suffix = '已上传'
+    ..suffix = 'aggregate.suffix.uploaded'.tr()
     ..description = ''
     ..url = file.url
     ..updatedAt = file.updatedAt
@@ -138,24 +138,25 @@ BriefInfo aggregateFromSubmission(Submission submission, Course course) {
   final title;
   final assignment = submission.assignment;
   if (assignment != null) {
-    title = '${assignment.name!.trim()}';
+    title = assignment.name!.trim();
   } else {
-    title = '作业';
+    title = 'aggregate.assignment'.tr();
   }
 
-  var description = '分数：${submission.grade}';
+  var description = '${'aggregate.score'.tr()}: ${submission.grade}';
 
   if (submission.submissionComments != null &&
       submission.submissionComments!.isNotEmpty) {
     var comment = submission.submissionComments![0]['comments'];
     if (comment != null) {
-      description = '分数: ${submission.grade}, [$comment]';
+      description = '${'aggregate.score'.tr()}: ${submission.grade}\n'
+          '${'aggregate.comment'.tr()}: $comment]';
     }
   }
 
   return BriefInfo((i) => i
     ..title = title
-    ..suffix = '已评分'
+    ..suffix = 'aggregate.suffix.graded'.tr()
     ..description = description
     ..url = submission.previewUrl
     ..updatedAt = submission.gradedAt!

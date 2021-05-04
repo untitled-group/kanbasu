@@ -42,9 +42,6 @@ class ActivityWidget extends StatelessWidget {
             backgroundColor: theme.primary,
             foregroundColor: theme.background,
             child: Icon(icon),
-            // Text(
-            //   'aggregate.short_type.${describeEnum(item.type)}'.tr(),
-            // ),
           ),
           SizedBox(width: 10),
           Expanded(
