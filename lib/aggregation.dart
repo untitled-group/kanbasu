@@ -1,5 +1,6 @@
 import 'package:kanbasu/buffer_api/canvas.dart';
 import 'package:kanbasu/models/assignment.dart';
+import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/planner.dart';
 import 'package:kanbasu/models/submission.dart';
@@ -35,19 +36,18 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
   final aggregations = <BriefInfo>[];
   final latestCourses = toLatestCourses(
       await getListDataFromApi(api.getCourses(), useOnlineData));
-  final idToName = {
-    for (final course in latestCourses) course.id: course.name,
+  final idToCourse = {
+    for (final course in latestCourses) course.id: course,
   };
 
   // info about assignment, file and grading
   for (final course in latestCourses) {
     final courseId = course.id;
-    final courseName = course.name;
 
     final assignments =
         await getListDataFromApi(api.getAssignments(courseId), useOnlineData);
     for (final assignment in assignments) {
-      final newAgg = aggregateFromAssignment(assignment, courseId, courseName);
+      final newAgg = aggregateFromAssignment(assignment, course);
       aggregations.add(newAgg);
     }
 
@@ -55,8 +55,7 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
         await getListDataFromApi(api.getSubmissions(courseId), useOnlineData);
     for (final submission in submissions) {
       if (submission.grade != null) {
-        final newAgg =
-            aggregateFromSubmission(submission, courseId, courseName);
+        final newAgg = aggregateFromSubmission(submission, course);
         aggregations.add(newAgg);
       }
     }
@@ -64,7 +63,7 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
     final files =
         await getListDataFromApi(api.getFiles(courseId), useOnlineData);
     for (final file in files) {
-      final newAgg = aggregateFromFile(file, courseId, courseName);
+      final newAgg = aggregateFromFile(file, course);
       aggregations.add(newAgg);
     }
   }
@@ -72,11 +71,12 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
   // info about announcement
   final planners = await getListDataFromApi(api.getPlanners(), useOnlineData);
   for (final planner in planners) {
-    if (planner.plannableType != 'announcements') continue;
+    if (planner.plannableType != 'announcement') continue;
+    print(planner);
     final courseId = planner.courseId;
-    final courseName = idToName[courseId];
-    if (courseId != null && courseName != null) {
-      final newAgg = aggregateFromPlanner(planner, courseId, courseName);
+    final course = idToCourse[courseId];
+    if (courseId != null && course != null) {
+      final newAgg = aggregateFromPlanner(planner, course);
       aggregations.add(newAgg);
     }
   }
@@ -85,10 +85,9 @@ Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
   return aggregations;
 }
 
-BriefInfo aggregateFromPlanner(
-    Planner planner, int course_id, String course_name) {
+BriefInfo aggregateFromPlanner(Planner planner, Course course) {
   // only deal with announcements
-  final title = '$course_name 通知: ${planner.plannable.title}';
+  final title = '${planner.plannable.title}';
   final description = getPlainText(planner.plannable.message ?? '');
 
   return BriefInfo((i) => i
@@ -96,52 +95,55 @@ BriefInfo aggregateFromPlanner(
     ..description = description
     ..url = planner.htmlUrl
     ..updatedAt = planner.plannableDate
-    ..type = 'announcements'
-    ..courseId = course_id);
+    ..type = BriefInfoType.announcements
+    ..courseId = course.id
+    ..courseName = course.name);
 }
 
-BriefInfo aggregateFromAssignment(
-    Assignment assignment, int course_id, String course_name) {
+BriefInfo aggregateFromAssignment(Assignment assignment, Course course) {
   final title;
   if (assignment.name != null) {
-    title = '$course_name 课程作业: ${assignment.name} 已布置';
+    title = assignment.name!.trim();
   } else {
-    title = '$course_name 课程作业已布置';
+    title = '作业';
   }
   final description = getPlainText(assignment.description ?? '');
   final updatedAt = assignment.updatedAt ?? assignment.createdAt;
 
   return BriefInfo((i) => i
     ..title = title
+    ..suffix = '已发布'
     ..description = description
     ..url = assignment.htmlUrl
     ..updatedAt = updatedAt
     ..dueDate = assignment.dueAt
-    ..type = 'assignment'
-    ..courseId = course_id);
+    ..type = BriefInfoType.assignment
+    ..courseId = course.id
+    ..courseName = course.name);
 }
 
-BriefInfo aggregateFromFile(File file, int course_id, String course_name) {
+BriefInfo aggregateFromFile(File file, Course course) {
   return BriefInfo((i) => i
-    ..title = '$course_name 课程上传文件: ${file.displayName}'
-    ..description = file.displayName
+    ..title = '${file.displayName.trim()}'
+    ..suffix = '已上传'
+    ..description = ''
     ..url = file.url
     ..updatedAt = file.updatedAt
-    ..type = 'file'
-    ..courseId = course_id);
+    ..type = BriefInfoType.file
+    ..courseId = course.id
+    ..courseName = course.name);
 }
 
-BriefInfo aggregateFromSubmission(
-    Submission submission, int course_id, String course_name) {
+BriefInfo aggregateFromSubmission(Submission submission, Course course) {
   final title;
   final assignment = submission.assignment;
   if (assignment != null) {
-    title = '$course_name 课程作业: ${assignment.name} 已批改';
+    title = '${assignment.name!.trim()}';
   } else {
-    title = '$course_name 课程作业已评分';
+    title = '作业';
   }
 
-  var description = '分数: ${submission.grade}';
+  var description = '分数：${submission.grade}';
 
   if (submission.submissionComments != null &&
       submission.submissionComments!.isNotEmpty) {
@@ -153,9 +155,11 @@ BriefInfo aggregateFromSubmission(
 
   return BriefInfo((i) => i
     ..title = title
+    ..suffix = '已评分'
     ..description = description
     ..url = submission.previewUrl
     ..updatedAt = submission.gradedAt!
-    ..type = 'grading'
-    ..courseId = course_id);
+    ..type = BriefInfoType.grading
+    ..courseId = course.id
+    ..courseName = course.name);
 }

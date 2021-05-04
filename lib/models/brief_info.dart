@@ -11,10 +11,16 @@ abstract class BriefInfo implements Built<BriefInfo, BriefInfoBuilder> {
   String get title;
 
   @BuiltValueField()
-  String get type;
+  String? get suffix;
+
+  @BuiltValueField()
+  BriefInfoType get type;
 
   @BuiltValueField()
   int get courseId;
+
+  @BuiltValueField()
+  String get courseName;
 
   @BuiltValueField()
   String get description;
@@ -41,3 +47,5 @@ abstract class BriefInfo implements Built<BriefInfo, BriefInfoBuilder> {
 
   static Serializer<BriefInfo> get serializer => _$briefInfoSerializer;
 }
+
+enum BriefInfoType { announcements, assignment, file, grading }

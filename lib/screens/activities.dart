@@ -44,10 +44,9 @@ class ActivitiesScreen extends StatelessWidget {
   }
 }
 
-// AssessmentRequest, Announcement, Collaboration, Conference, Submission, Message, Conversation, DiscussionTopic
-final Map<String, String> _typeToTabId = {
-  'Announcement': 'announcements',
-  'Submission': 'assignments',
-  'Message': 'assignments',
-  'DiscussionTopic': 'discussions'
+final _typeToTabId = {
+  BriefInfoType.announcements: 'announcements',
+  BriefInfoType.assignment: 'assignments',
+  BriefInfoType.file: 'files',
+  BriefInfoType.grading: 'assignments',
 };
