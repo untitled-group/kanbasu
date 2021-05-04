@@ -119,7 +119,9 @@ class MeScreen extends HookWidget {
               final aggregation = aggregate(
                   Provider.of<Model>(context, listen: false).canvas,
                   useOnlineData: true);
-              aggregation.then((data) => {logger.i(data)});
+              aggregation.listen((data) => {logger.i(data)}).onDone(() {
+                showSnack(context, 'Done');
+              });
             },
             child: Text('运行 Aggregator'),
           ),
@@ -134,7 +136,9 @@ class MeScreen extends HookWidget {
               final aggregation = aggregate(
                   Provider.of<Model>(context, listen: false).canvas,
                   useOnlineData: false);
-              aggregation.then((data) => {logger.i(data)});
+              aggregation.listen((data) => {logger.i(data)}).onDone(() {
+                showSnack(context, 'Done');
+              });
             },
             child: Text('运行 Aggregator (Offline)'),
           ),

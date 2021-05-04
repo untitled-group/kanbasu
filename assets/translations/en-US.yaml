@@ -24,11 +24,17 @@ activity:
     Conversation: Con
     DiscussionTopic: Dis
 aggregate:
-  short_type:
+  suffix:
+    published: Published
+    uploaded: Uploaded
+    graded: Graded
+  type:
     file: File
-    announcements: Ann
-    assignment: Ass
-    grading: Gra
+    announcements: Announcement
+    assignment: Assignment
+    grading: Grading
+  score: Score
+  comment: Comment
 tabs:
   overview: Overview
   announcement: Announcements
