@@ -16,10 +16,7 @@ class _ActivitiesView extends RefreshableStreamListWidget<BriefInfo> {
         useOnlineData: useOnlineData);
     if (useOnlineData) {
       // TODO: do not buffer items, avoid unnecessary updates on ui part
-      final items = <BriefInfo>[];
-      await for (final item in stream) {
-        items.add(item);
-      }
+      final items = await stream.toList();
       for (final item in items) {
         yield item;
       }
