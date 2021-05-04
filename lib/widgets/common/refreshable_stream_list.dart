@@ -97,7 +97,13 @@ abstract class RefreshableStreamListWidget<T> extends HookWidget {
 
   bool showLoadingWidget() => true;
 
+  void dataPostProcess(List<T> data) {}
+
   Widget buildWidget(BuildContext context, List<T>? data) {
+    if (data != null) {
+      dataPostProcess(data);
+    }
+
     return CommonListView<T>(
       itemBuilder: (item) => buildItem(context, item),
       itemList: data,

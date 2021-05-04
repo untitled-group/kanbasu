@@ -1,12 +1,14 @@
-import 'dart:math';
-
 import 'package:kanbasu/buffer_api/canvas.dart';
 import 'package:kanbasu/models/assignment.dart';
+import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/planner.dart';
 import 'package:kanbasu/models/submission.dart';
 import 'package:kanbasu/models/brief_info.dart';
 import 'package:html/parser.dart' show parse;
+import 'package:kanbasu/utils/courses.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:rxdart/rxdart.dart';
 
 String getPlainText(String htmlData) {
   final bodyText = parse(htmlData).body?.text;
@@ -31,71 +33,82 @@ Future<T> getItemDataFromApi<T>(
   }
 }
 
-Future<List<BriefInfo>> aggregate(CanvasBufferClient api,
-    {bool useOnlineData = false}) async {
-  // ignore: omit_local_variable_types
-  List<BriefInfo> aggregations = [];
-  // ignore: omit_local_variable_types
-  Map<int, String> course_id_name = {};
-
-  final available_courses = [];
-  final courses = await getListDataFromApi(api.getCourses(), useOnlineData);
-  final latestTerm = courses.map((c) => c.term?.id ?? 0).fold(0, max);
-  final latestCourses =
-      courses.where((c) => (c.term?.id ?? 0) >= latestTerm).toList();
-
-  for (final course in latestCourses) {
-    available_courses.add(course.id);
-    course_id_name[course.id] = course.name;
-  }
+Stream<BriefInfo> aggregate(CanvasBufferClient api,
+    {bool useOnlineData = false}) async* {
+  final latestCourses = toLatestCourses(
+      await getListDataFromApi(api.getCourses(), useOnlineData));
+  final idToCourse = {
+    for (final course in latestCourses) course.id: course,
+  };
 
   // info about assignment, file and grading
-  for (final course_id in available_courses) {
-    final course_name = course_id_name[course_id] ?? 'null course';
+  Future<List<BriefInfo>> processCourse(Course course) async {
+    final aggregations = <BriefInfo>[];
 
     final assignments =
-        await getListDataFromApi(api.getAssignments(course_id), useOnlineData);
+        await getListDataFromApi(api.getAssignments(course.id), useOnlineData);
     for (final assignment in assignments) {
-      final new_agg =
-          aggregateFromAssignment(assignment, course_id, course_name);
-      aggregations.add(new_agg);
+      final newAgg = aggregateFromAssignment(assignment, course);
+      aggregations.add(newAgg);
     }
 
     final submissions =
-        await getListDataFromApi(api.getSubmissions(course_id), useOnlineData);
+        await getListDataFromApi(api.getSubmissions(course.id), useOnlineData);
     for (final submission in submissions) {
       if (submission.grade != null) {
-        final new_agg =
-            aggregateFromSubmission(submission, course_id, course_name);
-        aggregations.add(new_agg);
+        final newAgg = aggregateFromSubmission(submission, course);
+        aggregations.add(newAgg);
       }
     }
 
     final files =
-        await getListDataFromApi(api.getFiles(course_id), useOnlineData);
+        await getListDataFromApi(api.getFiles(course.id), useOnlineData);
     for (final file in files) {
-      final new_agg = aggregateFromFile(file, course_id, course_name);
-      aggregations.add(new_agg);
+      final newAgg = aggregateFromFile(file, course);
+      aggregations.add(newAgg);
     }
+
+    return aggregations;
   }
 
   // info about announcement
-  final planners = await getListDataFromApi(api.getPlanners(), useOnlineData);
-  for (final planner in planners) {
-    if (planner.plannableType != 'announcements') continue;
-    final course_id = planner.courseId;
-    final course_name = course_id_name[course_id] ?? 'course null';
-    final new_agg = aggregateFromPlanner(planner, course_id, course_name);
-    aggregations.add(new_agg);
+  Future<List<BriefInfo>> processAnnouncements() async {
+    final aggregations = <BriefInfo>[];
+
+    final planners = await getListDataFromApi(api.getPlanners(), useOnlineData);
+    for (final planner in planners) {
+      if (planner.plannableType != 'announcement') continue;
+      final courseId = planner.courseId;
+      final course = idToCourse[courseId];
+      if (courseId != null && course != null) {
+        final newAgg = aggregateFromPlanner(planner, course);
+        aggregations.add(newAgg);
+      }
+    }
+
+    return aggregations;
   }
-  aggregations.sort((a, b) => a.updatedAt.compareTo(b.updatedAt));
-  return aggregations.reversed.toList();
+
+  final subject = PublishSubject<List<BriefInfo>>();
+
+  // ignore: unawaited_futures
+  Future.wait(
+    [
+      for (final course in latestCourses)
+        processCourse(course).then((d) => subject.add(d)),
+      processAnnouncements().then((d) => subject.add(d)),
+    ],
+  ).then((_) => subject.close());
+
+  final stream = subject.stream.flatMap((value) => Stream.fromIterable(value));
+  await for (final items in stream) {
+    yield items;
+  }
 }
 
-BriefInfo aggregateFromPlanner(
-    Planner planner, int course_id, String course_name) {
+BriefInfo aggregateFromPlanner(Planner planner, Course course) {
   // only deal with announcements
-  final title = '$course_name 通知: ${planner.plannable.title}';
+  final title = '${planner.plannable.title}';
   final description = getPlainText(planner.plannable.message ?? '');
 
   return BriefInfo((i) => i
@@ -103,66 +116,72 @@ BriefInfo aggregateFromPlanner(
     ..description = description
     ..url = planner.htmlUrl
     ..updatedAt = planner.plannableDate
-    ..type = 'announcements'
-    ..courseId = course_id);
+    ..type = BriefInfoType.announcements
+    ..courseId = course.id
+    ..courseName = course.name);
 }
 
-BriefInfo aggregateFromAssignment(
-    Assignment assignment, int course_id, String course_name) {
+BriefInfo aggregateFromAssignment(Assignment assignment, Course course) {
   final title;
   if (assignment.name != null) {
-    title = '$course_name 课程作业: ${assignment.name} 已布置';
+    title = assignment.name!.trim();
   } else {
-    title = '$course_name 课程作业已布置';
+    title = 'aggregate.assignment'.tr();
   }
   final description = getPlainText(assignment.description ?? '');
   final updatedAt = assignment.updatedAt ?? assignment.createdAt;
 
   return BriefInfo((i) => i
     ..title = title
+    ..suffix = 'aggregate.suffix.published'.tr()
     ..description = description
     ..url = assignment.htmlUrl
     ..updatedAt = updatedAt
     ..dueDate = assignment.dueAt
-    ..type = 'assignment'
-    ..courseId = course_id);
+    ..type = BriefInfoType.assignment
+    ..courseId = course.id
+    ..courseName = course.name);
 }
 
-BriefInfo aggregateFromFile(File file, int course_id, String course_name) {
+BriefInfo aggregateFromFile(File file, Course course) {
   return BriefInfo((i) => i
-    ..title = '$course_name 课程上传文件: ${file.displayName}'
-    ..description = file.displayName
+    ..title = '${file.displayName.trim()}'
+    ..suffix = 'aggregate.suffix.uploaded'.tr()
+    ..description = ''
     ..url = file.url
     ..updatedAt = file.updatedAt
-    ..type = 'file'
-    ..courseId = course_id);
+    ..type = BriefInfoType.file
+    ..courseId = course.id
+    ..courseName = course.name);
 }
 
-BriefInfo aggregateFromSubmission(
-    Submission submission, int course_id, String course_name) {
+BriefInfo aggregateFromSubmission(Submission submission, Course course) {
   final title;
   final assignment = submission.assignment;
   if (assignment != null) {
-    title = '$course_name 课程作业: ${assignment.name} 已批改';
+    title = assignment.name!.trim();
   } else {
-    title = '$course_name 课程作业已评分';
+    title = 'aggregate.assignment'.tr();
   }
 
-  var description = '分数: ${submission.grade}';
+  var description = '${'aggregate.score'.tr()}: ${submission.grade}';
 
   if (submission.submissionComments != null &&
       submission.submissionComments!.isNotEmpty) {
     var comment = submission.submissionComments![0]['comments'];
     if (comment != null) {
-      description = '分数: ${submission.grade}, [$comment]';
+      description = '${'aggregate.score'.tr()}: ${submission.grade}\n'
+          '${'aggregate.comment'.tr()}: $comment]';
     }
   }
 
   return BriefInfo((i) => i
     ..title = title
+    ..suffix = 'aggregate.suffix.graded'.tr()
     ..description = description
     ..url = submission.previewUrl
     ..updatedAt = submission.gradedAt!
-    ..type = 'grading'
-    ..courseId = course_id);
+    ..type = BriefInfoType.grading
+    ..courseId = course.id
+    ..courseName = course.name);
 }

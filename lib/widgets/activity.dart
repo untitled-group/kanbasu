@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:kanbasu/models/brief_info.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:provider/provider.dart';
@@ -14,81 +15,129 @@ class ActivityWidget extends StatelessWidget {
   Widget _buildItems(BuildContext context) {
     final theme = Provider.of<Model>(context).theme;
     final isDone = true;
+    final IconData icon;
+    switch (item.type) {
+      case BriefInfoType.announcements:
+        icon = Icons.announcement_outlined;
+        break;
+      case BriefInfoType.assignment:
+        icon = Icons.assignment_outlined;
+        break;
+      case BriefInfoType.file:
+        icon = Icons.upload_file;
+        break;
+      case BriefInfoType.grading:
+        icon = Icons.assignment_turned_in_outlined;
+        break;
+    }
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                backgroundColor: theme.primary,
-                foregroundColor: theme.background,
-                child: Text('aggregate.short_type.${item.type}'.tr()),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                child: SeparatedColumn(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  separatorBuilder: (context, index) => SizedBox(height: 1),
+          CircleAvatar(
+            backgroundColor: theme.primary,
+            foregroundColor: theme.background,
+            child: Icon(icon),
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              children: [
+                Row(
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.title,
-                          style: TextStyle(fontSize: 14, color: theme.primary),
-                        )
-                      ],
+                    Text(
+                      item.courseName,
+                      style: TextStyle(fontSize: 14, color: theme.primary),
                     ),
-                    Text.rich(
-                      TextSpan(
-                          style: TextStyle(
-                            fontSize: 17,
-                            color: theme.text,
-                            fontWeight: isDone ? null : FontWeight.bold,
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Icon(
+                            isDone ? Icons.done : null,
+                            color: theme.primary,
+                            size: 14,
                           ),
-                          children: [
-                            TextSpan(text: item.description),
-                            //* add more span here
-                          ]),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          timeago.format(
-                            item.updatedAt,
-                            locale: context.locale.toStringWithSeparator(),
+                          SizedBox(
+                            width: 5,
                           ),
-                          style: TextStyle(
-                              fontSize: 14, color: theme.tertiaryText),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Icon(
-                          isDone ? Icons.done : null,
-                          color: theme.primary,
-                          size: 15,
-                        )
-                      ],
-                    ),
+                          Text(
+                            timeago.format(
+                              item.updatedAt,
+                              locale: context.locale.toStringWithSeparator(),
+                            ),
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: theme.tertiaryText,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
                   ],
                 ),
-              ),
-              Icon(
-                Icons.arrow_forward,
-                color: theme.tertiaryText,
-                size: 18,
-              ),
-            ],
+                SizedBox(height: 1),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SeparatedColumn(
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 1),
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text.rich(
+                            TextSpan(
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: theme.text,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: item.title,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                if (item.suffix != null &&
+                                    item.suffix!.isNotEmpty)
+                                  TextSpan(
+                                    text: ' · ${item.suffix}',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: theme.secondaryText,
+                                    ),
+                                  )
+                              ],
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                          ),
+                          if (item.description.isNotEmpty)
+                            Text(
+                              item.description.trim(),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: theme.secondaryText,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Icon(
+                      Icons.arrow_forward,
+                      color: theme.tertiaryText,
+                      size: 18,
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ],
       ),
