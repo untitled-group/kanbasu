@@ -54,6 +54,7 @@ dependencies:
   # tuple: ^2.0.0
   url_launcher: ^6.0.2
   html: ^0.15.0
+  pedantic: ^1.11.0
 
 dev_dependencies:
   build_runner: any
@@ -63,7 +64,6 @@ dev_dependencies:
   json_annotation: ^4.0.0
   json_serializable: ^4.0.0
   lint: ^1.0.0
-  pedantic: ^1.11.0
   test: ^1.16.5
   retrofit_generator: ^2.0.0-beta1
   sqflite_common_ffi: any
