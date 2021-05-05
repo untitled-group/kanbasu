@@ -29,7 +29,7 @@ aggregate:
     published: Published
     uploaded: Uploaded
     graded: Graded
-    due: Due
+    due: Will be due
   type:
     file: File
     announcements: Announcement

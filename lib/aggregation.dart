@@ -154,9 +154,8 @@ BriefInfo aggregateFromAssignmentDue(Assignment assignment, Course course) {
   }
 
   final hasSubmitted = assignment.hasSubmittedSubmissions ?? false;
-  final description = hasSubmitted
-      ? 'aggregate.submmitted'.tr()
-      : 'aggregate.unsubmmitted'.tr();
+  final description =
+      hasSubmitted ? 'aggregate.submitted'.tr() : 'aggregate.unsubmitted'.tr();
 
   return BriefInfo((i) => i
     ..title = title
