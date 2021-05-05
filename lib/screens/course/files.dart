@@ -92,7 +92,7 @@ class _File extends HookWidget {
                             width: 24,
                             height: 24,
                             child: CircularProgressIndicator(
-                                value: progressData?.percent ?? 0.0))
+                                value: progressData?.percent))
                         : fileStatus.value == FileStatus.Downloaded
                             ? Icon(Icons.download_done_rounded)
                             : Container(width: 24, height: 24))),
