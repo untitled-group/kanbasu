@@ -24,6 +24,7 @@ import 'page.dart';
 import 'planner.dart';
 import 'plannable.dart';
 import 'brief_info.dart';
+import 'local_file.dart';
 
 part 'serializers.g.dart';
 
@@ -47,6 +48,7 @@ part 'serializers.g.dart';
   DiscussionEntry,
   BriefInfo,
   Term,
+  LocalFile
 ])
 final Serializers serializers = (_$serializers.toBuilder()
       ..add(Iso8601DateTimeSerializer())
