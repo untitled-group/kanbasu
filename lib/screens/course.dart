@@ -9,6 +9,7 @@ import 'package:kanbasu/screens/course/discussions.dart';
 import 'package:kanbasu/screens/course/files.dart';
 import 'package:kanbasu/screens/course/assignments.dart';
 import 'package:kanbasu/screens/course/home.dart';
+import 'package:kanbasu/screens/course/modules.dart';
 import 'package:kanbasu/screens/course/syllabus.dart';
 import 'package:kanbasu/utils/stream_op.dart';
 import 'package:kanbasu/widgets/common/refreshable_future.dart';
@@ -42,6 +43,8 @@ class _CourseTabView extends FutureWidget<void> {
         return CourseAssignmentsScreen(courseId);
       case 'discussions':
         return CourseDiscussionsScreen(courseId);
+      case 'modules':
+        return CourseModulesScreen(courseId);
       default:
         return Center(child: Text('It\'s ${tab.id} here'));
     }
