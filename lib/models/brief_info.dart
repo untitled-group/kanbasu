@@ -26,7 +26,7 @@ abstract class BriefInfo implements Built<BriefInfo, BriefInfoBuilder> {
   String get description;
 
   @BuiltValueField()
-  DateTime get updatedAt;
+  DateTime get createdAt;
 
   @BuiltValueField()
   String? get url;
@@ -48,4 +48,4 @@ abstract class BriefInfo implements Built<BriefInfo, BriefInfoBuilder> {
   static Serializer<BriefInfo> get serializer => _$briefInfoSerializer;
 }
 
-enum BriefInfoType { announcements, assignment, file, grading }
+enum BriefInfoType { announcements, assignment, file, grading, assignmentDue }

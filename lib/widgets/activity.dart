@@ -29,6 +29,9 @@ class ActivityWidget extends StatelessWidget {
       case BriefInfoType.grading:
         icon = Icons.assignment_turned_in_outlined;
         break;
+      case BriefInfoType.assignmentDue:
+        icon = Icons.assignment_outlined; // TODO: change this
+        break;
     }
 
     return Container(
@@ -66,7 +69,7 @@ class ActivityWidget extends StatelessWidget {
                           ),
                           Text(
                             timeago.format(
-                              item.updatedAt,
+                              item.createdAt,
                               locale: context.locale.toStringWithSeparator(),
                             ),
                             style: TextStyle(

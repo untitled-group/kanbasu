@@ -24,10 +24,12 @@ activity:
     Conversation: Con
     DiscussionTopic: Dis
 aggregate:
+  assignment: Assignment
   suffix:
     published: Published
     uploaded: Uploaded
     graded: Graded
+    due: Due
   type:
     file: File
     announcements: Announcement
@@ -35,6 +37,8 @@ aggregate:
     grading: Grading
   score: Score
   comment: Comment
+  submitted: Assignment submitted
+  unsubmitted: Assignment not submitted
 tabs:
   overview: Overview
   announcement: Announcements

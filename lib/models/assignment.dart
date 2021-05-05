@@ -26,6 +26,8 @@ abstract class Assignment implements Built<Assignment, AssignmentBuilder> {
   DateTime? get createdAt;
   @BuiltValueField(wireName: 'submission')
   Submission? get submission;
+  @BuiltValueField(wireName: 'has_submitted_submissions')
+  bool? get hasSubmittedSubmissions;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(Assignment.serializer, this)!

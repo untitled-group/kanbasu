@@ -50,6 +50,9 @@ Stream<BriefInfo> aggregate(CanvasBufferClient api,
     for (final assignment in assignments) {
       final newAgg = aggregateFromAssignment(assignment, course);
       aggregations.add(newAgg);
+
+      final newAgg2 = aggregateFromAssignmentDue(assignment, course);
+      aggregations.add(newAgg2);
     }
 
     final submissions =
@@ -115,7 +118,7 @@ BriefInfo aggregateFromPlanner(Planner planner, Course course) {
     ..title = title
     ..description = description
     ..url = planner.htmlUrl
-    ..updatedAt = planner.plannableDate
+    ..createdAt = planner.plannableDate
     ..type = BriefInfoType.announcements
     ..courseId = course.id
     ..courseName = course.name);
@@ -129,16 +132,40 @@ BriefInfo aggregateFromAssignment(Assignment assignment, Course course) {
     title = 'aggregate.assignment'.tr();
   }
   final description = getPlainText(assignment.description ?? '');
-  final updatedAt = assignment.updatedAt ?? assignment.createdAt;
 
   return BriefInfo((i) => i
     ..title = title
     ..suffix = 'aggregate.suffix.published'.tr()
     ..description = description
     ..url = assignment.htmlUrl
-    ..updatedAt = updatedAt
+    ..createdAt = assignment.createdAt
     ..dueDate = assignment.dueAt
     ..type = BriefInfoType.assignment
+    ..courseId = course.id
+    ..courseName = course.name);
+}
+
+BriefInfo aggregateFromAssignmentDue(Assignment assignment, Course course) {
+  final title;
+  if (assignment.name != null) {
+    title = assignment.name!.trim();
+  } else {
+    title = 'aggregate.assignment'.tr();
+  }
+
+  final hasSubmitted = assignment.hasSubmittedSubmissions ?? false;
+  final description = hasSubmitted
+      ? 'aggregate.submmitted'.tr()
+      : 'aggregate.unsubmmitted'.tr();
+
+  return BriefInfo((i) => i
+    ..title = title
+    ..suffix = 'aggregate.suffix.due'.tr()
+    ..description = description
+    ..url = assignment.htmlUrl
+    ..createdAt = assignment.dueAt
+    ..dueDate = assignment.dueAt
+    ..type = BriefInfoType.assignmentDue
     ..courseId = course.id
     ..courseName = course.name);
 }
@@ -149,7 +176,7 @@ BriefInfo aggregateFromFile(File file, Course course) {
     ..suffix = 'aggregate.suffix.uploaded'.tr()
     ..description = ''
     ..url = file.url
-    ..updatedAt = file.updatedAt
+    ..createdAt = file.createdAt
     ..type = BriefInfoType.file
     ..courseId = course.id
     ..courseName = course.name);
@@ -180,7 +207,7 @@ BriefInfo aggregateFromSubmission(Submission submission, Course course) {
     ..suffix = 'aggregate.suffix.graded'.tr()
     ..description = description
     ..url = submission.previewUrl
-    ..updatedAt = submission.gradedAt!
+    ..createdAt = submission.gradedAt!
     ..type = BriefInfoType.grading
     ..courseId = course.id
     ..courseName = course.name);
