@@ -4,13 +4,15 @@ import 'package:kanbasu/models/module.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:kanbasu/screens/course/modules.dart';
 import 'package:separated_column/separated_column.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:easy_localization/easy_localization.dart';
 
 class ModuleWidget extends StatelessWidget {
   final Module item;
-  ModuleWidget(this.item);
+  final int courseId;
+  ModuleWidget(this.item, this.courseId);
 
   @override
   Widget build(BuildContext context) {
@@ -50,57 +52,48 @@ class ModuleWidget extends StatelessWidget {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: SeparatedColumn(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  separatorBuilder: (context, index) => SizedBox(height: 1),
-                  children: [
-                    Text.rich(
-                      TextSpan(
-                          style: TextStyle(
-                            fontSize: 17,
-                            color: theme.text,
-                          ),
-                          children: [
-                            TextSpan(text: item.name),
-                          ]),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: SeparatedColumn(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      separatorBuilder: (context, index) => SizedBox(height: 1),
                       children: [
-                        // if (item.createdAt != null)
-                        //   Text(
-                        //     timeago.format(
-                        //       item.createdAt!,
-                        //       locale: context.locale.toStringWithSeparator(),
-                        //     ),
-                        //     style: TextStyle(
-                        //         fontSize: 14, color: theme.tertiaryText),
-                        //   ),
-                        SizedBox(
-                          width: 5,
+                        Text.rich(
+                          TextSpan(
+                              style: TextStyle(
+                                fontSize: 17,
+                                color: theme.text,
+                              ),
+                              children: [
+                                TextSpan(text: item.name),
+                              ]),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
                         ),
-                        Spacer(),
-                        if (icon != null) 
-                          icon,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Spacer(),
+                            if (icon != null) icon,
+                          ],
+                        ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
-    );
+        ]));
   }
 }

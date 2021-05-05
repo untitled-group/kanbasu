@@ -18,7 +18,7 @@ class CourseModulesScreen extends RefreshableStreamListWidget<Module> {
   @override
   Widget buildItem(context, Module item) {
     return InkWell(
-      child: ModuleWidget(item),
+      child: ModuleWidget(item, courseId),
     );
   }
 }
