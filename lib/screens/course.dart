@@ -101,15 +101,19 @@ class CourseScreen extends RefreshableListWidget<_CourseMeta> {
               : IconButton(
                   icon: Icon(Icons.file_download),
                   tooltip: 'tabs.download_all_file'.tr(),
-                  onPressed: () {
-                    final filesTab =
-                        validTabs.indexWhere((t) => t.id == 'files');
-                    if (filesTab >= 0) {
-                      DefaultTabController.of(context)?.animateTo(filesTab);
-                      // force notify
-                      filesDoFullDownload.value = true;
-                    }
-                  },
+                  onPressed: !filesDoFullDownload.value
+                      ? () {
+                          final filesTab =
+                              validTabs.indexWhere((t) => t.id == 'files');
+                          if (filesTab >= 0) {
+                            DefaultTabController.of(context)
+                                ?.animateTo(filesTab);
+                            // force notify
+                            filesDoFullDownload.value = false;
+                            filesDoFullDownload.value = true;
+                          }
+                        }
+                      : null,
                 );
 
           return Scaffold(
