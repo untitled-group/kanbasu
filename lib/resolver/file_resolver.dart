@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -16,6 +17,7 @@ class FileResolver {
 
   final KvStore _cache;
   final Logger _logger;
+  Completer? _completer;
 
   FileResolver(this._cache, this._logger);
 
@@ -30,33 +32,58 @@ class FileResolver {
     if (await getDownloadedFile(file) != null) {
       return;
     }
-    final downloadFolder =
-        Directory((await getApplicationDocumentsDirectory()).path + '/kanbasu');
-    await downloadFolder.create(recursive: true);
-    final localFilePath =
-        downloadFolder.path + '/' + '${file.id}-' + file.displayName;
-    _logger.i('[FileResolver] Download ${file.displayName} to $localFilePath');
 
-    final options = BaseOptions(responseType: ResponseType.stream);
-    final dio = Dio(options);
-    final subject = PublishSubject<ResolveProgress>();
-    unawaited(dio
-        .download(file.url, localFilePath,
-            onReceiveProgress: (of, total) => subject.add(ResolveProgress(
-                percent: of.toDouble() / total.toDouble(), message: '')))
-        .then((value) => subject.close(), onError: (error, st) {
-      onError(error, st);
-      subject.close();
-    }));
-    await for (final item in subject) {
-      yield item;
+    final completer = _completer;
+
+    // Create a new completer representing current file
+    var thisCompleter = Completer();
+    // Other tasks will now access this new completer
+    _completer = thisCompleter;
+
+    // Some file is being downloaded
+    if (completer != null) {
+      // Wait until current file being downloaded
+      await completer.future;
     }
-    final fileItem = LocalFile((f) => f
-      ..id = file.id
-      ..path = localFilePath);
-    await _cache.setItem(
-        _getLocalFileId(file.id), jsonEncode(fileItem.toJson()));
-    _logger.i('[FileResolver] Download complete');
+
+    final doDownload = () async* {
+      final downloadFolder = Directory(
+          (await getApplicationDocumentsDirectory()).path + '/kanbasu');
+      await downloadFolder.create(recursive: true);
+      final localFilePath =
+          downloadFolder.path + '/' + '${file.id}-' + file.displayName;
+      _logger
+          .i('[FileResolver] Download ${file.displayName} to $localFilePath');
+
+      final options = BaseOptions(responseType: ResponseType.stream);
+      final dio = Dio(options);
+      final subject = PublishSubject<ResolveProgress>();
+      unawaited(dio
+          .download(file.url, localFilePath,
+              onReceiveProgress: (of, total) => subject.add(ResolveProgress(
+                  percent: of.toDouble() / total.toDouble(), message: '')))
+          .then((value) => subject.close(), onError: (error, st) {
+        onError(error, st);
+        subject.close();
+      }));
+      await for (final item in subject) {
+        yield item;
+      }
+      final fileItem = LocalFile((f) => f
+        ..id = file.id
+        ..path = localFilePath);
+      await _cache.setItem(
+          _getLocalFileId(file.id), jsonEncode(fileItem.toJson()));
+      _logger.i('[FileResolver] Download complete');
+    };
+
+    try {
+      await for (final item in doDownload()) {
+        yield item;
+      }
+    } finally {
+      thisCompleter.complete();
+    }
   }
 
   Future<LocalFile?> getDownloadedFile(f.File file) async {
@@ -66,5 +93,16 @@ class FileResolver {
     } else {
       return null;
     }
+  }
+
+  Future<Map<int, LocalFile>> getAll() async {
+    const prefix = 'local_files/by_id/';
+    final items = await _cache.scan(prefix);
+    final files = <int, LocalFile>{};
+    for (final item in items.entries) {
+      files.putIfAbsent(int.parse(item.key.substring(prefix.length)),
+          () => LocalFile.fromJson(jsonDecode(item.value)));
+    }
+    return files;
   }
 }

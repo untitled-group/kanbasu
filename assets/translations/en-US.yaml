@@ -43,6 +43,7 @@ tabs:
   file: Files
   syllabus: Syllabus
   module: Modules
+  download_all_file: Download All Files
 overview:
   activities: Recent Activities
   more: More

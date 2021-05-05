@@ -43,6 +43,7 @@ tabs:
   file: 文件
   syllabus: 大纲
   module: 单元
+  download_all_file: 下载所有文件
 overview:
   activities: 最新动态
   more: 更多
