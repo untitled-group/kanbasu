@@ -86,7 +86,7 @@ class Resolver {
   Stream<ResolveProgress> visitCourse(Course course) async* {
     _logger.i('[Visitor] Course ${course.name}');
 
-    final total = 5;
+    final total = 8;
 
     yield ofCurrent('解析文件夹', 0, total);
     final folders =
@@ -118,6 +118,19 @@ class Resolver {
     await for (final progress in visitModules(course, modules)) {
       yield ofTotal(progress.prepend('单元'), 4, total);
     }
+
+    yield ofCurrent('解析公告', 5, total);
+    await _api.getAnnouncements(course.id).last.handleError(onError).toList();
+
+    yield ofCurrent('解析讨论区', 6, total);
+    await _api
+        .getDiscussionTopics(course.id)
+        .last
+        .handleError(onError)
+        .toList();
+
+    yield ofCurrent('解析页面', 7, total);
+    await _api.getPages(course.id).last.handleError(onError).toList();
   }
 
   /// Visit stream of [File].
