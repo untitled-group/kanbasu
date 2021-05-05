@@ -8,17 +8,7 @@ import 'package:kanbasu/models/module.dart';
 import 'package:kanbasu/rest_api/canvas.dart';
 import 'package:kanbasu/utils/courses.dart';
 import 'package:logger/logger.dart';
-
-class ResolveProgress {
-  final double percent;
-  final String message;
-
-  ResolveProgress({required this.percent, required this.message});
-
-  ResolveProgress prepend(String moduleName) {
-    return ResolveProgress(percent: percent, message: '$moduleName / $message');
-  }
-}
+import 'package:kanbasu/resolver/resolve_progress.dart';
 
 class Resolver {
   /// [Resolver] will try accessing all available endpoint of Canvas LMS, and

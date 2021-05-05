@@ -19,6 +19,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:kanbasu/aggregation.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:kanbasu/resolver/resolve_progress.dart';
 
 class _MeView extends FutureWidget<User?> {
   @override
