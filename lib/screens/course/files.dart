@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -62,6 +63,8 @@ class _File extends HookWidget {
       });
     }, [notifier]);
 
+    final percent = resolverModel.fileResolveProgress[_item.id]?.percent;
+
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -77,13 +80,13 @@ class _File extends HookWidget {
                     child: fileStatus.value == FileStatus.Downloaded
                         ? Icon(Icons.download_done_rounded)
                         : (resolverModel.isFileDownloading[_item.id] ?? false)
-                            ? SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                    value: resolverModel
-                                        .fileResolveProgress[_item.id]
-                                        ?.percent))
+                            ? (percent != null
+                                ? SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                        value: percent))
+                                : Icon(Icons.cloud_download_outlined))
                             : Container(width: 24, height: 24))),
           ],
         ),

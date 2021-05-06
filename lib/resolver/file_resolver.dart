@@ -33,59 +33,35 @@ class FileResolver {
       return;
     }
 
-    final completer = _completer;
+    final downloadFolder =
+        Directory((await getApplicationDocumentsDirectory()).path + '/kanbasu');
+    await downloadFolder.create(recursive: true);
+    final localFilePath =
+        downloadFolder.path + '/' + '${file.id}-' + file.displayName;
+    _logger.i('[FileResolver] Download ${file.displayName} to $localFilePath');
 
-    // Create a new completer representing current file
-    var thisCompleter = Completer();
-    // Other tasks will now access this new completer
-    _completer = thisCompleter;
-
-    // Some file is being downloaded
-    if (completer != null) {
-      // Wait until current file being downloaded
-      await completer.future;
+    final options = BaseOptions(responseType: ResponseType.stream);
+    final dio = Dio(options);
+    final subject = PublishSubject<ResolveProgress>();
+    unawaited(dio
+        .download(file.url, localFilePath,
+            onReceiveProgress: (of, total) =>
+                subject.add(ResolveProgress((r) => r
+                  ..percent = of.toDouble() / total.toDouble()
+                  ..message = '')))
+        .then((value) => subject.close(), onError: (error, st) {
+      onError(error, st);
+      subject.close();
+    }));
+    await for (final item in subject) {
+      yield item;
     }
-
-    final doDownload = () async* {
-      final downloadFolder = Directory(
-          (await getApplicationDocumentsDirectory()).path + '/kanbasu');
-      await downloadFolder.create(recursive: true);
-      final localFilePath =
-          downloadFolder.path + '/' + '${file.id}-' + file.displayName;
-      _logger
-          .i('[FileResolver] Download ${file.displayName} to $localFilePath');
-
-      final options = BaseOptions(responseType: ResponseType.stream);
-      final dio = Dio(options);
-      final subject = PublishSubject<ResolveProgress>();
-      unawaited(dio
-          .download(file.url, localFilePath,
-              onReceiveProgress: (of, total) =>
-                  subject.add(ResolveProgress((r) => r
-                    ..percent = of.toDouble() / total.toDouble()
-                    ..message = '')))
-          .then((value) => subject.close(), onError: (error, st) {
-        onError(error, st);
-        subject.close();
-      }));
-      await for (final item in subject) {
-        yield item;
-      }
-      final fileItem = LocalFile((f) => f
-        ..id = file.id
-        ..path = localFilePath);
-      await _cache.setItem(
-          _getLocalFileId(file.id), jsonEncode(fileItem.toJson()));
-      _logger.i('[FileResolver] Complete download ${file.displayName}');
-    };
-
-    try {
-      await for (final item in doDownload()) {
-        yield item;
-      }
-    } finally {
-      thisCompleter.complete();
-    }
+    final fileItem = LocalFile((f) => f
+      ..id = file.id
+      ..path = localFilePath);
+    await _cache.setItem(
+        _getLocalFileId(file.id), jsonEncode(fileItem.toJson()));
+    _logger.i('[FileResolver] Complete download ${file.displayName}');
   }
 
   Future<LocalFile?> getDownloadedFile(f.File file) async {

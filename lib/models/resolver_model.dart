@@ -1,4 +1,6 @@
-import 'package:built_collection/built_collection.dart';
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:kanbasu/aggregation.dart';
 import 'package:kanbasu/models/file.dart';
@@ -15,19 +17,19 @@ class ResolverModel with ChangeNotifier {
   late Model _model;
   late FileResolver _fileResolver;
   ResolveProgress? _resolveProgress;
-  BuiltMap<int, bool> _isFileDownloading = BuiltMap();
-  BuiltMap<int, ResolveProgress> _fileResolveProgress = BuiltMap();
-  BuiltMap<int, ValueNotifier<_Notifier>> _notifiers = BuiltMap();
+  final _isFileDownloading = <int, bool>{};
+  final _fileResolveProgress = <int, ResolveProgress>{};
+  final _notifiers = <int, ValueNotifier<_Notifier>>{};
 
   ResolveProgress? get resolveProgress => _resolveProgress;
-  BuiltMap<int, ResolveProgress> get fileResolveProgress =>
-      _fileResolveProgress;
-  BuiltMap<int, bool> get isFileDownloading => _isFileDownloading;
+  Map<int, ResolveProgress> get fileResolveProgress => _fileResolveProgress;
+  Map<int, bool> get isFileDownloading => _isFileDownloading;
   FileResolver get fileResolver => _fileResolver;
 
   ValueNotifier<_Notifier> getNotifierFor(int fileId) {
-    _notifiers = _notifiers.rebuild(
-        (b) => b..putIfAbsent(fileId, () => ValueNotifier(_Notifier())));
+    if (!_notifiers.containsKey(fileId)) {
+      _notifiers[fileId] = ValueNotifier(_Notifier());
+    }
     return _notifiers[fileId]!;
   }
 
@@ -46,67 +48,50 @@ class ResolverModel with ChangeNotifier {
     }
   }
 
-  void requestDownload(File file) {
-    unawaited(() async {
-      final fileResolver = _fileResolver;
-      _isFileDownloading = _isFileDownloading
-          .rebuild((b) => b..updateValue(file.id, (_) => true));
-      notifyId(file.id);
+  Future<void> requestDownload(File file) async {
+    final fileResolver = _fileResolver;
+    _isFileDownloading[file.id] = true;
+    notifyId(file.id);
 
-      try {
-        await for (final progress in fileResolver
-            .visit(file)
-            .throttleTime(Duration(milliseconds: 10))) {
-          _fileResolveProgress = _fileResolveProgress
-              .rebuild((b) => b..updateValue(file.id, (_) => progress));
-          notifyId(file.id);
-        }
-      } finally {
-        _isFileDownloading =
-            _isFileDownloading.rebuild((b) => b..remove(file.id));
-        _fileResolveProgress =
-            _fileResolveProgress.rebuild((b) => b..remove(file.id));
-        notifyId(file.id);
-      }
-      fileResolver.visit(file);
-    }());
+    final completer = Completer();
+    fileResolver
+        .visit(file)
+        .handleError((error) => completer.completeError(error))
+        .doOnDone(() => completer.complete())
+        .throttleTime(Duration(milliseconds: 10))
+        .listen((progress) {
+      _fileResolveProgress[file.id] = progress;
+      notifyId(file.id);
+    });
+
+    await completer.future;
+
+    await Future.delayed(Duration(milliseconds: 100));
+    _isFileDownloading.remove(file.id);
+    _fileResolveProgress.remove(file.id);
+    notifyId(file.id);
   }
 
   void requestDownloadAll(int courseId) {
     unawaited(() async {
       final model = _model;
-      final fileResolver = _fileResolver;
 
       final files =
           await getListDataFromApi(model.canvas.getFiles(courseId), true);
 
-      _isFileDownloading = _isFileDownloading.rebuild((b) {
-        for (final file in files) {
-          b.updateValue(file.id, (_) => true);
-        }
-        return b;
-      });
-
       for (final file in files) {
+        _isFileDownloading[file.id] = true;
         notifyId(file.id);
       }
 
       for (final file in files) {
         try {
-          await for (final progress in fileResolver
-              .visit(file)
-              .throttleTime(Duration(milliseconds: 10))) {
-            _fileResolveProgress = _fileResolveProgress
-                .rebuild((b) => b..updateValue(file.id, (_) => progress));
-            notifyId(file.id);
-          }
-        } finally {
-          _isFileDownloading =
-              _isFileDownloading.rebuild((b) => b..remove(file.id));
-          _fileResolveProgress =
-              _fileResolveProgress.rebuild((b) => b..remove(file.id));
-          notifyId(file.id);
-        }
+          await requestDownload(file);
+        } catch (_) {}
+        await Future.delayed(Duration(milliseconds: 100));
+        _isFileDownloading.remove(file.id);
+        _fileResolveProgress.remove(file.id);
+        notifyId(file.id);
       }
     }());
   }
