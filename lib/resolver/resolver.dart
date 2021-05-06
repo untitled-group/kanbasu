@@ -23,13 +23,14 @@ class Resolver {
       : _api = CanvasBufferClient(rest, _keyspace);
 
   ResolveProgress ofCurrent(String message, int of, int current) =>
-      ResolveProgress(
-          percent: of.toDouble() / current.toDouble(), message: message);
+      ResolveProgress((r) => r
+        ..percent = of.toDouble() / current.toDouble()
+        ..message = message);
 
   ResolveProgress ofTotal(ResolveProgress progress, int of, int total) =>
-      ResolveProgress(
-          percent: progress.percent / total + of / total,
-          message: progress.message);
+      ResolveProgress((r) => r
+        ..percent = progress.percent / total + of / total
+        ..message = progress.message);
 
   void onError(dynamic error, StackTrace st) {
     _logger.w('An error occurred when downloading', error, st);

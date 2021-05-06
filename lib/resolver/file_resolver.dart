@@ -60,8 +60,10 @@ class FileResolver {
       final subject = PublishSubject<ResolveProgress>();
       unawaited(dio
           .download(file.url, localFilePath,
-              onReceiveProgress: (of, total) => subject.add(ResolveProgress(
-                  percent: of.toDouble() / total.toDouble(), message: '')))
+              onReceiveProgress: (of, total) =>
+                  subject.add(ResolveProgress((r) => r
+                    ..percent = of.toDouble() / total.toDouble()
+                    ..message = '')))
           .then((value) => subject.close(), onError: (error, st) {
         onError(error, st);
         subject.close();
@@ -74,7 +76,7 @@ class FileResolver {
         ..path = localFilePath);
       await _cache.setItem(
           _getLocalFileId(file.id), jsonEncode(fileItem.toJson()));
-      _logger.i('[FileResolver] Download complete');
+      _logger.i('[FileResolver] Complete download ${file.displayName}');
     };
 
     try {

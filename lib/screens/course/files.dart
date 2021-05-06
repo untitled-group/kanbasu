@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/model.dart';
+import 'package:kanbasu/models/resolver_model.dart';
 import 'package:kanbasu/resolver/file_resolver.dart';
 import 'package:kanbasu/resolver/resolve_progress.dart';
 import 'package:kanbasu/utils/logging.dart';
@@ -40,40 +41,26 @@ enum FileStatus { Downloaded, Downloading, Remote }
 
 class _File extends HookWidget {
   final File _item;
-  final FileResolver _resolver;
-  final bool _doDownload;
 
-  _File(this._item, this._resolver, this._doDownload);
+  _File(this._item);
 
   @override
   Widget build(BuildContext context) {
     final fileStatus = useState<FileStatus>(FileStatus.Remote);
-    final resolveProgress = useState<Stream<ResolveProgress>?>(null);
-    final downloadProgress = useStream(resolveProgress.value,
-        initialData: null, preserveState: false);
-    final progressData = downloadProgress.data;
+    final resolverModel = Provider.of<ResolverModel>(context);
+    final notifier = useValueListenable(resolverModel.getNotifierFor(_item.id));
+
     final onTap = () {
-      if (fileStatus.value != FileStatus.Downloading) {
-        fileStatus.value = FileStatus.Downloading;
-        resolveProgress.value = _resolver
-            .visit(_item)
-            .doOnDone(() {
-              fileStatus.value = FileStatus.Downloaded;
-            })
-            .handleError((e) => showErrorSnack(context, e))
-            .throttleTime(Duration(milliseconds: 10));
-      }
+      resolverModel.requestDownload(_item);
     };
+
     useEffect(() {
-      _resolver.getDownloadedFile(_item).then((value) {
+      resolverModel.fileResolver.getDownloadedFile(_item).then((value) {
         if (value != null) {
           fileStatus.value = FileStatus.Downloaded;
         }
       });
-      if (_doDownload) {
-        onTap();
-      }
-    }, [_doDownload]);
+    }, [notifier]);
 
     return InkWell(
       onTap: onTap,
@@ -87,14 +74,16 @@ class _File extends HookWidget {
             Expanded(
                 child: Align(
                     alignment: Alignment.centerRight,
-                    child: fileStatus.value == FileStatus.Downloading
-                        ? SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                                value: progressData?.percent))
-                        : fileStatus.value == FileStatus.Downloaded
-                            ? Icon(Icons.download_done_rounded)
+                    child: fileStatus.value == FileStatus.Downloaded
+                        ? Icon(Icons.download_done_rounded)
+                        : (resolverModel.isFileDownloading[_item.id] ?? false)
+                            ? SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                    value: resolverModel
+                                        .fileResolveProgress[_item.id]
+                                        ?.percent))
                             : Container(width: 24, height: 24))),
           ],
         ),
@@ -105,10 +94,8 @@ class _File extends HookWidget {
 
 class _FilesView extends RefreshableStreamListWidget<File> {
   final int courseId;
-  final FileResolver _resolver;
-  final bool _doFullDownload;
 
-  _FilesView(this.courseId, this._resolver, this._doFullDownload);
+  _FilesView(this.courseId);
 
   @override
   int atLeast() => 20;
@@ -118,22 +105,18 @@ class _FilesView extends RefreshableStreamListWidget<File> {
       Provider.of<Model>(context).canvas.getFiles(courseId);
 
   @override
-  Widget buildItem(context, File item) =>
-      _File(item, _resolver, _doFullDownload);
+  Widget buildItem(context, File item) => _File(item);
 }
 
 class CourseFilesScreen extends HookWidget {
   final int courseId;
-  final bool doFullDownload;
 
-  CourseFilesScreen(this.courseId, this.doFullDownload);
+  CourseFilesScreen(this.courseId);
 
   @override
   Widget build(BuildContext context) {
     return HookBuilder(builder: (BuildContext context) {
-      final resolver =
-          FileResolver(Provider.of<Model>(context).kvs, createLogger());
-      return _FilesView(courseId, resolver, doFullDownload);
+      return _FilesView(courseId);
     });
   }
 }

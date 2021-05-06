@@ -11,7 +11,9 @@ class ResolverWidget extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final snapshot = useStream(_resolverStream,
-        initialData: ResolveProgress(percent: 0.0, message: '加载中'));
+        initialData: ResolveProgress((r) => r
+          ..percent = 0.0
+          ..message = '加载中'));
 
     return Container(
         padding: EdgeInsets.all(15),
