@@ -147,17 +147,20 @@ BriefInfo? aggregateFromAssignment(Assignment assignment, Course course) {
 BriefInfo? aggregateFromAssignmentDue(Assignment assignment, Course course) {
   if (assignment.dueAt == null) return null;
 
-  final title;
+  final String title;
   if (assignment.name != null) {
     title = assignment.name!.trim();
   } else {
     title = 'aggregate.assignment'.tr();
   }
 
-  final hasSubmitted = assignment.hasSubmittedSubmissions ?? false;
+  final hasSubmitted = (assignment.hasSubmittedSubmissions ?? false) &&
+      (assignment.submission?.attempt ?? 0) >= 1;
+  ;
   final description =
       hasSubmitted ? 'aggregate.submitted'.tr() : 'aggregate.unsubmitted'.tr();
-  final isDone = assignment.dueAt!.compareTo(DateTime.now()) <= 0;
+  final isDone =
+      assignment.dueAt!.compareTo(DateTime.now()) <= 0 || hasSubmitted;
   final suffix = isDone
       ? 'aggregate.suffix.was_due'.tr()
       : 'aggregate.suffix.will_due'.tr();
