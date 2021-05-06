@@ -281,6 +281,13 @@ packages:
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
     version: "6.1.0"
+  file_sizes:
+    dependency: "direct main"
+    description:
+      name: file_sizes
+      url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
+    source: hosted
+    version: "1.0.2"
   fixnum:
     dependency: transitive
     description:
