@@ -7,6 +7,7 @@ import 'package:kanbasu/widgets/border.dart';
 import 'package:kanbasu/widgets/loading.dart';
 import 'package:kanbasu/widgets/snack.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 /// [CommonListView] takes `List<T>` and display the items in view.
 /// This scaffold supports batch-update and on-demand-showing stream items.
@@ -106,7 +107,7 @@ abstract class RefreshableStreamListWidget<T> extends HookWidget {
 
   int atLeast() => 10;
 
-  int refreshInterval() => 200;
+  int refreshInterval() => 100;
 
   bool showLoadingWidget() => true;
 
@@ -118,11 +119,7 @@ abstract class RefreshableStreamListWidget<T> extends HookWidget {
     }
 
     if (data?.isEmpty ?? false) {
-      return CommonListView<void>(
-        itemBuilder: (_) => Center(child: Text('这里什么也没有')),
-        itemList: [0],
-        showLoadingWidget: showLoadingWidget(),
-      );
+      return Center(child: Text('error.nothing_here'.tr()));
     }
 
     return CommonListView<T>(
