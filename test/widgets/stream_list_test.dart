@@ -71,7 +71,7 @@ class TestFutureScreenError extends RefreshableListWidget<TestStruct> {
 class TestStreamScreen extends RefreshableStreamListWidget<TestStruct> {
   @override
   int atLeast() {
-    return 100;
+    return 0;
   }
 
   @override
@@ -81,8 +81,8 @@ class TestStreamScreen extends RefreshableStreamListWidget<TestStruct> {
 
   @override
   List<Stream<TestStruct>> getStreams(context) => [
-        Stream.fromFuture(Future.value(TestStruct('old'))),
-        Stream.fromFuture(Future.value(TestStruct('new'))),
+        Stream.fromIterable([TestStruct('old')]),
+        Stream.fromIterable([TestStruct('new')]),
       ];
 
   @override
@@ -146,13 +146,10 @@ void main() {
   });
 
   group('RefreshableStreamListWidget', () {
-    // This test is disabled for now
     testWidgets('should show latest information', (WidgetTester tester) async {
       await tester.pumpWidget(wrapWidgetForTest(TestStreamScreen()));
       await tester.pumpAndSettle();
-      await tester.pumpAndSettle();
-      await tester.pumpAndSettle();
-      // expect(find.text('new'), findsOneWidget);
+      expect(find.text('new'), findsOneWidget);
     });
 
     testWidgets('should correctly handle error', (WidgetTester tester) async {

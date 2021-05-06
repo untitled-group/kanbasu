@@ -19,11 +19,15 @@ FutureSnapshot<T> useFutureCombination<T>(
   var data;
   var error;
   final snapshots = <AsyncSnapshot<T?>>[];
+  var isFirstOne = true;
 
   for (final future in futures.reversed) {
-    final snapshot =
-        useFuture(future, initialData: initialData, preserveState: true);
+    final snapshot = useFuture(
+        refreshWidget && !isFirstOne ? Future.value(null) : future,
+        initialData: initialData,
+        preserveState: true);
     snapshots.add(snapshot);
+    isFirstOne = false;
   }
 
   for (final snapshot in snapshots) {

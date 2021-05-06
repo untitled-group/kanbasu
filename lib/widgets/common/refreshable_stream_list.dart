@@ -7,6 +7,7 @@ import 'package:kanbasu/widgets/border.dart';
 import 'package:kanbasu/widgets/loading.dart';
 import 'package:kanbasu/widgets/snack.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 /// [CommonListView] takes `List<T>` and display the items in view.
 /// This scaffold supports batch-update and on-demand-showing stream items.
@@ -67,11 +68,15 @@ StreamSnapshot<T> useStreamCombination<T>(
   var error;
 
   final snapshots = <AsyncSnapshot<List<T>?>>[];
+  var isFirstOne = true;
 
   for (final stream in streams.reversed) {
-    final snapshot =
-        useStream(stream, initialData: initialData, preserveState: true);
+    final snapshot = useStream(
+        refreshWidget && !isFirstOne ? Stream<List<T>>.empty() : stream,
+        initialData: initialData,
+        preserveState: true);
     snapshots.add(snapshot);
+    isFirstOne = false;
   }
 
   for (final snapshot in snapshots) {
@@ -79,9 +84,11 @@ StreamSnapshot<T> useStreamCombination<T>(
     if (snapshotData != null &&
         (snapshot.connectionState == ConnectionState.done ||
             snapshotData.length >= atLeast ||
-            refreshWidget)) {
-      data = snapshotData;
-      break;
+            (refreshWidget && snapshotData.isNotEmpty))) {
+      if (snapshotData.isNotEmpty || snapshot == snapshots.first) {
+        data = snapshotData;
+        break;
+      }
     }
     if (snapshot.error != null) {
       error = snapshot.error;
@@ -100,7 +107,7 @@ abstract class RefreshableStreamListWidget<T> extends HookWidget {
 
   int atLeast() => 10;
 
-  int refreshInterval() => 200;
+  int refreshInterval() => 100;
 
   bool showLoadingWidget() => true;
 
@@ -109,6 +116,10 @@ abstract class RefreshableStreamListWidget<T> extends HookWidget {
   Widget buildWidget(BuildContext context, List<T>? data) {
     if (data != null) {
       dataPostProcess(data);
+    }
+
+    if (data?.isEmpty ?? false) {
+      return Center(child: Text('error.nothing_here'.tr()));
     }
 
     return CommonListView<T>(
@@ -148,7 +159,7 @@ abstract class RefreshableStreamListWidget<T> extends HookWidget {
                     final list = acc ?? List<T>.empty(growable: true);
                     list.add(s);
                     return list;
-                  }));
+                  }).defaultIfEmpty([]));
 
           final interval = refreshInterval();
 

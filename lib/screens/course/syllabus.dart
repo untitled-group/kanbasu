@@ -10,6 +10,9 @@ class CourseSyllabusScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Single(Html(data: course.syllabusBody ?? ''));
+    return Single(Html(
+      data: course.syllabusBody ?? '',
+      shrinkWrap: true,
+    ));
   }
 }
