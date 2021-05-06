@@ -4,6 +4,7 @@ title:
   courses: Courses
   me: Me
   settings: Settings
+  preview: File Preview
 settings:
   api_key: API Key
   api_endpoint: API Endpoint
@@ -51,8 +52,6 @@ tabs:
 overview:
   activities: Recent Activities
   more: More
-actions:
-  open_in_browser: Open in browser
 assignment:
   due_time_is: 'Due time:'
   no_due_time: No due time provided
@@ -66,3 +65,5 @@ files:
   download_all: Download all files
   start_download_all: Start downloading all files...
   done_download: Done with {} files processed.
+preview:
+  change_dir: Change scroll direction

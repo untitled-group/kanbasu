@@ -47,6 +47,7 @@ dependencies:
   native_pdf_view: ^4.0.1
   path: any
   path_provider: any
+  pdf_render: ^1.0.10
   pedantic: ^1.11.0
   provider: ^5.0.0
   retrofit: ^2.0.0-beta1

@@ -4,6 +4,7 @@ title:
   courses: 课程
   me: 我
   settings: 设置
+  preview: 文件预览
 settings:
   api_key: API 密钥
   api_endpoint: API 端点
@@ -51,8 +52,6 @@ tabs:
 overview:
   activities: 最新动态
   more: 更多
-actions:
-  open_in_browser: 用浏览器打开
 assignment:
   due_time_is: 截止时间：
   no_due_time: 没有截止时间
@@ -66,3 +65,5 @@ files:
   download_all: 下载所有文件
   start_download_all: 开始下载所有文件...
   done_download: 完成，共处理了 {} 个文件。
+preview:
+  change_dir: 切换滚动方向
