@@ -16,7 +16,7 @@ class PreviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PdfRenderPreviewScreen(fileId: fileId);
+    return NativePdfViewPreviewScreen(fileId: fileId);
   }
 }
 
