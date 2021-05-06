@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:kanbasu/aggregation.dart';
 import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/resolver/file_resolver.dart';
@@ -73,15 +72,16 @@ class ResolverModel with ChangeNotifier {
 
   Future<int> requestDownloadAll(int courseId) async {
     final model = _model;
-    final files =
-        await getListDataFromApi(model.canvas.getFiles(courseId), true);
 
-    for (final file in files) {
+    final stream = model.canvas.getFiles(courseId).last.shareReplay();
+    await for (final file in stream) {
       _isFileDownloading[file.id] = true;
       notifyId(file.id);
     }
 
+    final files = await stream.toList();
     var count = 0;
+
     for (final file in files) {
       try {
         await Future.wait([
