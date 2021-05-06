@@ -3,8 +3,6 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:kanbasu/aggregation.dart';
 import 'package:kanbasu/buffer_api/canvas.dart';
 import 'package:kanbasu/models/model.dart';
-import 'package:kanbasu/models/module.dart';
-import 'package:kanbasu/models/module_item.dart';
 import 'package:kanbasu/widgets/module.dart';
 import 'package:kanbasu/widgets/common/refreshable_stream_list.dart';
 import 'package:provider/provider.dart';

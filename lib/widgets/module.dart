@@ -5,8 +5,6 @@ import 'package:kanbasu/models/module.dart';
 import 'package:kanbasu/models/module_item.dart';
 import 'package:provider/provider.dart';
 import 'package:separated_column/separated_column.dart';
-import 'package:timeago/timeago.dart' as timeago;
-import 'package:easy_localization/easy_localization.dart';
 
 class ComposedModuleData {
   Module module;
