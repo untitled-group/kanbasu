@@ -72,6 +72,15 @@ class FileResolver {
     }
   }
 
+  Future<LocalFile?> getDownloadedFileById(String id) async {
+    final item = await _cache.getItem(_getLocalFileId(id));
+    if (item != null) {
+      return LocalFile.fromJson(jsonDecode(item));
+    } else {
+      return null;
+    }
+  }
+
   Future<Map<int, LocalFile>> getAll() async {
     const prefix = 'local_files/by_id/';
     final items = await _cache.scan(prefix);

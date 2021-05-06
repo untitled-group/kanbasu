@@ -1,5 +1,6 @@
 import 'package:get/route_manager.dart';
 import 'package:kanbasu/screens/course.dart';
+import 'package:kanbasu/screens/preview.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final getPages = [
@@ -13,6 +14,10 @@ final getPages = [
       courseId: int.parse(Get.parameters['courseId']!),
       initialTabId: Get.parameters['initialTabId'],
     ),
+  ),
+  GetPage(
+    name: '/preview/:fileId',
+    page: () => PreviewScreen(fileId: Get.parameters['fileId']!),
   ),
 ];
 
