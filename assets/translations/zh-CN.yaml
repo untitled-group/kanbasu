@@ -62,6 +62,8 @@ assignment:
     successful: 已提交
     late: 迟交
     waiting: 待提交
+page:
+  no_details: 暂无详情
 files:
   download_all: 下载所有文件
   start_download_all: 开始下载所有文件...

@@ -52,10 +52,10 @@ class PageContentWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String htmlData;
-    if(detailedPage == null){
-      htmlData = '<h3> ${'assignment.no_details'.tr()} </h3>';
-    }else{
-      htmlData = detailedPage!.body ?? '<h3> ${'assignment.no_details'.tr()} </h3>';
+    if (detailedPage == null) {
+      htmlData = '<h3> ${'page.no_details'.tr()} </h3>';
+    } else {
+      htmlData = detailedPage!.body ?? '<h3> ${'page.no_details'.tr()} </h3>';
     }
     return ListView(
       shrinkWrap: true,
