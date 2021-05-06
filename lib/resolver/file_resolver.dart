@@ -17,7 +17,6 @@ class FileResolver {
 
   final KvStore _cache;
   final Logger _logger;
-  Completer? _completer;
 
   FileResolver(this._cache, this._logger);
 

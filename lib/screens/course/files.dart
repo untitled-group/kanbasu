@@ -1,16 +1,9 @@
 import 'dart:async';
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/models/resolver_model.dart';
-import 'package:kanbasu/resolver/file_resolver.dart';
-import 'package:kanbasu/resolver/resolve_progress.dart';
-import 'package:kanbasu/utils/logging.dart';
-import 'package:kanbasu/widgets/snack.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:kanbasu/widgets/common/refreshable_stream_list.dart';
 import 'package:provider/provider.dart';
 
