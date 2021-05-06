@@ -44,7 +44,7 @@ Stream<BriefInfo> aggregate(CanvasBufferClient api,
 
   // info about assignment, file and grading
   Future<List<BriefInfo>> processCourse(Course course) async {
-    final aggregations = <BriefInfo>[];
+    final aggregations = <BriefInfo?>[];
 
     final assignments =
         await getListDataFromApi(api.getAssignments(course.id), useOnlineData);
@@ -59,10 +59,8 @@ Stream<BriefInfo> aggregate(CanvasBufferClient api,
     final submissions =
         await getListDataFromApi(api.getSubmissions(course.id), useOnlineData);
     for (final submission in submissions) {
-      if (submission.grade != null) {
-        final newAgg = aggregateFromSubmission(submission, course);
-        aggregations.add(newAgg);
-      }
+      final newAgg = aggregateFromSubmission(submission, course);
+      aggregations.add(newAgg);
     }
 
     final files =
@@ -72,25 +70,24 @@ Stream<BriefInfo> aggregate(CanvasBufferClient api,
       aggregations.add(newAgg);
     }
 
-    return aggregations;
+    return aggregations.whereType<BriefInfo>().toList();
   }
 
   // info about announcement
   Future<List<BriefInfo>> processAnnouncements() async {
-    final aggregations = <BriefInfo>[];
+    final aggregations = <BriefInfo?>[];
 
     final planners = await getListDataFromApi(api.getPlanners(), useOnlineData);
     for (final planner in planners) {
       if (planner.plannableType != 'announcement') continue;
-      final courseId = planner.courseId;
-      final course = idToCourse[courseId];
-      if (courseId != null && course != null) {
+      final course = idToCourse[planner.courseId];
+      if (course != null) {
         final newAgg = aggregateFromPlanner(planner, course);
         aggregations.add(newAgg);
       }
     }
 
-    return aggregations;
+    return aggregations.whereType<BriefInfo>().toList();
   }
 
   final subject = PublishSubject<List<BriefInfo>>();
@@ -109,7 +106,7 @@ Stream<BriefInfo> aggregate(CanvasBufferClient api,
   }
 }
 
-BriefInfo aggregateFromPlanner(Planner planner, Course course) {
+BriefInfo? aggregateFromPlanner(Planner planner, Course course) {
   // only deal with announcements
   final title = '${planner.plannable.title}';
   final description = getPlainText(planner.plannable.message ?? '');
@@ -121,10 +118,11 @@ BriefInfo aggregateFromPlanner(Planner planner, Course course) {
     ..createdAt = planner.plannableDate
     ..type = BriefInfoType.announcements
     ..courseId = course.id
-    ..courseName = course.name);
+    ..courseName = course.name
+    ..isDone = true);
 }
 
-BriefInfo aggregateFromAssignment(Assignment assignment, Course course) {
+BriefInfo? aggregateFromAssignment(Assignment assignment, Course course) {
   final title;
   if (assignment.name != null) {
     title = assignment.name!.trim();
@@ -138,14 +136,17 @@ BriefInfo aggregateFromAssignment(Assignment assignment, Course course) {
     ..suffix = 'aggregate.suffix.published'.tr()
     ..description = description
     ..url = assignment.htmlUrl
-    ..createdAt = assignment.createdAt
-    ..dueDate = assignment.dueAt
+    ..createdAt = assignment.createdAt!
+    ..dueAt = assignment.dueAt
     ..type = BriefInfoType.assignment
     ..courseId = course.id
-    ..courseName = course.name);
+    ..courseName = course.name
+    ..isDone = true);
 }
 
-BriefInfo aggregateFromAssignmentDue(Assignment assignment, Course course) {
+BriefInfo? aggregateFromAssignmentDue(Assignment assignment, Course course) {
+  if (assignment.dueAt == null) return null;
+
   final title;
   if (assignment.name != null) {
     title = assignment.name!.trim();
@@ -156,32 +157,40 @@ BriefInfo aggregateFromAssignmentDue(Assignment assignment, Course course) {
   final hasSubmitted = assignment.hasSubmittedSubmissions ?? false;
   final description =
       hasSubmitted ? 'aggregate.submitted'.tr() : 'aggregate.unsubmitted'.tr();
+  final isDone = assignment.dueAt!.compareTo(DateTime.now()) <= 0;
+  final suffix = isDone
+      ? 'aggregate.suffix.was_due'.tr()
+      : 'aggregate.suffix.will_due'.tr();
 
   return BriefInfo((i) => i
     ..title = title
-    ..suffix = 'aggregate.suffix.due'.tr()
+    ..suffix = suffix
     ..description = description
     ..url = assignment.htmlUrl
-    ..createdAt = assignment.dueAt
-    ..dueDate = assignment.dueAt
+    ..createdAt = assignment.dueAt!
+    ..dueAt = assignment.dueAt
     ..type = BriefInfoType.assignmentDue
     ..courseId = course.id
-    ..courseName = course.name);
+    ..courseName = course.name
+    ..isDone = isDone);
 }
 
-BriefInfo aggregateFromFile(File file, Course course) {
+BriefInfo? aggregateFromFile(File file, Course course) {
   return BriefInfo((i) => i
-    ..title = '${file.displayName.trim()}'
+    ..title = file.displayName.trim()
     ..suffix = 'aggregate.suffix.uploaded'.tr()
     ..description = ''
     ..url = file.url
-    ..createdAt = file.createdAt
+    ..createdAt = file.updatedAt
     ..type = BriefInfoType.file
     ..courseId = course.id
-    ..courseName = course.name);
+    ..courseName = course.name
+    ..isDone = true);
 }
 
-BriefInfo aggregateFromSubmission(Submission submission, Course course) {
+BriefInfo? aggregateFromSubmission(Submission submission, Course course) {
+  if (submission.grade == null) return null;
+
   final title;
   final assignment = submission.assignment;
   if (assignment != null) {
@@ -197,7 +206,7 @@ BriefInfo aggregateFromSubmission(Submission submission, Course course) {
     var comment = submission.submissionComments![0]['comments'];
     if (comment != null) {
       description = '${'aggregate.score'.tr()}: ${submission.grade}\n'
-          '${'aggregate.comment'.tr()}: $comment]';
+          '${'aggregate.comment'.tr()}: $comment';
     }
   }
 
@@ -209,5 +218,6 @@ BriefInfo aggregateFromSubmission(Submission submission, Course course) {
     ..createdAt = submission.gradedAt!
     ..type = BriefInfoType.grading
     ..courseId = course.id
-    ..courseName = course.name);
+    ..courseName = course.name
+    ..isDone = true);
 }

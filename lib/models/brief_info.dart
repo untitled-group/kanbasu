@@ -32,7 +32,10 @@ abstract class BriefInfo implements Built<BriefInfo, BriefInfoBuilder> {
   String? get url;
 
   @BuiltValueField()
-  DateTime? get dueDate;
+  DateTime? get dueAt;
+
+  @BuiltValueField()
+  bool get isDone;
 
   factory BriefInfo([Function(BriefInfoBuilder b) updates]) = _$BriefInfo;
 
