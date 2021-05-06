@@ -91,14 +91,17 @@ class CourseScreen extends RefreshableListWidget<_CourseMeta> {
           validTabs.map((t) => _CourseTabView(courseId, course, t)).toList(),
     );
 
-    final resolverModel = Provider.of<ResolverModel>(context);
-    final downloadAllAction = HookBuilder(
-      builder: (BuildContext context) {
-        final isDownloading = useState(false);
-        final downloadAll = () async {
-          final filesTab = validTabs.indexWhere((t) => t.id == 'files');
-          isDownloading.value = true;
-          if (filesTab >= 0) {
+    final downloadAllAction = () {
+      final resolverModel = Provider.of<ResolverModel>(context);
+
+      final filesTab = validTabs.indexWhere((t) => t.id == 'files');
+      if (filesTab < 0) return null;
+
+      return HookBuilder(
+        builder: (BuildContext context) {
+          final isDownloading = useState(false);
+          final downloadAll = () async {
+            isDownloading.value = true;
             DefaultTabController.of(context)?.animateTo(filesTab);
             showSnack(context, 'files.start_download_all'.tr());
             final count = await resolverModel.requestDownloadAll(courseId);
@@ -107,21 +110,21 @@ class CourseScreen extends RefreshableListWidget<_CourseMeta> {
               'files.done_download'.tr(args: [count.toString()]),
             );
             isDownloading.value = false;
-          }
-        };
+          };
 
-        return IconButton(
-          icon: Icon(Icons.cloud_download_outlined),
-          tooltip: 'files.download_all'.tr(),
-          onPressed: isDownloading.value == false ? downloadAll : null,
-        );
-      },
-    );
+          return IconButton(
+            icon: Icon(Icons.cloud_download_outlined),
+            tooltip: 'files.download_all'.tr(),
+            onPressed: isDownloading.value == false ? downloadAll : null,
+          );
+        },
+      );
+    }();
 
     final scaffold = Scaffold(
       appBar: AppBar(
         title: title,
-        actions: [downloadAllAction],
+        actions: [downloadAllAction].whereType<Widget>().toList(),
         bottom: tabBar,
       ),
       body: tabBarView,
