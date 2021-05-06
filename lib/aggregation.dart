@@ -159,9 +159,9 @@ BriefInfo? aggregateFromAssignmentDue(Assignment assignment, Course course) {
   ;
   final description =
       hasSubmitted ? 'aggregate.submitted'.tr() : 'aggregate.unsubmitted'.tr();
-  final isDone =
-      assignment.dueAt!.compareTo(DateTime.now()) <= 0 || hasSubmitted;
-  final suffix = isDone
+  final wasDue = assignment.dueAt!.compareTo(DateTime.now()) <= 0;
+  final isDone = wasDue || hasSubmitted;
+  final suffix = wasDue
       ? 'aggregate.suffix.was_due'.tr()
       : 'aggregate.suffix.will_due'.tr();
 
