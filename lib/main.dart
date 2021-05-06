@@ -79,6 +79,7 @@ class MyApp extends StatelessWidget {
       supportedLocales: context.supportedLocales,
       defaultTransition: Transition.fade,
       getPages: getPages,
+      debugShowCheckedModeBanner: false,
       home: Home(),
     );
   }
