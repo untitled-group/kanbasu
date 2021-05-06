@@ -1,8 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/course.dart';
 import 'package:kanbasu/models/model.dart';
+import 'package:kanbasu/models/resolver_model.dart';
 import 'package:kanbasu/models/tab.dart' as t;
 import 'package:kanbasu/screens/course/announcements.dart';
 import 'package:kanbasu/screens/course/discussions.dart';
@@ -12,24 +14,20 @@ import 'package:kanbasu/screens/course/home.dart';
 import 'package:kanbasu/screens/course/syllabus.dart';
 import 'package:kanbasu/utils/stream_op.dart';
 import 'package:kanbasu/widgets/common/refreshable_future.dart';
-import 'package:kanbasu/widgets/common/future.dart';
 import 'package:kanbasu/widgets/loading.dart';
+import 'package:kanbasu/widgets/snack.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-class _CourseTabView extends FutureWidget<void> {
+class _CourseTabView extends StatelessWidget {
   final int courseId;
   final Course? course;
   final t.Tab tab;
 
-  _CourseTabView(
-    this.courseId,
-    this.course,
-    this.tab,
-  );
+  _CourseTabView(this.courseId, this.course, this.tab);
 
   @override
-  Widget buildWidget(context, void data) {
+  Widget build(BuildContext context) {
     switch (tab.id) {
       case 'home':
         return CourseHomeScreen();
@@ -47,9 +45,6 @@ class _CourseTabView extends FutureWidget<void> {
         return Center(child: Text('It\'s ${tab.id} here'));
     }
   }
-
-  @override
-  List<Future<void>> getFutures(context) => [];
 }
 
 class _CourseMeta {
@@ -72,50 +67,71 @@ class CourseScreen extends RefreshableListWidget<_CourseMeta> {
   Widget buildWidget(context, _CourseMeta? data) {
     final course = data?.course;
     final tabs = data?.tabs;
-
     final title = Text(course?.name ?? 'title.course'.tr());
 
     if (tabs == null || tabs.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: title),
-        body: LoadingWidget(isMore: false)
+        body: LoadingWidget(isMore: false),
       );
     } else {
       final validTabs = _filterTabs(tabs);
-
-      final action = course == null
-          ? null
-          : IconButton(
-              icon: Icon(Icons.folder),
-              tooltip: 'tabs.file'.tr(),
-              onPressed: () {},
-            );
 
       final tabBar = TabBar(
         tabs: validTabs.map((t) => Tab(text: t.label)).toList(),
         isScrollable: true,
       );
 
-      final scaffold = Scaffold(
-          appBar: AppBar(
-            title: title,
-            actions: [action].whereType<Widget>().toList(),
-            bottom: tabBar,
-          ),
-          body: TabBarView(
-            children: validTabs
-                .map((t) => _CourseTabView(courseId, course, t))
-                .toList(),
-          ));
-
-      final initialIndex = initialTabId == null
-          ? 0
-          : max(validTabs.indexWhere((t) => t.id == initialTabId), 0);
+      final initialIndex = max(
+        validTabs.indexWhere((t) => t.id == initialTabId),
+        0,
+      );
 
       return DefaultTabController(
         length: validTabs.length,
         initialIndex: initialIndex,
-        child: scaffold,
+        child: HookBuilder(
+          builder: (BuildContext context) {
+            final children = validTabs
+                .map((t) => _CourseTabView(courseId, course, t))
+                .toList();
+            final tabBarView = TabBarView(children: children);
+
+            final resolverModel = Provider.of<ResolverModel>(context);
+            final downloadAllAction = course == null
+                ? null
+                : IconButton(
+                    icon: Icon(Icons.cloud_download_outlined),
+                    tooltip: 'tabs.download_all_file'.tr(),
+                    onPressed: () {
+                      final filesTab =
+                          validTabs.indexWhere((t) => t.id == 'files');
+                      if (filesTab >= 0) {
+                        DefaultTabController.of(context)?.animateTo(filesTab);
+                        showSnack(context, 'files.start_download_all'.tr());
+                        resolverModel.requestDownloadAll(courseId).then(
+                          (count) {
+                            showSnack(
+                              context,
+                              'files.done_download'
+                                  .tr(args: [count.toString()]),
+                            );
+                          },
+                        );
+                      }
+                    },
+                  );
+
+            return Scaffold(
+              appBar: AppBar(
+                title: title,
+                actions: [downloadAllAction].whereType<Widget>().toList(),
+                bottom: tabBar,
+              ),
+              body: tabBarView,
+            );
+          },
+        ),
       );
     }
   }

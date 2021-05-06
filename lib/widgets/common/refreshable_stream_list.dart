@@ -65,9 +65,16 @@ StreamSnapshot<T> useStreamCombination<T>(
   // return last future with data fetched
   var data;
   var error;
+
+  final snapshots = <AsyncSnapshot<List<T>?>>[];
+
   for (final stream in streams.reversed) {
     final snapshot =
         useStream(stream, initialData: initialData, preserveState: true);
+    snapshots.add(snapshot);
+  }
+
+  for (final snapshot in snapshots) {
     final snapshotData = snapshot.data;
     if (snapshotData != null &&
         (snapshot.connectionState == ConnectionState.done ||

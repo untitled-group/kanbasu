@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:get/route_manager.dart';
 import 'package:kanbasu/models/model.dart';
+import 'package:kanbasu/models/resolver_model.dart';
 import 'package:kanbasu/router.dart';
 import 'package:kanbasu/utils/timeago_zh_cn.dart';
 import 'package:provider/provider.dart';
@@ -17,28 +18,29 @@ Future<void> main() async {
   KvStore.initFfi();
   timeago.setLocaleMessages('zh_CN', KZhCnMessages());
 
-  // await resolverMain();
-
   final model = Model();
-  await Future.wait([model.init()]);
+  await model.init();
 
-  return runApp(
-    EasyLocalization(
-      supportedLocales: [
-        Locale('zh', 'CN'),
-        Locale('en', 'US'),
+  return runApp(EasyLocalization(
+    supportedLocales: [
+      Locale('zh', 'CN'),
+      Locale('en', 'US'),
+    ],
+    startLocale: Locale('zh', 'CN'),
+    fallbackLocale: Locale('en', 'US'),
+    useFallbackTranslations: true,
+    path: 'assets/translations',
+    assetLoader: YamlAssetLoader(),
+    child: MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => model),
+        ChangeNotifierProxyProvider<Model, ResolverModel>(
+            create: (_) => ResolverModel(),
+            update: (_, model, notifier) => notifier!..updateModel(model))
       ],
-      startLocale: Locale('zh', 'CN'),
-      fallbackLocale: Locale('en', 'US'),
-      useFallbackTranslations: true,
-      path: 'assets/translations',
-      assetLoader: YamlAssetLoader(),
-      child: ChangeNotifierProvider(
-        create: (context) => model,
-        child: Phoenix(child: MyApp()), // for rebirthing the app
-      ),
+      child: Phoenix(child: MyApp()), // for rebirthing the app
     ),
-  );
+  ));
 }
 
 class MyApp extends StatelessWidget {

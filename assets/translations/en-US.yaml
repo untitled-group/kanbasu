@@ -62,3 +62,7 @@ assignment:
     successful: Successful Submission
     late: Late Submission
     waiting: Wating for Submission
+files:
+  download_all: Download all files
+  start_download_all: Start downloading all files...
+  done_download: Done with {} files processed.

@@ -1,10 +1,21 @@
-class ResolveProgress {
-  final double percent;
-  final String message;
+import 'package:built_value/built_value.dart';
 
-  ResolveProgress({required this.percent, required this.message});
+part 'resolve_progress.g.dart';
+
+abstract class ResolveProgress
+    implements Built<ResolveProgress, ResolveProgressBuilder> {
+  ResolveProgress._();
+
+  factory ResolveProgress([Function(ResolveProgressBuilder b) updates]) =
+      _$ResolveProgress;
+
+  @BuiltValueField()
+  double get percent;
+
+  @BuiltValueField()
+  String get message;
 
   ResolveProgress prepend(String moduleName) {
-    return ResolveProgress(percent: percent, message: '$moduleName / $message');
+    return rebuild((r) => r..message = '$moduleName / ${r.message}');
   }
 }

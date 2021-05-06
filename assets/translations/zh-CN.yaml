@@ -62,3 +62,7 @@ assignment:
     successful: 已提交
     late: 迟交
     waiting: 待提交
+files:
+  download_all: 下载所有文件
+  start_download_all: 开始下载所有文件...
+  done_download: 完成，共处理了 {} 个文件。
