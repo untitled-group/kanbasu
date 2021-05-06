@@ -23,13 +23,14 @@ class Resolver {
       : _api = CanvasBufferClient(rest, _keyspace);
 
   ResolveProgress ofCurrent(String message, int of, int current) =>
-      ResolveProgress(
-          percent: of.toDouble() / current.toDouble(), message: message);
+      ResolveProgress((r) => r
+        ..percent = of.toDouble() / current.toDouble()
+        ..message = message);
 
   ResolveProgress ofTotal(ResolveProgress progress, int of, int total) =>
-      ResolveProgress(
-          percent: progress.percent / total + of / total,
-          message: progress.message);
+      ResolveProgress((r) => r
+        ..percent = progress.percent / total + of / total
+        ..message = progress.message);
 
   void onError(dynamic error, StackTrace st) {
     _logger.w('An error occurred when downloading', error, st);
@@ -47,7 +48,7 @@ class Resolver {
       yield progress;
     }
 
-    yield ofCurrent('解析用户日程', 9, 10);
+    yield ofCurrent('解析用户日程', 8, 10);
     await _api.getPlanners().last.handleError(onError).toList();
 
     yield ofCurrent('解析用户动态', 9, 10);
@@ -86,50 +87,53 @@ class Resolver {
   Stream<ResolveProgress> visitCourse(Course course) async* {
     _logger.i('[Visitor] Course ${course.name}');
 
-    final total = 8;
+    final total = 9;
 
-    yield ofCurrent('解析文件夹', 0, total);
+    yield ofCurrent('获取可用功能', 0, total);
+    await _api.getTabs(course.id).last.handleError(onError).toList();
+
+    yield ofCurrent('解析文件夹', 1, total);
     final folders =
         await _api.getFolders(course.id).last.handleError(onError).toList();
     await for (final progress in visitFolders(folders)) {
       yield ofTotal(progress.prepend('文件夹'), 0, total);
     }
 
-    yield ofCurrent('解析文件', 1, total);
+    yield ofCurrent('解析文件', 2, total);
     final files =
         await _api.getFiles(course.id).last.handleError(onError).toList();
     await for (final progress in visitFiles(files)) {
       yield ofTotal(progress.prepend('文件'), 1, total);
     }
 
-    yield ofCurrent('解析作业', 2, total);
+    yield ofCurrent('解析作业', 3, total);
     final assignments =
         await _api.getAssignments(course.id).last.handleError(onError).toList();
     await for (final progress in visitAssignments(assignments)) {
       yield ofTotal(progress.prepend('作业'), 2, total);
     }
 
-    yield ofCurrent('解析提交', 3, total);
+    yield ofCurrent('解析提交', 4, total);
     await _api.getSubmissions(course.id).last.handleError(onError).toList();
 
-    yield ofCurrent('解析单元', 4, total);
+    yield ofCurrent('解析单元', 5, total);
     final modules =
         await _api.getModules(course.id).last.handleError(onError).toList();
     await for (final progress in visitModules(course, modules)) {
       yield ofTotal(progress.prepend('单元'), 4, total);
     }
 
-    yield ofCurrent('解析公告', 5, total);
+    yield ofCurrent('解析公告', 6, total);
     await _api.getAnnouncements(course.id).last.handleError(onError).toList();
 
-    yield ofCurrent('解析讨论区', 6, total);
+    yield ofCurrent('解析讨论区', 7, total);
     await _api
         .getDiscussionTopics(course.id)
         .last
         .handleError(onError)
         .toList();
 
-    yield ofCurrent('解析页面', 7, total);
+    yield ofCurrent('解析页面', 8, total);
     await _api.getPages(course.id).last.handleError(onError).toList();
   }
 

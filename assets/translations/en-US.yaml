@@ -4,6 +4,7 @@ title:
   courses: Courses
   me: Me
   settings: Settings
+  preview: File Preview
 settings:
   api_key: API Key
   api_endpoint: API Endpoint
@@ -24,10 +25,13 @@ activity:
     Conversation: Con
     DiscussionTopic: Dis
 aggregate:
+  assignment: Assignment
   suffix:
     published: Published
     uploaded: Uploaded
     graded: Graded
+    was_due: Was due
+    will_due: Will be due
   type:
     file: File
     announcements: Announcement
@@ -35,6 +39,8 @@ aggregate:
     grading: Grading
   score: Score
   comment: Comment
+  submitted: Assignment submitted
+  unsubmitted: Assignment not submitted
 tabs:
   overview: Overview
   announcement: Announcements
@@ -46,8 +52,6 @@ tabs:
 overview:
   activities: Recent Activities
   more: More
-actions:
-  open_in_browser: Open in browser
 assignment:
   due_time_is: 'Due time:'
   no_due_time: No due time provided
@@ -57,3 +61,9 @@ assignment:
     successful: Successful Submission
     late: Late Submission
     waiting: Wating for Submission
+files:
+  download_all: Download all files
+  start_download_all: Start downloading all files...
+  done_download: Done with {} files processed.
+preview:
+  change_dir: Change scroll direction

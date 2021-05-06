@@ -29,7 +29,7 @@ class _ActivitiesView extends RefreshableStreamListWidget<BriefInfo> {
 
   @override
   void dataPostProcess(List<BriefInfo> data) {
-    data.sort((a, b) => -a.updatedAt.compareTo(b.updatedAt));
+    data.sort((a, b) => -a.createdAt.compareTo(b.createdAt));
   }
 
   @override
@@ -61,4 +61,5 @@ final _typeToTabId = {
   BriefInfoType.assignment: 'assignments',
   BriefInfoType.file: 'files',
   BriefInfoType.grading: 'assignments',
+  BriefInfoType.assignmentDue: 'assignments'
 };

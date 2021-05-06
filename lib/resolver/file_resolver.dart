@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -30,6 +31,7 @@ class FileResolver {
     if (await getDownloadedFile(file) != null) {
       return;
     }
+
     final downloadFolder =
         Directory((await getApplicationDocumentsDirectory()).path + '/kanbasu');
     await downloadFolder.create(recursive: true);
@@ -42,8 +44,10 @@ class FileResolver {
     final subject = PublishSubject<ResolveProgress>();
     unawaited(dio
         .download(file.url, localFilePath,
-            onReceiveProgress: (of, total) => subject.add(ResolveProgress(
-                percent: of.toDouble() / total.toDouble(), message: '')))
+            onReceiveProgress: (of, total) =>
+                subject.add(ResolveProgress((r) => r
+                  ..percent = of.toDouble() / total.toDouble()
+                  ..message = '')))
         .then((value) => subject.close(), onError: (error, st) {
       onError(error, st);
       subject.close();
@@ -56,7 +60,7 @@ class FileResolver {
       ..path = localFilePath);
     await _cache.setItem(
         _getLocalFileId(file.id), jsonEncode(fileItem.toJson()));
-    _logger.i('[FileResolver] Download complete');
+    _logger.i('[FileResolver] Complete download ${file.displayName}');
   }
 
   Future<LocalFile?> getDownloadedFile(f.File file) async {
@@ -66,5 +70,25 @@ class FileResolver {
     } else {
       return null;
     }
+  }
+
+  Future<LocalFile?> getDownloadedFileById(String id) async {
+    final item = await _cache.getItem(_getLocalFileId(id));
+    if (item != null) {
+      return LocalFile.fromJson(jsonDecode(item));
+    } else {
+      return null;
+    }
+  }
+
+  Future<Map<int, LocalFile>> getAll() async {
+    const prefix = 'local_files/by_id/';
+    final items = await _cache.scan(prefix);
+    final files = <int, LocalFile>{};
+    for (final item in items.entries) {
+      files.putIfAbsent(int.parse(item.key.substring(prefix.length)),
+          () => LocalFile.fromJson(jsonDecode(item.value)));
+    }
+    return files;
   }
 }

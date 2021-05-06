@@ -18,9 +18,15 @@ FutureSnapshot<T> useFutureCombination<T>(
   // return last future with data fetched
   var data;
   var error;
+  final snapshots = <AsyncSnapshot<T?>>[];
+
   for (final future in futures.reversed) {
     final snapshot =
         useFuture(future, initialData: initialData, preserveState: true);
+    snapshots.add(snapshot);
+  }
+
+  for (final snapshot in snapshots) {
     if (snapshot.data != null) {
       data = snapshot.data;
       break;
@@ -83,10 +89,13 @@ abstract class RefreshableListWidget<T> extends HookWidget {
       final snapshot = useFutureCombination(itemFutures, manualRefresh.value,
           initialData: null);
 
+      // Always build widget to prevent `use` error
+      final hookWidget = buildWidget(context, snapshot.data);
+
       final widget =
           snapshot.data == null && snapshot.error == null && showLoadingWidget()
               ? LoadingWidget(isMore: true)
-              : buildWidget(context, snapshot.data);
+              : hookWidget;
 
       final refreshIndicator = RefreshIndicator(
         onRefresh: () async {

@@ -4,6 +4,7 @@ title:
   courses: 课程
   me: 我
   settings: 设置
+  preview: 文件预览
 settings:
   api_key: API 密钥
   api_endpoint: API 端点
@@ -24,10 +25,13 @@ activity:
     Conversation: 对话
     DiscussionTopic: 讨论
 aggregate:
+  assignment: 作业
   suffix:
     published: 已发布
     uploaded: 已上传
     graded: 已评分
+    was_due: 已截止
+    will_due: 将截止
   type:
     file: 文件
     announcements: 公告
@@ -35,6 +39,8 @@ aggregate:
     grading: 评分
   score: 分数
   comment: 评论
+  submitted: 作业已提交
+  unsubmitted: 作业未提交
 tabs:
   overview: 概览
   announcement: 公告
@@ -46,8 +52,6 @@ tabs:
 overview:
   activities: 最新动态
   more: 更多
-actions:
-  open_in_browser: 用浏览器打开
 assignment:
   due_time_is: 截止时间：
   no_due_time: 没有截止时间
@@ -57,3 +61,9 @@ assignment:
     successful: 已提交
     late: 迟交
     waiting: 待提交
+files:
+  download_all: 下载所有文件
+  start_download_all: 开始下载所有文件...
+  done_download: 完成，共处理了 {} 个文件。
+preview:
+  change_dir: 切换滚动方向
