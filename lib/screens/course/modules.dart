@@ -1,42 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:kanbasu/models/module_list_item.dart';
+import 'package:kanbasu/aggregation.dart';
+import 'package:kanbasu/buffer_api/canvas.dart';
 import 'package:kanbasu/models/model.dart';
+import 'package:kanbasu/models/module.dart';
+import 'package:kanbasu/models/module_item.dart';
 import 'package:kanbasu/widgets/module.dart';
 import 'package:kanbasu/widgets/common/refreshable_stream_list.dart';
 import 'package:provider/provider.dart';
 
-class CourseModulesScreen extends RefreshableStreamListWidget<ModuleListItem> {
+class CourseModulesScreen
+    extends RefreshableStreamListWidget<ComposedModuleData> {
   final int courseId;
 
   CourseModulesScreen(this.courseId);
 
-  Stream<ModuleListItem> getModuleListStream(canvas, courseId, online) async* {
-    final modules = await (online
-        ? canvas.getModules(courseId).last
-        : canvas.getModules(courseId).first);
+  Stream<ComposedModuleData> getModuleListStream(
+      CanvasBufferClient canvas, int courseId, bool useOnlineData) async* {
+    final modules =
+        await getListDataFromApi(canvas.getModules(courseId), useOnlineData);
     for (final module in modules) {
-      yield ModuleListItem.ModuleIs(module);
-      await for (final moduleItem
-          in canvas.getModuleItem(courseId, module.Id)) {
-        yield ModuleListItem.ModuleItemIs(moduleItem);
-      }
+      final items = await getListDataFromApi(
+          canvas.getModuleItems(courseId, module.id), useOnlineData);
+      yield ComposedModuleData(module, items);
     }
   }
 
   @override
-  List<Stream<ModuleListItem>> getStreams(context) => [
+  List<Stream<ComposedModuleData>> getStreams(context) => [
         getModuleListStream(
             Provider.of<Model>(context).canvas, courseId, false),
         getModuleListStream(Provider.of<Model>(context).canvas, courseId, true),
       ];
 
   @override
-  Widget buildItem(context, ModuleListItem item) {
+  Widget buildItem(context, ComposedModuleData item) {
     return InkWell(
-      child: ModuleListItemWidget(item),
+      child: ModuleWidget(item),
     );
   }
 }
-
-

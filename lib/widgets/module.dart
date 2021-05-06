@@ -3,34 +3,27 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/models/module.dart';
 import 'package:kanbasu/models/module_item.dart';
-import 'package:kanbasu/models/module_list_item.dart';
 import 'package:provider/provider.dart';
 import 'package:separated_column/separated_column.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:easy_localization/easy_localization.dart';
 
-class ModuleListItemWidget extends StatelessWidget {
-  final ModuleListItem item;
-  ModuleListItemWidget(this.item);
+class ComposedModuleData {
+  Module module;
+  List<ModuleItem> items;
 
-  @override
-  Widget build(BuildContext context) {
-    if (item.module != null) {
-      return ModuleWidget(item.module!);
-    } else {
-      return ModuleItemWidget(item.moduleItem!);
-    }
-  }
+  ComposedModuleData(this.module, this.items);
 }
 
 class ModuleWidget extends StatelessWidget {
-  final Module item;
+  final ComposedModuleData item;
   ModuleWidget(this.item);
+
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<Model>(context).theme;
     final Icon? icon;
-    switch (item.state) {
+    switch (item.module.state) {
       case 'started':
         icon = Icon(
           Icons.play_arrow_outlined,
@@ -82,7 +75,7 @@ class ModuleWidget extends StatelessWidget {
                             color: theme.text,
                           ),
                           children: [
-                            TextSpan(text: item.name),
+                            TextSpan(text: item.module.name),
                           ]),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
@@ -102,6 +95,7 @@ class ModuleWidget extends StatelessWidget {
               ),
             ],
           ),
+          ...item.items.map((moduleItem) => ModuleItemWidget(moduleItem))
         ],
       ),
     );
