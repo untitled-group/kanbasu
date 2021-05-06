@@ -100,27 +100,38 @@ class CourseScreen extends RefreshableListWidget<_CourseMeta> {
             final resolverModel = Provider.of<ResolverModel>(context);
             final downloadAllAction = course == null
                 ? null
-                : IconButton(
-                    icon: Icon(Icons.cloud_download_outlined),
-                    tooltip: 'tabs.download_all_file'.tr(),
-                    onPressed: () {
-                      final filesTab =
-                          validTabs.indexWhere((t) => t.id == 'files');
-                      if (filesTab >= 0) {
-                        DefaultTabController.of(context)?.animateTo(filesTab);
-                        showSnack(context, 'files.start_download_all'.tr());
-                        resolverModel.requestDownloadAll(courseId).then(
-                          (count) {
-                            showSnack(
-                              context,
-                              'files.done_download'
-                                  .tr(args: [count.toString()]),
-                            );
-                          },
-                        );
-                      }
-                    },
-                  );
+                : HookBuilder(builder: (BuildContext context) {
+                    final isDownloading = useState(false);
+
+                    return IconButton(
+                        icon: Icon(Icons.cloud_download_outlined),
+                        tooltip: 'tabs.download_all_file'.tr(),
+                        onPressed: !isDownloading.value
+                            ? () {
+                                final filesTab = validTabs
+                                    .indexWhere((t) => t.id == 'files');
+                                isDownloading.value = true;
+                                if (filesTab >= 0) {
+                                  DefaultTabController.of(context)
+                                      ?.animateTo(filesTab);
+                                  showSnack(
+                                      context, 'files.start_download_all'.tr());
+                                  resolverModel
+                                      .requestDownloadAll(courseId)
+                                      .then(
+                                    (count) {
+                                      showSnack(
+                                        context,
+                                        'files.done_download'
+                                            .tr(args: [count.toString()]),
+                                      );
+                                      isDownloading.value = false;
+                                    },
+                                  );
+                                }
+                              }
+                            : null);
+                  });
 
             return Scaffold(
               appBar: AppBar(

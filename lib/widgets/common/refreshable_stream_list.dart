@@ -115,6 +115,14 @@ abstract class RefreshableStreamListWidget<T> extends HookWidget {
       dataPostProcess(data);
     }
 
+    if (data?.isEmpty ?? false) {
+      return CommonListView<void>(
+        itemBuilder: (_) => Center(child: Text('这里什么也没有')),
+        itemList: [0],
+        showLoadingWidget: showLoadingWidget(),
+      );
+    }
+
     return CommonListView<T>(
       itemBuilder: (item) => buildItem(context, item),
       itemList: data,
@@ -152,7 +160,7 @@ abstract class RefreshableStreamListWidget<T> extends HookWidget {
                     final list = acc ?? List<T>.empty(growable: true);
                     list.add(s);
                     return list;
-                  }));
+                  }).defaultIfEmpty([]));
 
           final interval = refreshInterval();
 
