@@ -61,4 +61,5 @@ final _typeToTabId = {
   BriefInfoType.assignment: 'assignments',
   BriefInfoType.file: 'files',
   BriefInfoType.grading: 'assignments',
+  BriefInfoType.assignmentDue: 'assignments'
 };
