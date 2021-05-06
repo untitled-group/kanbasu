@@ -47,18 +47,31 @@ class PageWidget extends StatelessWidget {
 }
 
 class PageContentWidget extends StatelessWidget {
-  final page_model.Page item;
-
-  PageContentWidget(this.item);
+  final page_model.Page page;
+  final page_model.Page? detailedPage;
+  PageContentWidget(this.page, this.detailedPage);
 
   @override
   Widget build(BuildContext context) {
+    String htmlData;
+    if(detailedPage == null){
+      htmlData = '<h3> ${'assignment.no_details'.tr()} </h3>';
+    }else{
+      htmlData = detailedPage!.body ?? '<h3> ${'assignment.no_details'.tr()} </h3>';
+    }
     return ListView(
       shrinkWrap: true,
       children: [
-        PageWidget(item, true),
-        Html(data: item.body ?? '<h3> ${'assignment.no_details'.tr()} </h3>'),
+        PageWidget(page, true),
+        Html(data: htmlData),
       ],
     );
   }
+}
+
+class ComposedPageData {
+  page_model.Page page;
+  page_model.Page? detailedPage;
+
+  ComposedPageData(this.page, this.detailedPage);
 }

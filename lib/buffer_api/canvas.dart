@@ -381,7 +381,7 @@ class CanvasBufferClient {
   }
 
   String _getPagePrefix(course_id, page_id) =>
-      'courses/$course_id/pages/by_id/$page_id';
+      'courses/$course_id/pages/detail/by_id/$page_id';
 
   /// List a specific page.
   List<Future<Page?>> getPage(int course_id, int page_id) {

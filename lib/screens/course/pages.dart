@@ -1,22 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:kanbasu/models/page.dart' as page_model;
+import 'package:kanbasu/buffer_api/canvas.dart';
+import 'package:kanbasu/aggregation.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/page.dart';
 import 'package:kanbasu/widgets/common/refreshable_stream_list.dart';
 import 'package:provider/provider.dart';
 
-class CoursePagesScreen extends RefreshableStreamListWidget<page_model.Page> {
+class CoursePagesScreen extends RefreshableStreamListWidget<ComposedPageData> {
   final int courseId;
 
   CoursePagesScreen(this.courseId);
 
-  @override
-  List<Stream<page_model.Page>> getStreams(context) =>
-      Provider.of<Model>(context).canvas.getPages(courseId);
+  Stream<ComposedPageData> getPagesStream(
+      CanvasBufferClient canvas, int courseId, bool useOnlineData) async* {
+    final pages =
+        await getListDataFromApi(canvas.getPages(courseId), useOnlineData);
+    for (final page in pages) {
+      final detailedPage = await getItemDataFromApi(
+          canvas.getPage(courseId, page.pageId), useOnlineData);
+      yield ComposedPageData(page, detailedPage);
+    }
+  }
 
   @override
-  Widget buildItem(context, page_model.Page item) {
+  List<Stream<ComposedPageData>> getStreams(context) => [
+        getPagesStream(Provider.of<Model>(context).canvas, courseId, false),
+        getPagesStream(Provider.of<Model>(context).canvas, courseId, true),
+      ];
+
+  @override
+  Widget buildItem(context, ComposedPageData item) {
     return InkWell(
       onTap: () => showModalBottomSheet(
         context: context,
@@ -30,11 +45,11 @@ class CoursePagesScreen extends RefreshableStreamListWidget<page_model.Page> {
               minHeight: MediaQuery.of(context).size.height * 0.3,
               maxHeight: MediaQuery.of(context).size.height * 0.9,
             ),
-            child: PageContentWidget(item),
+            child: PageContentWidget(item.page, item.detailedPage),
           );
         },
       ),
-      child: PageWidget(item, false),
+      child: PageWidget(item.page, false),
     );
   }
 }
