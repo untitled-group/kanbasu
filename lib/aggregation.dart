@@ -8,6 +8,7 @@ import 'package:kanbasu/models/brief_info.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:kanbasu/utils/courses.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:rxdart/rxdart.dart';
 
 String getPlainText(String htmlData) {
@@ -94,14 +95,13 @@ Stream<BriefInfo> aggregate(CanvasBufferClient api,
 
   final subject = PublishSubject<List<BriefInfo>>();
 
-  // ignore: unawaited_futures
-  Future.wait(
+  unawaited(Future.wait(
     [
       for (final course in latestCourses)
         processCourse(course).then((d) => subject.add(d)),
       processAnnouncements().then((d) => subject.add(d)),
     ],
-  ).then((_) => subject.close());
+  ).then((_) => subject.close()));
 
   final stream = subject.stream.flatMap((value) => Stream.fromIterable(value));
   await for (final items in stream) {

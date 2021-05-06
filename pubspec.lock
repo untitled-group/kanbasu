@@ -217,7 +217,7 @@ packages:
       name: cupertino_icons
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
-    version: "1.0.2"
+    version: "1.0.3"
   dart_style:
     dependency: transitive
     description:
@@ -391,7 +391,7 @@ packages:
       name: http
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
-    version: "0.13.2"
+    version: "0.13.3"
   http_multi_server:
     dependency: transitive
     description:
@@ -561,7 +561,7 @@ packages:
     source: hosted
     version: "2.0.1"
   pedantic:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: pedantic
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
@@ -998,7 +998,7 @@ packages:
       name: web_socket_channel
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
-    version: "2.0.0"
+    version: "2.1.0"
   webkit_inspection_protocol:
     dependency: transitive
     description:
