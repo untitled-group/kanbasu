@@ -67,11 +67,15 @@ StreamSnapshot<T> useStreamCombination<T>(
   var error;
 
   final snapshots = <AsyncSnapshot<List<T>?>>[];
+  var isFirstOne = true;
 
   for (final stream in streams.reversed) {
-    final snapshot =
-        useStream(stream, initialData: initialData, preserveState: true);
+    final snapshot = useStream(
+        refreshWidget && !isFirstOne ? Stream<List<T>>.empty() : stream,
+        initialData: initialData,
+        preserveState: true);
     snapshots.add(snapshot);
+    isFirstOne = false;
   }
 
   for (final snapshot in snapshots) {
@@ -79,7 +83,7 @@ StreamSnapshot<T> useStreamCombination<T>(
     if (snapshotData != null &&
         (snapshot.connectionState == ConnectionState.done ||
             snapshotData.length >= atLeast ||
-            refreshWidget)) {
+            (refreshWidget && snapshotData.isNotEmpty))) {
       data = snapshotData;
       break;
     }
