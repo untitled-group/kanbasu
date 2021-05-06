@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:kanbasu/models/page.dart' as page_model;
 import 'package:kanbasu/buffer_api/canvas.dart';
 import 'package:kanbasu/aggregation.dart';
 import 'package:kanbasu/models/model.dart';

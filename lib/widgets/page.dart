@@ -4,8 +4,6 @@ import 'package:kanbasu/models/page.dart' as page_model;
 import 'package:kanbasu/models/model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:separated_column/separated_column.dart';
-import 'package:timeago/timeago.dart' as timeago;
 import 'package:easy_localization/easy_localization.dart';
 
 class PageWidget extends StatelessWidget {
