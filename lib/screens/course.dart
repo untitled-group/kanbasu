@@ -72,71 +72,72 @@ class CourseScreen extends RefreshableListWidget<_CourseMeta> {
     final tabs = data?.tabs;
     final title = Text(course?.name ?? 'title.course'.tr());
 
-    if (tabs == null || tabs.isEmpty) {
+    if (tabs == null || course == null || tabs.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: title),
         body: LoadingWidget(isMore: false),
       );
-    } else {
-      final validTabs = _filterTabs(tabs);
-
-      final tabBar = TabBar(
-        tabs: validTabs.map((t) => Tab(text: t.label)).toList(),
-        isScrollable: true,
-      );
-
-      final initialIndex = max(
-        validTabs.indexWhere((t) => t.id == initialTabId),
-        0,
-      );
-
-      return DefaultTabController(
-        length: validTabs.length,
-        initialIndex: initialIndex,
-        child: HookBuilder(
-          builder: (BuildContext context) {
-            final children = validTabs
-                .map((t) => _CourseTabView(courseId, course, t))
-                .toList();
-            final tabBarView = TabBarView(children: children);
-
-            final resolverModel = Provider.of<ResolverModel>(context);
-            final downloadAllAction = course == null
-                ? null
-                : IconButton(
-                    icon: Icon(Icons.cloud_download_outlined),
-                    tooltip: 'tabs.download_all_file'.tr(),
-                    onPressed: () {
-                      final filesTab =
-                          validTabs.indexWhere((t) => t.id == 'files');
-                      if (filesTab >= 0) {
-                        DefaultTabController.of(context)?.animateTo(filesTab);
-                        showSnack(context, 'files.start_download_all'.tr());
-                        resolverModel.requestDownloadAll(courseId).then(
-                          (count) {
-                            showSnack(
-                              context,
-                              'files.done_download'
-                                  .tr(args: [count.toString()]),
-                            );
-                          },
-                        );
-                      }
-                    },
-                  );
-
-            return Scaffold(
-              appBar: AppBar(
-                title: title,
-                actions: [downloadAllAction].whereType<Widget>().toList(),
-                bottom: tabBar,
-              ),
-              body: tabBarView,
-            );
-          },
-        ),
-      );
     }
+
+    final validTabs = _filterTabs(tabs);
+
+    final tabBar = TabBar(
+      tabs: validTabs.map((t) => Tab(text: t.label)).toList(),
+      isScrollable: true,
+    );
+
+    final initialIndex =
+        max(validTabs.indexWhere((t) => t.id == initialTabId), 0);
+
+    final tabBarView = TabBarView(
+      children:
+          validTabs.map((t) => _CourseTabView(courseId, course, t)).toList(),
+    );
+
+    final downloadAllAction = () {
+      final resolverModel = Provider.of<ResolverModel>(context);
+
+      final filesTab = validTabs.indexWhere((t) => t.id == 'files');
+      if (filesTab < 0) return null;
+
+      return HookBuilder(
+        builder: (BuildContext context) {
+          final isDownloading = useState(false);
+          final downloadAll = () async {
+            isDownloading.value = true;
+            DefaultTabController.of(context)?.animateTo(filesTab);
+            showSnack(context, 'files.start_download_all'.tr());
+            final count = await resolverModel.requestDownloadAll(courseId);
+            showSnack(
+              context,
+              'files.done_download'.tr(args: [count.toString()]),
+            );
+            isDownloading.value = false;
+          };
+
+          return IconButton(
+            icon: Icon(Icons.cloud_download_outlined),
+            tooltip: 'files.download_all'.tr(),
+            onPressed: isDownloading.value == false ? downloadAll : null,
+          );
+        },
+      );
+    }();
+
+    final scaffold = Scaffold(
+      appBar: AppBar(
+        title: title,
+        actions: [downloadAllAction].whereType<Widget>().toList(),
+        bottom: tabBar,
+      ),
+      body: tabBarView,
+    );
+
+    return DefaultTabController(
+      length: validTabs.length,
+      initialIndex: initialIndex,
+      child: scaffold,
+    );
   }
 
   @override
