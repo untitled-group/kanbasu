@@ -14,11 +14,10 @@ class ActivityWidget extends StatelessWidget {
 
   Widget _buildItems(BuildContext context) {
     final theme = Provider.of<Model>(context).theme;
-    final isDone = true;
     final IconData icon;
     switch (item.type) {
       case BriefInfoType.announcements:
-        icon = Icons.announcement_outlined;
+        icon = Icons.campaign_outlined;
         break;
       case BriefInfoType.assignment:
         icon = Icons.assignment_outlined;
@@ -28,6 +27,9 @@ class ActivityWidget extends StatelessWidget {
         break;
       case BriefInfoType.grading:
         icon = Icons.assignment_turned_in_outlined;
+        break;
+      case BriefInfoType.assignmentDue:
+        icon = Icons.assignment_late_outlined;
         break;
     }
 
@@ -57,7 +59,7 @@ class ActivityWidget extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Icon(
-                            isDone ? Icons.done : null,
+                            item.isDone ? Icons.done : null,
                             color: theme.primary,
                             size: 14,
                           ),
@@ -66,8 +68,9 @@ class ActivityWidget extends StatelessWidget {
                           ),
                           Text(
                             timeago.format(
-                              item.updatedAt,
+                              item.createdAt,
                               locale: context.locale.toStringWithSeparator(),
+                              allowFromNow: true,
                             ),
                             style: TextStyle(
                               fontSize: 14,

@@ -29,7 +29,7 @@ class _ActivitiesView extends RefreshableStreamListWidget<BriefInfo> {
 
   @override
   void dataPostProcess(List<BriefInfo> data) {
-    data.sort((a, b) => -a.updatedAt.compareTo(b.updatedAt));
+    data.sort((a, b) => -a.createdAt.compareTo(b.createdAt));
   }
 
   @override
