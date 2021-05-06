@@ -84,8 +84,10 @@ StreamSnapshot<T> useStreamCombination<T>(
         (snapshot.connectionState == ConnectionState.done ||
             snapshotData.length >= atLeast ||
             (refreshWidget && snapshotData.isNotEmpty))) {
-      data = snapshotData;
-      break;
+      if (snapshotData.isNotEmpty || snapshot == snapshots.first) {
+        data = snapshotData;
+        break;
+      }
     }
     if (snapshot.error != null) {
       error = snapshot.error;
