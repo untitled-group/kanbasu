@@ -8,7 +8,6 @@ import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/resolver/file_resolver.dart';
 import 'package:kanbasu/resolver/resolve_progress.dart';
 import 'package:kanbasu/utils/logging.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:rxdart/rxdart.dart';
 
 class _Notifier {}
@@ -72,27 +71,30 @@ class ResolverModel with ChangeNotifier {
     notifyId(file.id);
   }
 
-  void requestDownloadAll(int courseId) {
-    unawaited(() async {
-      final model = _model;
+  Future<int> requestDownloadAll(int courseId) async {
+    final model = _model;
+    final files =
+        await getListDataFromApi(model.canvas.getFiles(courseId), true);
 
-      final files =
-          await getListDataFromApi(model.canvas.getFiles(courseId), true);
+    for (final file in files) {
+      _isFileDownloading[file.id] = true;
+      notifyId(file.id);
+    }
 
-      for (final file in files) {
-        _isFileDownloading[file.id] = true;
-        notifyId(file.id);
-      }
+    var count = 0;
+    for (final file in files) {
+      try {
+        await Future.wait([
+          requestDownload(file),
+          Future.delayed(Duration(milliseconds: 100)),
+        ]);
+        count += 1;
+      } catch (_) {}
+      _isFileDownloading.remove(file.id);
+      _fileResolveProgress.remove(file.id);
+      notifyId(file.id);
+    }
 
-      for (final file in files) {
-        try {
-          await requestDownload(file);
-        } catch (_) {}
-        await Future.delayed(Duration(milliseconds: 100));
-        _isFileDownloading.remove(file.id);
-        _fileResolveProgress.remove(file.id);
-        notifyId(file.id);
-      }
-    }());
+    return count;
   }
 }

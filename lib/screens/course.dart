@@ -15,6 +15,7 @@ import 'package:kanbasu/screens/course/syllabus.dart';
 import 'package:kanbasu/utils/stream_op.dart';
 import 'package:kanbasu/widgets/common/refreshable_future.dart';
 import 'package:kanbasu/widgets/loading.dart';
+import 'package:kanbasu/widgets/snack.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -70,7 +71,9 @@ class CourseScreen extends RefreshableListWidget<_CourseMeta> {
 
     if (tabs == null || tabs.isEmpty) {
       return Scaffold(
-          appBar: AppBar(title: title), body: LoadingWidget(isMore: false));
+        appBar: AppBar(title: title),
+        body: LoadingWidget(isMore: false),
+      );
     } else {
       final validTabs = _filterTabs(tabs);
 
@@ -79,44 +82,56 @@ class CourseScreen extends RefreshableListWidget<_CourseMeta> {
         isScrollable: true,
       );
 
-      final initialIndex = initialTabId == null
-          ? 0
-          : max(validTabs.indexWhere((t) => t.id == initialTabId), 0);
+      final initialIndex = max(
+        validTabs.indexWhere((t) => t.id == initialTabId),
+        0,
+      );
 
       return DefaultTabController(
         length: validTabs.length,
         initialIndex: initialIndex,
-        child: HookBuilder(builder: (BuildContext context) {
-          final children = validTabs
-              .map((t) => _CourseTabView(courseId, course, t))
-              .toList();
+        child: HookBuilder(
+          builder: (BuildContext context) {
+            final children = validTabs
+                .map((t) => _CourseTabView(courseId, course, t))
+                .toList();
+            final tabBarView = TabBarView(children: children);
 
-          final tabBarView = TabBarView(children: children);
+            final resolverModel = Provider.of<ResolverModel>(context);
+            final downloadAllAction = course == null
+                ? null
+                : IconButton(
+                    icon: Icon(Icons.cloud_download_outlined),
+                    tooltip: 'tabs.download_all_file'.tr(),
+                    onPressed: () {
+                      final filesTab =
+                          validTabs.indexWhere((t) => t.id == 'files');
+                      if (filesTab >= 0) {
+                        DefaultTabController.of(context)?.animateTo(filesTab);
+                        showSnack(context, 'files.start_download_all'.tr());
+                        resolverModel.requestDownloadAll(courseId).then(
+                          (count) {
+                            showSnack(
+                              context,
+                              'files.done_download'
+                                  .tr(args: [count.toString()]),
+                            );
+                          },
+                        );
+                      }
+                    },
+                  );
 
-          final resolverModel = Provider.of<ResolverModel>(context);
-
-          final action = course == null
-              ? null
-              : IconButton(
-                  icon: Icon(Icons.file_download),
-                  tooltip: 'tabs.download_all_file'.tr(),
-                  onPressed: () {
-                    final filesTab =
-                        validTabs.indexWhere((t) => t.id == 'files');
-                    if (filesTab >= 0) {
-                      DefaultTabController.of(context)?.animateTo(filesTab);
-                      resolverModel.requestDownloadAll(courseId);
-                    }
-                  });
-
-          return Scaffold(
+            return Scaffold(
               appBar: AppBar(
                 title: title,
-                actions: [action].whereType<Widget>().toList(),
+                actions: [downloadAllAction].whereType<Widget>().toList(),
                 bottom: tabBar,
               ),
-              body: tabBarView);
-        }),
+              body: tabBarView,
+            );
+          },
+        ),
       );
     }
   }

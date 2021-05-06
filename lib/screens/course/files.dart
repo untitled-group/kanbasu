@@ -41,12 +41,9 @@ class _File extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final fileStatus = useState<FileStatus>(FileStatus.Remote);
+    final theme = Provider.of<Model>(context).theme;
     final resolverModel = Provider.of<ResolverModel>(context);
     final notifier = useValueListenable(resolverModel.getNotifierFor(_item.id));
-
-    final onTap = () {
-      resolverModel.requestDownload(_item);
-    };
 
     useEffect(() {
       resolverModel.fileResolver.getDownloadedFile(_item).then((value) {
@@ -56,31 +53,49 @@ class _File extends HookWidget {
       });
     }, [notifier]);
 
-    final percent = resolverModel.fileResolveProgress[_item.id]?.percent;
+    final Widget statusWidget;
+
+    if (fileStatus.value == FileStatus.Downloaded) {
+      // downloaded
+      statusWidget = Icon(Icons.cloud_done_outlined);
+    } else if (resolverModel.isFileDownloading[_item.id] == true) {
+      // downloading
+      final percent = resolverModel.fileResolveProgress[_item.id]?.percent;
+      if (percent != null) {
+        // transferring
+        statusWidget = SizedBox(
+          width: 24,
+          height: 24,
+          child: CircularProgressIndicator(value: percent),
+        );
+      } else {
+        // queueing
+        statusWidget = Icon(Icons.cloud_queue_outlined);
+      }
+    } else {
+      // on cloud
+      statusWidget = Icon(
+        Icons.cloud_download_outlined,
+        color: theme.tertiaryText,
+      );
+    }
 
     return InkWell(
-      onTap: onTap,
+      onTap: () => resolverModel.requestDownload(_item),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
           children: [
             Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [Text(_item.displayName)]),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [Text(_item.displayName)],
+            ),
             Expanded(
-                child: Align(
-                    alignment: Alignment.centerRight,
-                    child: fileStatus.value == FileStatus.Downloaded
-                        ? Icon(Icons.download_done_rounded)
-                        : (resolverModel.isFileDownloading[_item.id] ?? false)
-                            ? (percent != null
-                                ? SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: CircularProgressIndicator(
-                                        value: percent))
-                                : Icon(Icons.cloud_download_outlined))
-                            : Container(width: 24, height: 24))),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: statusWidget,
+              ),
+            ),
           ],
         ),
       ),
