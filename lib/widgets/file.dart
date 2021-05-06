@@ -3,9 +3,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/models/resolver_model.dart';
-import 'package:kanbasu/router.dart';
 import 'package:provider/provider.dart';
 import 'package:file_sizes/file_sizes.dart';
+import 'package:open_file/open_file.dart';
 
 enum FileStatus { Downloaded, Downloading, Remote }
 
@@ -53,8 +53,17 @@ class FileWidget extends HookWidget {
     return InkWell(
       onTap: () async {
         await resolverModel.requestDownload(_item);
-        if (_item.contentType == 'application/pdf') {
-          await navigateTo('/preview/${_item.id}');
+
+        // if (_item.contentType == 'application/pdf') {
+        //   await navigateTo('/preview/${_item.id}');
+        //   return;
+        // }
+
+        // Always open file and use native previewer
+        final localFile =
+            await resolverModel.fileResolver.getDownloadedFile(_item);
+        if (localFile != null) {
+          await OpenFile.open(localFile.path);
         }
       },
       child: Container(

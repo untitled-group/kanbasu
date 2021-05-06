@@ -45,6 +45,9 @@ dependencies:
   html: ^0.15.0
   logger: ^1.0.0
   native_pdf_view: ^4.0.1
+  open_file:
+    git:
+      url: https://github.com/untitled-group/open_file.git
   path: any
   path_provider: any
   pdf_render: ^1.0.10

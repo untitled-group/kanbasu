@@ -553,6 +553,15 @@ packages:
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
     version: "1.4.13"
+  open_file:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: b1b9cebfd1304512374a3c867a1656b3fbec6d0e
+      url: "https://github.com/untitled-group/open_file.git"
+    source: git
+    version: "3.1.0"
   package_config:
     dependency: transitive
     description:
