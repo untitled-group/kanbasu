@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/resolver_model.dart';
-import 'package:kanbasu/resolver/resolve_progress.dart';
 import 'package:provider/provider.dart';
 import 'package:separated_column/separated_column.dart';
 
 class ResolverWidget extends HookWidget {
-  final Stream<ResolveProgress> _resolverStream;
-
-  ResolverWidget(this._resolverStream);
-
   @override
   Widget build(BuildContext context) {
     final resolverModel = Provider.of<ResolverModel>(context);

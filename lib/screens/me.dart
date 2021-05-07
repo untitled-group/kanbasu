@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:kanbasu/buffer_api/kvstore.dart';
 import 'package:kanbasu/models/resolver_model.dart';
 import 'package:kanbasu/models/user.dart';
-import 'package:kanbasu/resolver/resolver.dart';
 import 'package:kanbasu/utils/logging.dart';
 import 'package:kanbasu/utils/persistence.dart';
 import 'package:kanbasu/models/model.dart';
@@ -19,8 +17,6 @@ import 'package:separated_column/separated_column.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:kanbasu/aggregation.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:kanbasu/resolver/resolve_progress.dart';
 
 class _MeView extends FutureWidget<User?> {
   @override
@@ -102,7 +98,6 @@ class MeScreen extends HookWidget {
   Widget build(BuildContext context) {
     final model = Provider.of<Model>(context, listen: false);
     final tapped = useState(0);
-    final resolverStream = useState<Stream<ResolveProgress>?>(null);
 
     final developerTools = Container(
       padding: EdgeInsets.all(15),
@@ -179,8 +174,6 @@ class MeScreen extends HookWidget {
       ),
     );
 
-    final resolverStreamValue = resolverStream.value;
-
     return Scaffold(
       appBar: AppBar(
         title: Text('title.settings'.tr()),
@@ -202,7 +195,7 @@ class MeScreen extends HookWidget {
           child: _MeView(),
         ),
         tools,
-        if (resolverStreamValue != null) ResolverWidget(resolverStreamValue),
+        ResolverWidget(),
         if (tapped.value >= 5) developerTools,
       ]),
     );
