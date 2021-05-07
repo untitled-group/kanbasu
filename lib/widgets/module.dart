@@ -97,11 +97,11 @@ class ModuleWidget extends StatelessWidget {
             ],
           ),
           ...item.items.map((moduleItem) => moduleItem.url == null
-              ? ModuleItemWidget(moduleItem)
+              ? ModuleItemWidget(moduleItem, false)
               : Link(
                   path: '/course' +
                       (RegUrl.stringMatch(moduleItem.url!.substring(37)) ?? ''),
-                  child: ModuleItemWidget(moduleItem)))
+                  child: ModuleItemWidget(moduleItem, true)))
         ],
       ),
     );
@@ -110,7 +110,8 @@ class ModuleWidget extends StatelessWidget {
 
 class ModuleItemWidget extends StatelessWidget {
   final ModuleItem item;
-  ModuleItemWidget(this.item);
+  final bool hasUrl;
+  ModuleItemWidget(this.item, this.hasUrl);
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<Model>(context).theme;
@@ -146,6 +147,12 @@ class ModuleItemWidget extends StatelessWidget {
                           width: 5,
                         ),
                         Spacer(),
+                        if (hasUrl)
+                          Icon(
+                            Icons.arrow_forward,
+                            color: theme.tertiaryText,
+                            size: 18,
+                          ),
                       ],
                     ),
                   ],
