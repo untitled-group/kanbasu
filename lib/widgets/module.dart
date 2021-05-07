@@ -6,6 +6,7 @@ import 'package:kanbasu/models/module.dart';
 import 'package:kanbasu/models/module_item.dart';
 import 'package:provider/provider.dart';
 import 'package:separated_column/separated_column.dart';
+import 'package:kanbasu/widgets/common/future.dart';
 import 'package:kanbasu/widgets/page.dart';
 import 'package:kanbasu/models/page.dart' as p;
 import 'package:kanbasu/widgets/file.dart';
@@ -60,47 +61,44 @@ class ModuleWidget extends StatelessWidget {
     }
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: SeparatedColumn(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  separatorBuilder: (context, index) => SizedBox(height: 1),
-                  children: [
-                    Text.rich(
-                      TextSpan(
-                          style: TextStyle(
-                            fontSize: 17,
-                            color: theme.text,
-                          ),
-                          children: [
-                            TextSpan(text: item.module.name),
-                          ]),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 5,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: SeparatedColumn(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                separatorBuilder: (context, index) => SizedBox(height: 1),
+                children: [
+                  Text.rich(
+                    TextSpan(
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: theme.text,
                         ),
-                        Spacer(),
-                        if (icon != null) icon,
-                      ],
-                    ),
-                  ],
-                ),
+                        children: [
+                          TextSpan(text: item.module.name),
+                        ]),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Spacer(),
+                      if (icon != null) icon,
+                    ],
+                  ),
+                ],
               ),
-            ],
-          ),
-          ...item.items.map((moduleItem) => ModuleItemWidget(moduleItem)),
-        ],
-      ),
+            ),
+          ],
+        ),
+        ...item.items.map((moduleItem) => ModuleItemWidget(moduleItem))
+      ]),
     );
   }
 }
@@ -110,33 +108,58 @@ class ModuleItemWidget extends StatelessWidget {
   ModuleItemWidget(this.item);
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<Model>(context).theme;
-    final hasUrl = item.url != null;
-    return NormalModuleItemWidget(item);
-    // if (!hasUrl) {
-    //   return NormalModuleItemWidget(item);
-    // } else {
-    //   final infoList =
-    //       RegExp(r'[0-9]*/[a-z]*/[0-9]*').stringMatch(item.url!)!.split('/');
-    //   final courseId = int.parse(infoList[0]);
-    //   final tabType = infoList[1];
-    //   final tabId = int.parse(infoList[2]);
-    //   switch (tabType) {
-    //     case 'pages':
-    //       return PageWidget(getPageItem(courseId, tabId));
-    //     case 'files':
-    //       return FileWidget(getFileItem(courseId, tabId));
-    //   }
-    // }
+    if (item.url == null) {
+      return NormalModuleItemWidget(item);
+    } else {
+      final stringMatch =
+          RegExp(r'/[0-9]+/[a-z]+/[0-9]+').stringMatch(item.url!);
+      if (stringMatch == null) {
+        return NormalModuleItemWidget(item);
+      }
+      final infoList = stringMatch.split('/');
+      final courseId = int.parse(infoList[1]);
+      final tabType = infoList[2];
+      final tabId = int.parse(infoList[3]);
+      switch (tabType) {
+        case 'pages':
+          return RefPageItemWidget(courseId, tabId);
+        case 'files':
+          return RefFileItemWidget(courseId, tabId);
+        default:
+          return NormalModuleItemWidget(item);
+      }
+    }
   }
+}
 
-//   p.Page getPageItem(int courseId, int tabId){
+class RefPageItemWidget extends FutureWidget<p.Page?> {
+  final int courseId;
+  final int pageId;
+  RefPageItemWidget(this.courseId, this.pageId);
 
-//   }
+  @override
+  List<Future<p.Page?>> getFutures(BuildContext context) =>
+      Provider.of<Model>(context).canvas.getPage(courseId, pageId);
 
-//   File getFileItem(int courseId, int tabId){
+  @override
+  Widget buildWidget(BuildContext context, p.Page? item) {
+    return PageItemWidget(courseId, item!);
+  }
+}
 
-//   }
+class RefFileItemWidget extends FutureWidget<File?> {
+  final int courseId;
+  final int fileId;
+  RefFileItemWidget(this.courseId, this.fileId);
+
+  @override
+  List<Future<File?>> getFutures(BuildContext context) =>
+      Provider.of<Model>(context).canvas.getFile(courseId, fileId);
+
+  @override
+  Widget buildWidget(BuildContext context, File? item) {
+    return FileWidget(item!);
+  }
 }
 
 class NormalModuleItemWidget extends StatelessWidget {
