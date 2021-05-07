@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:kanbasu/widgets/link.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/models/module.dart';
 import 'package:kanbasu/models/module_item.dart';
 import 'package:provider/provider.dart';
 import 'package:separated_column/separated_column.dart';
+import 'package:kanbasu/widgets/page.dart';
+import 'package:kanbasu/models/page.dart' as p;
+import 'package:kanbasu/widgets/file.dart';
+import 'package:kanbasu/models/file.dart';
 
 class ComposedModuleData {
   Module module;
@@ -22,7 +25,6 @@ class ModuleWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<Model>(context).theme;
-    final RegUrl = RegExp(r'/[0-9]*/[a-z]*');
     final Icon? icon;
     switch (item.module.state) {
       case 'started':
@@ -96,12 +98,7 @@ class ModuleWidget extends StatelessWidget {
               ),
             ],
           ),
-          ...item.items.map((moduleItem) => moduleItem.url == null
-              ? ModuleItemWidget(moduleItem, false)
-              : Link(
-                  path: '/course' +
-                      (RegUrl.stringMatch(moduleItem.url!.substring(37)) ?? ''),
-                  child: ModuleItemWidget(moduleItem, true)))
+          ...item.items.map((moduleItem) => ModuleItemWidget(moduleItem)),
         ],
       ),
     );
@@ -110,8 +107,41 @@ class ModuleWidget extends StatelessWidget {
 
 class ModuleItemWidget extends StatelessWidget {
   final ModuleItem item;
-  final bool hasUrl;
-  ModuleItemWidget(this.item, this.hasUrl);
+  ModuleItemWidget(this.item);
+  @override
+  Widget build(BuildContext context) {
+    final theme = Provider.of<Model>(context).theme;
+    final hasUrl = item.url != null;
+    return NormalModuleItemWidget(item);
+    // if (!hasUrl) {
+    //   return NormalModuleItemWidget(item);
+    // } else {
+    //   final infoList =
+    //       RegExp(r'[0-9]*/[a-z]*/[0-9]*').stringMatch(item.url!)!.split('/');
+    //   final courseId = int.parse(infoList[0]);
+    //   final tabType = infoList[1];
+    //   final tabId = int.parse(infoList[2]);
+    //   switch (tabType) {
+    //     case 'pages':
+    //       return PageWidget(getPageItem(courseId, tabId));
+    //     case 'files':
+    //       return FileWidget(getFileItem(courseId, tabId));
+    //   }
+    // }
+  }
+
+//   p.Page getPageItem(int courseId, int tabId){
+
+//   }
+
+//   File getFileItem(int courseId, int tabId){
+
+//   }
+}
+
+class NormalModuleItemWidget extends StatelessWidget {
+  final ModuleItem item;
+  NormalModuleItemWidget(this.item);
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<Model>(context).theme;
@@ -147,12 +177,6 @@ class ModuleItemWidget extends StatelessWidget {
                           width: 5,
                         ),
                         Spacer(),
-                        if (hasUrl)
-                          Icon(
-                            Icons.arrow_forward,
-                            color: theme.tertiaryText,
-                            size: 18,
-                          ),
                       ],
                     ),
                   ],

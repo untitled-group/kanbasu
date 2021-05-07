@@ -7,6 +7,34 @@ import 'package:provider/provider.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+class PageItemWidget extends StatelessWidget {
+  final int courseId;
+  final p.Page item;
+  PageItemWidget(this.courseId, this.item);
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+        ),
+        isScrollControlled: true,
+        builder: (context) {
+          return ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height * 0.3,
+              maxHeight: MediaQuery.of(context).size.height * 0.9,
+            ),
+            child: PageContentWidget(courseId, item.pageId),
+          );
+        },
+      ),
+      child: PageWidget(item),
+    );
+  }
+}
+
 class PageWidget extends StatelessWidget {
   final p.Page item;
   PageWidget(this.item);
