@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:kanbasu/widgets/link.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/models/module.dart';
 import 'package:kanbasu/models/module_item.dart';
@@ -20,6 +22,7 @@ class ModuleWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<Model>(context).theme;
+    final RegUrl = RegExp(r'/[0-9]*/[a-z]*');
     final Icon? icon;
     switch (item.module.state) {
       case 'started':
@@ -93,7 +96,12 @@ class ModuleWidget extends StatelessWidget {
               ),
             ],
           ),
-          ...item.items.map((moduleItem) => ModuleItemWidget(moduleItem))
+          ...item.items.map((moduleItem) => moduleItem.url == null
+              ? ModuleItemWidget(moduleItem)
+              : Link(
+                  path: '/course' +
+                      (RegUrl.stringMatch(moduleItem.url!.substring(37)) ?? ''),
+                  child: ModuleItemWidget(moduleItem)))
         ],
       ),
     );
