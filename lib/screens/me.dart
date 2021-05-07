@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:kanbasu/buffer_api/kvstore.dart';
+import 'package:kanbasu/models/resolver_model.dart';
 import 'package:kanbasu/models/user.dart';
 import 'package:kanbasu/resolver/resolver.dart';
 import 'package:kanbasu/utils/logging.dart';
@@ -147,6 +148,8 @@ class MeScreen extends HookWidget {
       ),
     );
 
+    final resolverModel = Provider.of<ResolverModel>(context);
+
     final tools = Container(
       padding: EdgeInsets.all(15),
       child: SeparatedColumn(
@@ -158,22 +161,7 @@ class MeScreen extends HookWidget {
               primary: Colors.grey, // background
               onPrimary: Colors.white, // foreground
             ),
-            onPressed: () async {
-              final model = Provider.of<Model>(context, listen: false);
-              final resolver = Resolver(model.rest, KvStore.openInMemory(),
-                  model.kvs, createLogger());
-              final stream = resolver
-                  .visit()
-                  .doOnDone(() {
-                    resolverStream.value = null;
-                  })
-                  .doOnError((err, _st) {
-                    showErrorSnack(context, err);
-                  })
-                  .shareReplay()
-                  .throttleTime(Duration(milliseconds: 200));
-              resolverStream.value = stream;
-            },
+            onPressed: () async => await resolverModel.requestFullSync(),
             child: Text('同步数据'),
           ),
           ElevatedButton(
