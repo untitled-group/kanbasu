@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/page.dart' as p;
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/common/future.dart';
