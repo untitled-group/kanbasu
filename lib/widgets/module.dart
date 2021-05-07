@@ -121,8 +121,9 @@ class ModuleItemWidget extends StatelessWidget {
       final tabType = infoList[2];
       final tabId = int.parse(infoList[3]);
       switch (tabType) {
-        case 'pages':
-          return RefPageItemWidget(courseId, tabId);
+        //FIXME: how to get pageId ? 
+        // case 'pages':
+        //   return RefPageItemWidget(courseId, tabId);
         case 'files':
           return RefFileItemWidget(courseId, tabId);
         default:
