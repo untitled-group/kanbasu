@@ -62,6 +62,8 @@ assignment:
     successful: Successful Submission
     late: Late Submission
     waiting: Wating for Submission
+page: 
+  no_details: No details
 files:
   download_all: Download all files
   start_download_all: Start downloading all files...
