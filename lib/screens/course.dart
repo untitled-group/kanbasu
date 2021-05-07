@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/course.dart';
@@ -21,6 +22,30 @@ import 'package:kanbasu/widgets/snack.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+enum KnownTabType {
+  home,
+  announcements,
+  files,
+  syllabus,
+  assignments,
+  discussions,
+  modules,
+  pages,
+  unknown,
+}
+
+class TabsModel {
+  final List<t.Tab> validTabs;
+
+  TabsModel(this.validTabs);
+
+  void animateToTab(BuildContext context, KnownTabType type) {
+    final index = validTabs.indexWhere((t) => t.id == describeEnum(type));
+    if (index < 0) return;
+    DefaultTabController.of(context)?.animateTo(index);
+  }
+}
+
 class _CourseTabView extends StatelessWidget {
   final int courseId;
   final Course? course;
@@ -30,24 +55,29 @@ class _CourseTabView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    switch (tab.id) {
-      case 'home':
+    final type = KnownTabType.values.firstWhere(
+      (e) => describeEnum(e) == tab.id,
+      orElse: () => KnownTabType.unknown,
+    );
+
+    switch (type) {
+      case KnownTabType.home:
         return CourseHomeScreen();
-      case 'announcements':
+      case KnownTabType.announcements:
         return CourseAnnouncementsScreen(courseId);
-      case 'files':
+      case KnownTabType.files:
         return CourseFilesScreen(courseId);
-      case 'syllabus':
+      case KnownTabType.syllabus:
         return course != null ? CourseSyllabusScreen(course!) : Container();
-      case 'assignments':
+      case KnownTabType.assignments:
         return CourseAssignmentsScreen(courseId);
-      case 'discussions':
+      case KnownTabType.discussions:
         return CourseDiscussionsScreen(courseId);
-      case 'modules':
+      case KnownTabType.modules:
         return CourseModulesScreen(courseId);
-      case 'pages':
+      case KnownTabType.pages:
         return CoursePagesScreen(courseId);
-      default:
+      case KnownTabType.unknown:
         return Center(child: Text('It\'s ${tab.id} here'));
     }
   }
@@ -98,17 +128,15 @@ class CourseScreen extends RefreshableListWidget<_CourseMeta> {
     );
 
     final downloadAllAction = () {
-      final resolverModel = Provider.of<ResolverModel>(context);
-
-      final filesTab = validTabs.indexWhere((t) => t.id == 'files');
-      if (filesTab < 0) return null;
-
       return HookBuilder(
         builder: (BuildContext context) {
+          final resolverModel = context.watch<ResolverModel>();
+          final tabsModel = context.read<TabsModel>();
           final isDownloading = useState(false);
+
           final downloadAll = () async {
             isDownloading.value = true;
-            DefaultTabController.of(context)?.animateTo(filesTab);
+            tabsModel.animateToTab(context, KnownTabType.files);
             showSnack(context, 'files.start_download_all'.tr());
             final count = await resolverModel.requestDownloadAll(courseId);
             showSnack(
@@ -139,7 +167,10 @@ class CourseScreen extends RefreshableListWidget<_CourseMeta> {
     return DefaultTabController(
       length: validTabs.length,
       initialIndex: initialIndex,
-      child: scaffold,
+      child: Provider(
+        create: (_) => TabsModel(validTabs),
+        child: scaffold,
+      ),
     );
   }
 
