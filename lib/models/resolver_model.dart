@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:kanbasu/buffer_api/kvstore.dart';
 import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/resolver/file_resolver.dart';
 import 'package:kanbasu/resolver/resolve_progress.dart';
+import 'package:kanbasu/resolver/resolver.dart';
 import 'package:kanbasu/utils/logging.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -14,12 +16,12 @@ class _Notifier {}
 class ResolverModel with ChangeNotifier {
   late Model _model;
   late FileResolver _fileResolver;
-  ResolveProgress? _resolveProgress;
+  final _resolveProgress = ValueNotifier<ResolveProgress?>(null);
   final _isFileDownloading = <int, bool>{};
   final _fileResolveProgress = <int, ResolveProgress>{};
   final _notifiers = <int, ValueNotifier<_Notifier>>{};
 
-  ResolveProgress? get resolveProgress => _resolveProgress;
+  ValueNotifier<ResolveProgress?> get resolveProgress => _resolveProgress;
   Map<int, ResolveProgress> get fileResolveProgress => _fileResolveProgress;
   Map<int, bool> get isFileDownloading => _isFileDownloading;
   FileResolver get fileResolver => _fileResolver;
@@ -96,5 +98,28 @@ class ResolverModel with ChangeNotifier {
     }
 
     return count;
+  }
+
+  Future<void> requestFullSync() async {
+    final resolver = Resolver(
+        _model.rest, KvStore.openInMemory(), _model.kvs, createLogger());
+    final completer = Completer();
+    resolver
+        .visit()
+        .doOnDone(() {})
+        .doOnError((err, st) {
+          completer.completeError(err, st);
+        })
+        .doOnDone(() {
+          if (!completer.isCompleted) {
+            completer.complete();
+          }
+        })
+        .throttleTime(Duration(milliseconds: 10))
+        .listen((event) {
+          _resolveProgress.value = event;
+        });
+    _resolveProgress.value = null;
+    await completer.future;
   }
 }
