@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:kanbasu/models/page.dart' as page_model;
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:kanbasu/models/page.dart' as p;
 import 'package:kanbasu/models/model.dart';
+import 'package:kanbasu/widgets/common/future.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class PageWidget extends StatelessWidget {
-  final page_model.Page item;
-  final bool showDetails;
-  PageWidget(this.item, this.showDetails);
+  final p.Page item;
+  PageWidget(this.item);
 
   @override
   Widget build(BuildContext context) {
@@ -44,32 +45,30 @@ class PageWidget extends StatelessWidget {
   }
 }
 
-class PageContentWidget extends StatelessWidget {
-  final page_model.Page page;
-  final page_model.Page? detailedPage;
-  PageContentWidget(this.page, this.detailedPage);
+class PageContentWidget extends FutureWidget<p.Page?> {
+  final int pageId;
+  final int courseId;
+
+  PageContentWidget(this.courseId, this.pageId);
 
   @override
-  Widget build(BuildContext context) {
+  List<Future<p.Page?>> getFutures(BuildContext context) =>
+      Provider.of<Model>(context).canvas.getPage(courseId, pageId);
+
+  @override
+  Widget buildWidget(BuildContext context, p.Page? data) {
     String htmlData;
-    if (detailedPage == null) {
+    if (data == null) {
       htmlData = '<h3> ${'page.no_details'.tr()} </h3>';
     } else {
-      htmlData = detailedPage!.body ?? '<h3> ${'page.no_details'.tr()} </h3>';
+      htmlData = data.body ?? '<h3> ${'page.no_details'.tr()} </h3>';
     }
     return ListView(
       shrinkWrap: true,
       children: [
-        PageWidget(page, true),
+        if (data != null) PageWidget(data),
         Html(data: htmlData),
       ],
     );
   }
-}
-
-class ComposedPageData {
-  page_model.Page page;
-  page_model.Page? detailedPage;
-
-  ComposedPageData(this.page, this.detailedPage);
 }

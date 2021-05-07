@@ -249,14 +249,6 @@ void main() {
       expect(json.encode(data), equals(json.encode(offlineData)));
     });
 
-    test('should cache page when fetching all pages', () async {
-      final data = await api.getPages(23333).toList();
-      expect(await data[0].toList(), equals([]));
-      await data[1].toList(); // ensure all REST APIs have been called
-      final offlineData = await api.getPage(23333, 41136).first;
-      expect(offlineData!.title, equals('第一节课在线视频'));
-    });
-
     test('should get planners in stream mode', () async {
       final data = await api.getPlanners().last;
       final dataJson = await data.toList();
