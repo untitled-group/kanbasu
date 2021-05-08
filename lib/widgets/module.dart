@@ -127,9 +127,9 @@ class ModuleItemWidget extends StatelessWidget {
         // case 'pages':
         //   return RefPageItemWidget(courseId, tabId);
         case 'files':
-          return RefFileItemWidget(courseId, tabId);
+          return RefFileItemWidget(courseId, tabId, item);
         case 'assignments':
-          return RefAssignmentItemWidget(courseId, tabId);
+          return RefAssignmentItemWidget(courseId, tabId, item);
         default:
           return NormalModuleItemWidget(item);
       }
@@ -140,7 +140,8 @@ class ModuleItemWidget extends StatelessWidget {
 class RefPageItemWidget extends FutureWidget<p.Page?> {
   final int courseId;
   final int pageId;
-  RefPageItemWidget(this.courseId, this.pageId);
+  final ModuleItem item;
+  RefPageItemWidget(this.courseId, this.pageId, this.item);
 
   @override
   List<Future<p.Page?>> getFutures(BuildContext context) =>
@@ -155,30 +156,38 @@ class RefPageItemWidget extends FutureWidget<p.Page?> {
 class RefFileItemWidget extends FutureWidget<File?> {
   final int courseId;
   final int fileId;
-  RefFileItemWidget(this.courseId, this.fileId);
+  final ModuleItem item;
+  RefFileItemWidget(this.courseId, this.fileId, this.item);
 
   @override
   List<Future<File?>> getFutures(BuildContext context) =>
       Provider.of<Model>(context).canvas.getFile(courseId, fileId);
 
   @override
-  Widget buildWidget(BuildContext context, File? item) {
-    return FileWidget(item!);
+  Widget buildWidget(BuildContext context, File? fileItem) {
+    if (fileItem == null) {
+      return NormalModuleItemWidget(item);
+    }
+    return FileWidget(fileItem);
   }
 }
 
 class RefAssignmentItemWidget extends FutureWidget<Assignment?> {
   final int courseId;
   final int assignmentId;
-  RefAssignmentItemWidget(this.courseId, this.assignmentId);
+  final ModuleItem item;
+  RefAssignmentItemWidget(this.courseId, this.assignmentId, this.item);
 
   @override
   List<Future<Assignment?>> getFutures(BuildContext context) =>
       Provider.of<Model>(context).canvas.getAssignment(courseId, assignmentId);
 
   @override
-  Widget buildWidget(BuildContext context, Assignment? item) {
-    return AssignmentItemWidget(item!);
+  Widget buildWidget(BuildContext context, Assignment? AssignmentItem) {
+    if (AssignmentItem == null) {
+      return NormalModuleItemWidget(item);
+    }
+    return AssignmentItemWidget(AssignmentItem);
   }
 }
 
