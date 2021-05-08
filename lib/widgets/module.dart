@@ -11,6 +11,8 @@ import 'package:kanbasu/widgets/page.dart';
 import 'package:kanbasu/models/page.dart' as p;
 import 'package:kanbasu/widgets/file.dart';
 import 'package:kanbasu/models/file.dart';
+import 'package:kanbasu/widgets/assignment.dart';
+import 'package:kanbasu/models/assignment.dart';
 
 class ComposedModuleData {
   Module module;
@@ -121,11 +123,13 @@ class ModuleItemWidget extends StatelessWidget {
       final tabType = infoList[2];
       final tabId = int.parse(infoList[3]);
       switch (tabType) {
-        //FIXME: how to get pageId ? 
+        //FIXME: how to get pageId ?
         // case 'pages':
         //   return RefPageItemWidget(courseId, tabId);
         case 'files':
           return RefFileItemWidget(courseId, tabId);
+        case 'assignments':
+          return RefAssignmentItemWidget(courseId, tabId);
         default:
           return NormalModuleItemWidget(item);
       }
@@ -160,6 +164,21 @@ class RefFileItemWidget extends FutureWidget<File?> {
   @override
   Widget buildWidget(BuildContext context, File? item) {
     return FileWidget(item!);
+  }
+}
+
+class RefAssignmentItemWidget extends FutureWidget<Assignment?> {
+  final int courseId;
+  final int assignmentId;
+  RefAssignmentItemWidget(this.courseId, this.assignmentId);
+
+  @override
+  List<Future<Assignment?>> getFutures(BuildContext context) =>
+      Provider.of<Model>(context).canvas.getAssignment(courseId, assignmentId);
+
+  @override
+  Widget buildWidget(BuildContext context, Assignment? item) {
+    return AssignmentItemWidget(item!);
   }
 }
 

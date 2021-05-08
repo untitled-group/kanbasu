@@ -8,6 +8,33 @@ import 'package:separated_column/separated_column.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:easy_localization/easy_localization.dart';
 
+class AssignmentItemWidget extends StatelessWidget {
+  final Assignment item;
+  AssignmentItemWidget(this.item);
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+        ),
+        isScrollControlled: true,
+        builder: (context) {
+          return ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height * 0.3,
+              maxHeight: MediaQuery.of(context).size.height * 0.9,
+            ),
+            child: AssignmentContentWidget(item),
+          );
+        },
+      ),
+      child: AssignmentWidget(item, false),
+    );
+  }
+}
+
 class AssignmentWidget extends StatelessWidget {
   final Assignment item;
   final bool showDetails;
