@@ -305,16 +305,28 @@ class CanvasBufferClient {
         () => _restClient.getModuleItem(course_id, module_id, item_id));
   }
 
-  String _getAssignmentPrefix(id) => 'courses/$id/assignments/by_id/';
+  String _getAssignmentsPrefix(id) => 'courses/$id/assignments/by_id/';
 
   /// List available assignments for a course.
   List<Stream<Assignment>> getAssignments(int id) {
     return _getPaginatedStreamStream(
-        _getAssignmentPrefix(id),
+        _getAssignmentsPrefix(id),
         (e) => Assignment.fromJson(e),
         (e) => e.toJson(),
         ({queries}) => _restClient.getAssignments(id, queries: queries),
         (e) => e.id.toString());
+  }
+
+  String _getAssignmentPrefix(course_id, assignment_id) =>
+      'courses/$course_id/assignments/by_id/$assignment_id';
+
+  /// Get an assignment for a course.
+  List<Future<Assignment?>> getAssignment(int course_id, int assignment_id) {
+    return _getItemStream(
+        _getAssignmentPrefix(course_id, assignment_id),
+        (e) => Assignment.fromJson(e),
+        (e) => e.toJson(),
+        () => _restClient.getAssignment(course_id, assignment_id));
   }
 
   String _getSubmissionPrefix(course_id, assignment_id, user_id) =>
@@ -390,6 +402,15 @@ class CanvasBufferClient {
         (e) => Page.fromJson(e),
         (e) => e.toJson(),
         () => _restClient.getPage(course_id, page_id));
+  }
+
+  /// List a specific page by string id.
+  List<Future<Page?>> getPageByIdentifier(int course_id, String page_id) {
+    return _getItemStream(
+        _getPagePrefix(course_id, page_id),
+        (e) => Page.fromJson(e),
+        (e) => e.toJson(),
+        () => _restClient.getPageByIdentifier(course_id, page_id));
   }
 
   String _getPlannersPrefix() => 'planners/by_id/';

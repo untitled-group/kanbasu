@@ -83,6 +83,13 @@ abstract class CanvasRestClient {
       {@Query('include[]') List<String> includes = const ['submission'],
       @Queries() Map<String, dynamic>? queries});
 
+  /// Get assignment for a course or group.
+  @GET('/courses/{course_id}/assignments/{assignment_id}')
+  Future<HttpResponse<Assignment>> getAssignment(
+      @Path() int course_id, @Path() int assignment_id,
+      {@Query('include[]') List<String> includes = const ['submission'],
+      @Queries() Map<String, dynamic>? queries});
+
   /// Get available submissions for an assignment for self.
   @GET('/courses/{course_id}/assignments/{assignment_id}/submissions/{user_id}')
   Future<HttpResponse<Submission>> getSubmission(
@@ -143,6 +150,12 @@ abstract class CanvasRestClient {
   /// Get information about a single page.
   @GET('/courses/{course_id}/pages/{page_id}')
   Future<HttpResponse<Page>> getPage(@Path() int course_id, @Path() int page_id,
+      {@Queries() Map<String, dynamic>? queries});
+
+  /// Get information about a single page.
+  @GET('/courses/{course_id}/pages/{page_id}')
+  Future<HttpResponse<Page>> getPageByIdentifier(
+      @Path() int course_id, @Path() String page_id,
       {@Queries() Map<String, dynamic>? queries});
 
   /// Get information about planners.
