@@ -64,7 +64,7 @@ assignment:
     late: 迟交
     waiting: 待提交
     no_grading: 尚未评分
-    score: '得分：'
+    score_prefix: '得分：'
 page:
   no_details: 暂无详情
 files:
