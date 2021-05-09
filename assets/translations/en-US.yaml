@@ -62,6 +62,8 @@ assignment:
     successful: Successful Submission
     late: Late Submission
     waiting: Wating for Submission
+    no_grading: Not graded yet
+
 page: 
   no_details: No details
 files:

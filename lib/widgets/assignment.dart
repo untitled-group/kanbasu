@@ -23,9 +23,8 @@ class AssignmentWidget extends StatelessWidget {
     final bool lateSubmission;
     final bool waitForSubmission;
     final bool failedSubmission;
-    final bool graded;
+    final String grade;
     final TextStyle dueTimeStyle;
-    final String? grade;
     final theme = Provider.of<Model>(context).theme;
 
     if (item.dueAt != null) {
@@ -65,8 +64,13 @@ class AssignmentWidget extends StatelessWidget {
     successfulSubmission = _submitted && !_late;
 
     if (successfulSubmission || lateSubmission) {
-      grade = item.submission!.grade;
-      graded = grade != null;
+      if (item.submission!.grade == null) {
+        grade = 'assignment.submission.no_grading'.tr();
+      } else {
+        grade = item.submission!.grade!;
+      }
+    } else {
+      grade = 'assignment.submission.no_grading'.tr();
     }
 
     return Container(
@@ -82,18 +86,24 @@ class AssignmentWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   separatorBuilder: (context, index) => SizedBox(height: 1),
                   children: [
-                    Text.rich(
-                      TextSpan(
-                          style: TextStyle(
-                            fontSize: 17,
-                            color: theme.text,
+                    Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text.rich(
+                            TextSpan(
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  color: theme.text,
+                                ),
+                                children: [
+                                  TextSpan(text: item.name?.trim()),
+                                ]),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                           ),
-                          children: [
-                            TextSpan(text: item.name?.trim()),
-                          ]),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    ),
+                          Spacer(),
+                          if (showDetails) Text(grade),
+                        ]),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
