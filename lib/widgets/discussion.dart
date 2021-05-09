@@ -1,11 +1,13 @@
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:kanbasu/models/discussion_entry.dart';
 import 'package:kanbasu/models/discussion_topic.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/utils/html.dart';
 import 'package:kanbasu/widgets/announcement.dart';
+import 'package:kanbasu/widgets/border.dart';
 import 'package:kanbasu/widgets/common/future.dart';
 import 'package:kanbasu/widgets/loading.dart';
 import 'package:provider/provider.dart';
@@ -14,11 +16,81 @@ class DiscussionWidget extends AnnouncementWidget {
   DiscussionWidget(DiscussionTopic item) : super(item);
 }
 
-class DiscussionContentWidget extends FutureWidget<List<DiscussionEntry>> {
+class DiscussionPostWidget extends HookWidget {
+  final int courseId;
+  final int topicId;
+  final VoidCallback refresh;
+
+  DiscussionPostWidget(
+    this.courseId,
+    this.topicId,
+    this.refresh,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = useTextEditingController();
+    final sending = useState<bool>(false);
+
+    final textField = TextField(
+      controller: controller,
+      keyboardType: TextInputType.multiline,
+      minLines: 1,
+      maxLines: 5,
+      autofocus: true,
+      readOnly: sending.value,
+      style: TextStyle(
+        fontSize: 15,
+      ),
+      decoration: InputDecoration(
+        hintText: 'Post something',
+      ),
+    );
+
+    final button = IconButton(
+      icon: Icon(Icons.send),
+      onPressed: sending.value
+          ? null
+          : () async {
+              final rest = context.read<Model>().rest;
+              final message = controller.value.text;
+
+              sending.value = true;
+              try {
+                final response = await rest.postDiscussionEntry(
+                  courseId,
+                  topicId,
+                  message,
+                );
+                // await Future.delayed(Duration(seconds: 1));
+                print(response.data.toString());
+              } finally {
+                controller.clear();
+                sending.value = false;
+                refresh();
+              }
+            },
+    );
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(child: textField),
+          button,
+        ],
+      ),
+    );
+  }
+}
+
+class DiscussionEntriesWidget extends FutureWidget<List<DiscussionEntry>> {
   final int courseId;
   final DiscussionTopic topic;
 
-  DiscussionContentWidget(this.courseId, this.topic);
+  DiscussionEntriesWidget(this.courseId, this.topic, refreshTimes)
+      : super(refreshTimes: refreshTimes);
 
   Widget _buildEntry(
     BuildContext context,
@@ -86,10 +158,22 @@ class DiscussionContentWidget extends FutureWidget<List<DiscussionEntry>> {
   Widget buildWidget(BuildContext context, List<DiscussionEntry>? data) {
     data?.sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
+    final controller = useScrollController();
+    useEffect(() {
+      if (controller.hasClients) {
+        controller.animateTo(
+          controller.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+
     return ListView(
+      controller: controller,
       shrinkWrap: true,
+      physics: ClampingScrollPhysics(),
       children: [
-        DiscussionWidget(topic),
         if (data != null) ...[
           for (final entry in data.asMap().entries)
             Container(
@@ -110,4 +194,26 @@ class DiscussionContentWidget extends FutureWidget<List<DiscussionEntry>> {
           .getDiscussionEntries(courseId, topic.id)
           .map((stream) => stream.toList())
           .toList();
+}
+
+class DiscussionContentWidget extends HookWidget {
+  final int courseId;
+  final DiscussionTopic topic;
+
+  DiscussionContentWidget(this.courseId, this.topic);
+
+  @override
+  Widget build(BuildContext context) {
+    final refreshTimes = useState<int>(0);
+    final refresh = () => refreshTimes.value += 1;
+
+    return Column(
+      children: [
+        DiscussionWidget(topic),
+        Expanded(child: DiscussionEntriesWidget(courseId, topic, refreshTimes)),
+        ListBorder(),
+        DiscussionPostWidget(courseId, topic.id, refresh)
+      ],
+    );
+  }
 }
