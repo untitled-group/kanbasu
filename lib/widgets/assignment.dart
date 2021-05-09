@@ -38,9 +38,9 @@ class AssignmentWidget extends StatelessWidget {
       _passDue = false;
     }
     if (_passDue) {
-      dueTimeStyle = TextStyle(fontSize: 14, color: theme.primary);
+      dueTimeStyle = TextStyle(fontSize: 13, color: theme.primary);
     } else {
-      dueTimeStyle = TextStyle(fontSize: 14, color: theme.succeed);
+      dueTimeStyle = TextStyle(fontSize: 13, color: theme.succeed);
     }
 
     if (item.submission == null) {
@@ -114,7 +114,7 @@ class AssignmentWidget extends StatelessWidget {
                               locale: context.locale.toStringWithSeparator(),
                             ),
                             style: TextStyle(
-                                fontSize: 14, color: theme.tertiaryText),
+                                fontSize: 13, color: theme.tertiaryText),
                           ),
                         SizedBox(
                           width: 5,
@@ -135,7 +135,8 @@ class AssignmentWidget extends StatelessWidget {
                             size: 15,
                           ),
                         if (successfulSubmission && showDetails)
-                          Text('assignment.submission.successful'.tr()),
+                          Text('assignment.submission.successful'.tr(),
+                              style: TextStyle(fontSize: 13)),
                         if (failedSubmission || lateSubmission)
                           Icon(
                             Icons.error,
@@ -143,9 +144,11 @@ class AssignmentWidget extends StatelessWidget {
                             size: 15,
                           ),
                         if (failedSubmission && showDetails)
-                          Text('assignment.submission.failed'.tr()),
+                          Text('assignment.submission.failed'.tr(),
+                              style: TextStyle(fontSize: 13)),
                         if (lateSubmission && showDetails)
-                          Text('assignment.submission.late'.tr()),
+                          Text('assignment.submission.late'.tr(),
+                              style: TextStyle(fontSize: 13)),
                         if (waitForSubmission)
                           Icon(
                             Icons.warning,
@@ -153,7 +156,8 @@ class AssignmentWidget extends StatelessWidget {
                             size: 15,
                           ),
                         if (waitForSubmission && showDetails)
-                          Text('assignment.submission.waiting'.tr()),
+                          Text('assignment.submission.waiting'.tr(),
+                              style: TextStyle(fontSize: 13)),
                       ],
                     ),
                   ],
