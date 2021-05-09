@@ -5,8 +5,8 @@ import 'package:declarative_refresh_indicator/declarative_refresh_indicator.dart
 import 'package:flutter/material.dart';
 import 'package:kanbasu/widgets/border.dart';
 import 'package:kanbasu/widgets/loading.dart';
+import 'package:kanbasu/widgets/nothing_here.dart';
 import 'package:kanbasu/widgets/snack.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:mutex/mutex.dart';
 
 /// [CommonListView] takes `List<T>` and display the items in view.
@@ -165,7 +165,7 @@ class _RefreshableStreamListWidgetState<T>
       if (data.isEmpty) {
         child = state.maybeStale
             ? LoadingWidget(isMore: false)
-            : Center(child: Text('error.nothing_here'.tr()));
+            : NothingHereWidget();
       } else {
         widget.dataPostProcess(data);
         child = CommonListView<T>(
