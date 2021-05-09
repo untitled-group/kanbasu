@@ -67,7 +67,7 @@ class AssignmentWidget extends StatelessWidget {
       if (item.submission!.grade == null) {
         grade = 'assignment.submission.no_grading'.tr();
       } else {
-        grade = item.submission!.grade!;
+        grade = 'assignment.submission.score'.tr() + item.submission!.grade!;
       }
     } else {
       grade = 'assignment.submission.no_grading'.tr();

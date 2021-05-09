@@ -63,6 +63,7 @@ assignment:
     late: Late Submission
     waiting: Wating for Submission
     no_grading: Not graded yet
+    score: 'Score: '
 
 page: 
   no_details: No details
