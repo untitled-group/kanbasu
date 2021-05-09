@@ -199,4 +199,10 @@ abstract class CanvasRestClient {
   Future<HttpResponse<List<DiscussionEntry>>> getDiscussionEntries(
       @Path() int course_id, @Path() int topic_id,
       {@Queries() Map<String, dynamic>? queries});
+
+  @POST('/courses/{course_id}/discussion_topics/{topic_id}/entries')
+  @FormUrlEncoded()
+  Future<HttpResponse<DiscussionEntry>> postDiscussionEntry(
+      @Path() int course_id, @Path() int topic_id, @Field() String message,
+      {@Queries() Map<String, dynamic>? queries});
 }

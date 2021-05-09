@@ -12,7 +12,7 @@ class CoursePagesScreen extends RefreshableStreamListWidget<p.Page> {
   CoursePagesScreen(this.courseId);
   @override
   List<Stream<p.Page>> getStreams(context) =>
-      Provider.of<Model>(context).canvas.getPages(courseId);
+      context.read<Model>().canvas.getPages(courseId);
 
   @override
   Widget buildItem(context, p.Page item) {

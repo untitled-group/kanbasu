@@ -46,7 +46,7 @@ class TabsModel {
   }
 }
 
-class _CourseTabView extends StatelessWidget {
+class _CourseTabView extends StatefulWidget {
   final int courseId;
   final Course? course;
   final t.Tab tab;
@@ -54,33 +54,52 @@ class _CourseTabView extends StatelessWidget {
   _CourseTabView(this.courseId, this.course, this.tab);
 
   @override
+  _CourseTabViewState createState() => _CourseTabViewState();
+}
+
+class _CourseTabViewState extends State<_CourseTabView>
+    with AutomaticKeepAliveClientMixin {
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
+
+    final courseId = widget.courseId;
+    final course = widget.course;
+    final tab = widget.tab;
+
     final type = KnownTabType.values.firstWhere(
       (e) => describeEnum(e) == tab.id,
       orElse: () => KnownTabType.unknown,
     );
 
-    switch (type) {
-      case KnownTabType.home:
-        return CourseHomeScreen();
-      case KnownTabType.announcements:
-        return CourseAnnouncementsScreen(courseId);
-      case KnownTabType.files:
-        return CourseFilesScreen(courseId);
-      case KnownTabType.syllabus:
-        return course != null ? CourseSyllabusScreen(course!) : Container();
-      case KnownTabType.assignments:
-        return CourseAssignmentsScreen(courseId);
-      case KnownTabType.discussions:
-        return CourseDiscussionsScreen(courseId);
-      case KnownTabType.modules:
-        return CourseModulesScreen(courseId);
-      case KnownTabType.pages:
-        return CoursePagesScreen(courseId);
-      case KnownTabType.unknown:
-        return Center(child: Text('It\'s ${tab.id} here'));
-    }
+    final screen = () {
+      switch (type) {
+        case KnownTabType.home:
+          return CourseHomeScreen();
+        case KnownTabType.announcements:
+          return CourseAnnouncementsScreen(courseId);
+        case KnownTabType.files:
+          return CourseFilesScreen(courseId);
+        case KnownTabType.syllabus:
+          return course != null ? CourseSyllabusScreen(course) : Container();
+        case KnownTabType.assignments:
+          return CourseAssignmentsScreen(courseId);
+        case KnownTabType.discussions:
+          return CourseDiscussionsScreen(courseId);
+        case KnownTabType.modules:
+          return CourseModulesScreen(courseId);
+        case KnownTabType.pages:
+          return CoursePagesScreen(courseId);
+        case KnownTabType.unknown:
+          return Center(child: Text('It\'s ${tab.id} here'));
+      }
+    }();
+
+    return screen;
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class _CourseMeta {
@@ -176,7 +195,7 @@ class CourseScreen extends RefreshableListWidget<_CourseMeta> {
 
   @override
   List<Future<_CourseMeta>> getFutures(context) {
-    final canvas = Provider.of<Model>(context).canvas;
+    final canvas = context.read<Model>().canvas;
     return zip2(
       canvas.getCourse(courseId),
       canvas.getTabs(courseId).map((s) => s.toList()),

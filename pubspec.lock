@@ -28,7 +28,7 @@ packages:
       name: args
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
-    version: "2.1.0"
+    version: "2.0.0"
   async:
     dependency: transitive
     description:
@@ -349,6 +349,13 @@ packages:
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
     version: "2.0.0-nullsafety.1"
+  flutter_launcher_icons:
+    dependency: "direct dev"
+    description:
+      name: flutter_launcher_icons
+      url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
+    source: hosted
+    version: "0.9.0"
   flutter_layout_grid:
     dependency: transitive
     description:
@@ -525,6 +532,13 @@ packages:
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
     version: "1.0.0"
+  mutex:
+    dependency: "direct main"
+    description:
+      name: mutex
+      url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
+    source: hosted
+    version: "3.0.0"
   native_pdf_renderer:
     dependency: transitive
     description:

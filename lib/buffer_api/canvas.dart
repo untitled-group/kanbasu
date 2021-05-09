@@ -502,6 +502,7 @@ class CanvasBufferClient {
         (e) => e.toJson(),
         ({queries}) => _restClient.getDiscussionEntries(course_id, topic_id,
             queries: queries),
-        (e) => e.id.toString());
+        (e) => e.id.toString(),
+        purge: true);
   }
 }

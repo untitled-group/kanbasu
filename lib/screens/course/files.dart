@@ -28,7 +28,7 @@ import 'package:provider/provider.dart';
 
 //   @override
 //   List<Future<Course?>> getStream(context) =>
-//       Provider.of<Model>(context).canvas.getCourse(courseId);
+//       context.read<Model>().canvas.getCourse(courseId);
 // }
 
 class _FilesView extends RefreshableStreamListWidget<File> {
@@ -41,7 +41,7 @@ class _FilesView extends RefreshableStreamListWidget<File> {
 
   @override
   List<Stream<File>> getStreams(context) =>
-      Provider.of<Model>(context).canvas.getFiles(courseId);
+      context.read<Model>().canvas.getFiles(courseId);
 
   @override
   Widget buildItem(context, File item) => FileWidget(item);

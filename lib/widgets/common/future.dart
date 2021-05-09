@@ -7,6 +7,10 @@ import 'package:kanbasu/widgets/snack.dart';
 import 'package:kanbasu/widgets/common/refreshable_future.dart';
 
 abstract class FutureWidget<T> extends HookWidget {
+  final ValueNotifier? refreshKey;
+
+  FutureWidget({this.refreshKey});
+
   List<Future<T>> getFutures(BuildContext context);
 
   Widget buildWidget(BuildContext context, T? data);
@@ -19,32 +23,30 @@ abstract class FutureWidget<T> extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HookBuilder(builder: (context) {
-      final itemFutures = useMemoized(
-        () {
-          // rewrite futures to catch errors inside
-          final items = getFutures(context).map((future) async {
-            try {
-              return await future;
-            } catch (error) {
-              onError(context, error);
-            }
-            return null;
-          });
-          return items.toList();
-        },
-        [],
-      );
+    final itemFutures = useMemoized(
+      () {
+        // rewrite futures to catch errors inside
+        final items = getFutures(context).map((future) async {
+          try {
+            return await future;
+          } catch (error) {
+            onError(context, error);
+          }
+          return null;
+        });
+        return items.toList();
+      },
+      [refreshKey?.value],
+    );
 
-      final snapshot =
-          useFutureCombination(itemFutures, false, initialData: null);
+    final snapshot =
+        useFutureCombination(itemFutures, false, initialData: null);
 
-      final widget =
-          snapshot.data == null && snapshot.error == null && showLoadingWidget()
-              ? LoadingWidget(isMore: true)
-              : buildWidget(context, snapshot.data);
+    final widget =
+        snapshot.data == null && snapshot.error == null && showLoadingWidget()
+            ? LoadingWidget(isMore: true)
+            : buildWidget(context, snapshot.data);
 
-      return widget;
-    });
+    return widget;
   }
 }

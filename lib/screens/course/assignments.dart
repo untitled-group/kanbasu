@@ -13,7 +13,7 @@ class CourseAssignmentsScreen extends RefreshableStreamListWidget<Assignment> {
 
   @override
   List<Stream<Assignment>> getStreams(context) =>
-      Provider.of<Model>(context).canvas.getAssignments(courseId);
+      context.read<Model>().canvas.getAssignments(courseId);
 
   @override
   Widget buildItem(context, Assignment item) {

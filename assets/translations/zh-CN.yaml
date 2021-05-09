@@ -70,3 +70,5 @@ files:
   done_download: 完成，共处理了 {} 个文件。
 preview:
   change_dir: 切换滚动方向
+discussion:
+  post_something: 说点什么...

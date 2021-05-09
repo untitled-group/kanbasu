@@ -27,8 +27,8 @@ class CourseModulesScreen
   @override
   List<Stream<ComposedModuleData>> getStreams(context) => [
         getModuleListStream(
-            Provider.of<Model>(context).canvas, courseId, false),
-        getModuleListStream(Provider.of<Model>(context).canvas, courseId, true),
+            context.read<Model>().canvas, courseId, false),
+        getModuleListStream(context.read<Model>().canvas, courseId, true),
       ];
 
   @override
