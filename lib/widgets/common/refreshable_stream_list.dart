@@ -93,6 +93,7 @@ class _RefreshableStreamListWidgetState<T>
     final itemsBuffer = <T>[];
 
     final completer = Completer();
+    var error = false;
 
     _sub = stream.listen(
       (item) {
@@ -107,16 +108,19 @@ class _RefreshableStreamListWidgetState<T>
         }
       },
       onDone: () {
-        final items = itemsBuffer.toList();
-        setState(() {
-          state.data = items;
-          state.refreshing = false;
-        });
-        if (items.isNotEmpty) _shown = true;
-        setState(() => state.maybeStale = maybeStale);
+        setState(() => state.refreshing = false);
+
+        final shouldShow = !_shown || !error;
+        if (shouldShow) {
+          final items = itemsBuffer.toList();
+          setState(() => state.data = items);
+          if (items.isNotEmpty) _shown = true;
+          setState(() => state.maybeStale = maybeStale);
+        }
         completer.complete();
       },
       onError: (e) {
+        error = true;
         widget.onError(context, e);
       },
     );
@@ -125,7 +129,7 @@ class _RefreshableStreamListWidgetState<T>
   }
 
   final _refreshMutex = Mutex();
-  
+
   Future<Completer> _requestRefresh({required bool mannually}) async {
     await _refreshMutex.acquire();
 
