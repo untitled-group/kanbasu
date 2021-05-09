@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -57,13 +60,11 @@ class DiscussionPostWidget extends HookWidget {
 
               sending.value = true;
               try {
-                final response = await rest.postDiscussionEntry(
+                final _ = await rest.postDiscussionEntry(
                   courseId,
                   topicId,
                   message,
                 );
-                // await Future.delayed(Duration(seconds: 1));
-                print(response.data.toString());
               } finally {
                 controller.clear();
                 sending.value = false;
@@ -160,15 +161,18 @@ class DiscussionEntriesWidget extends FutureWidget<List<DiscussionEntry>> {
 
     final controller = useScrollController();
     useEffect(() {
-      Future.microtask(() {
-        if (controller.hasClients) {
-          controller.animateTo(
-            controller.position.maxScrollExtent,
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        }
-      });
+      final shouldScroll = refreshTimes!.value.isEven;
+      if (shouldScroll) {
+        Future.microtask(() {
+          if (controller.hasClients) {
+            controller.animateTo(
+              controller.position.maxScrollExtent,
+              duration: Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+            );
+          }
+        });
+      }
     });
 
     return ListView(
@@ -207,14 +211,27 @@ class DiscussionContentWidget extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final refreshTimes = useState<int>(0);
-    final refresh = () => refreshTimes.value += 1;
+    final manuallyRefresh =
+        () => refreshTimes.value = (refreshTimes.value ~/ 2 + 1) * 2;
+    final autoRefresh =
+        () => refreshTimes.value = (refreshTimes.value ~/ 2 + 1) * 2 + 1;
+
+    useEffect(() {
+      final timer = Timer.periodic(Duration(seconds: 5), (timer) {
+        final randomDelay = Duration(
+          milliseconds: (Random().nextDouble() * 1000).floor(),
+        );
+        Future.delayed(randomDelay).then((_) => autoRefresh());
+      });
+      return () => timer.cancel();
+    });
 
     return Column(
       children: [
         DiscussionWidget(topic),
         Expanded(child: DiscussionEntriesWidget(courseId, topic, refreshTimes)),
         ListBorder(),
-        DiscussionPostWidget(courseId, topic.id, refresh)
+        DiscussionPostWidget(courseId, topic.id, manuallyRefresh)
       ],
     );
   }
