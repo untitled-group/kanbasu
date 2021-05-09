@@ -7,9 +7,9 @@ import 'package:kanbasu/widgets/snack.dart';
 import 'package:kanbasu/widgets/common/refreshable_future.dart';
 
 abstract class FutureWidget<T> extends HookWidget {
-  final ValueNotifier<int>? refreshTimes;
+  final ValueNotifier? refreshKey;
 
-  FutureWidget({this.refreshTimes});
+  FutureWidget({this.refreshKey});
 
   List<Future<T>> getFutures(BuildContext context);
 
@@ -36,7 +36,7 @@ abstract class FutureWidget<T> extends HookWidget {
         });
         return items.toList();
       },
-      [refreshTimes?.value],
+      [refreshKey?.value],
     );
 
     final snapshot =

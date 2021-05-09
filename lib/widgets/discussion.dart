@@ -90,8 +90,11 @@ class DiscussionEntriesWidget extends FutureWidget<List<DiscussionEntry>> {
   final int courseId;
   final DiscussionTopic topic;
 
-  DiscussionEntriesWidget(this.courseId, this.topic, refreshTimes)
-      : super(refreshTimes: refreshTimes);
+  DiscussionEntriesWidget(
+    this.courseId,
+    this.topic,
+    ValueNotifier<int> refreshKey,
+  ) : super(refreshKey: refreshKey);
 
   Widget _buildEntry(
     BuildContext context,
@@ -161,7 +164,7 @@ class DiscussionEntriesWidget extends FutureWidget<List<DiscussionEntry>> {
 
     final controller = useScrollController();
     useEffect(() {
-      final shouldScroll = refreshTimes!.value.isEven;
+      final shouldScroll = (refreshKey! as ValueNotifier<int>).value.isEven;
       if (shouldScroll) {
         Future.microtask(() {
           if (controller.hasClients) {
