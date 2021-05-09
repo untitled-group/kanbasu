@@ -129,7 +129,6 @@ class _RefreshableStreamListWidgetState<T>
   }
 
   final _refreshMutex = Mutex();
-
   Future<Completer> _requestRefresh({required bool mannually}) async {
     await _refreshMutex.acquire();
 
