@@ -75,11 +75,6 @@ class TestStreamScreen extends RefreshableStreamListWidget<TestStruct> {
   }
 
   @override
-  int refreshInterval() {
-    return 0;
-  }
-
-  @override
   List<Stream<TestStruct>> getStreams(context) => [
         Stream.fromIterable([TestStruct('old')]),
         Stream.fromIterable([TestStruct('new')]),
@@ -87,11 +82,6 @@ class TestStreamScreen extends RefreshableStreamListWidget<TestStruct> {
 
   @override
   Widget buildItem(context, TestStruct item) => Text(item.data);
-
-  @override
-  bool showLoadingWidget() {
-    return false;
-  }
 }
 
 // ignore: must_be_immutable
@@ -99,11 +89,6 @@ class TestStreamScreenError extends RefreshableStreamListWidget<TestStruct> {
   @override
   int atLeast() {
     return 100;
-  }
-
-  @override
-  int refreshInterval() {
-    return 0;
   }
 
   @override
@@ -120,11 +105,6 @@ class TestStreamScreenError extends RefreshableStreamListWidget<TestStruct> {
   @override
   void onError(BuildContext context, Object? error) {
     onErrorCalled = true;
-  }
-
-  @override
-  bool showLoadingWidget() {
-    return false;
   }
 }
 

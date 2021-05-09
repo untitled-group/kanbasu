@@ -67,6 +67,10 @@ abstract class RefreshableStreamListWidget<T> extends StatefulWidget {
 
   void dataPostProcess(List<T> data) {}
 
+  void onError(BuildContext context, Object? error) {
+    showErrorSnack(context, error);
+  }
+
   @override
   _RefreshableStreamListWidgetState<T> createState() =>
       _RefreshableStreamListWidgetState<T>();
@@ -94,7 +98,7 @@ class _RefreshableStreamListWidgetState<T>
         itemsBuffer.add(item);
 
         final shouldShow = itemsBuffer.isNotEmpty &&
-            itemsBuffer.length % widget.atLeast() == 0 &&
+            itemsBuffer.length % max(widget.atLeast(), 1) == 0 &&
             !shown;
         if (shouldShow) {
           final items = itemsBuffer.toList();
@@ -112,7 +116,7 @@ class _RefreshableStreamListWidgetState<T>
         completer.complete();
       },
       onError: (e) {
-        showErrorSnack(context, e);
+        widget.onError(context, e);
       },
     );
 
