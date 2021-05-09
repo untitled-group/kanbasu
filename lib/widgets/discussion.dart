@@ -74,7 +74,7 @@ class DiscussionPostWidget extends HookWidget {
     );
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -107,7 +107,7 @@ class DiscussionEntriesWidget extends FutureWidget<List<DiscussionEntry>> {
       nip: BubbleNip.leftTop,
       color: theme.background,
       elevation: 2,
-      margin: BubbleEdges.only(top: 8, bottom: 8),
+      margin: BubbleEdges.only(top: 4, bottom: 8),
       alignment: Alignment.topLeft,
     );
 
@@ -117,41 +117,47 @@ class DiscussionEntriesWidget extends FutureWidget<List<DiscussionEntry>> {
         if (entry.user.avatarImageUrl != null) ...[
           Column(
             children: [
+              SizedBox(height: 4),
               CircleAvatar(
                 backgroundImage: NetworkImage(entry.user.avatarImageUrl!),
               ),
-              SizedBox(height: 2),
+            ],
+          ),
+          SizedBox(width: 8),
+        ],
+        Flexible(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Text.rich(TextSpan(children: [
                 TextSpan(
                   text: entry.user.displayName ?? '',
                   style: TextStyle(
-                    fontSize: 14,
-                  ),
-                ),
-              ])),
-            ],
-          ),
-          SizedBox(width: 10),
-        ],
-        Flexible(
-          child: Bubble(
-            style: bubbleStyle,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Text(getPlainText(entry.message)),
-                ),
-                SizedBox(width: 10),
-                Text(
-                  '#${floorNumber.toString()}',
-                  style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     color: theme.secondaryText,
                   ),
                 ),
-              ],
-            ),
+              ])),
+              Bubble(
+                style: bubbleStyle,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(getPlainText(entry.message)),
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      '#${floorNumber.toString()}',
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: theme.secondaryText,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ],
