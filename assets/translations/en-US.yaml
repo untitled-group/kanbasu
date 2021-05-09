@@ -15,6 +15,7 @@ error:
     Check the connection and your provided API key.
   tips: "Error occured, here are some tips:"
   nothing_here: There's nothing here.
+  offline_mode: Offline Mode
 activity:
   short_type:
     AssessmentRequest: Ass
