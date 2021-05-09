@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:kanbasu/models/resolver_model.dart';
 import 'package:kanbasu/models/user.dart';
+import 'package:kanbasu/router.dart';
 import 'package:kanbasu/utils/logging.dart';
 import 'package:kanbasu/utils/persistence.dart';
 import 'package:kanbasu/models/model.dart';
@@ -138,6 +139,16 @@ class MeScreen extends HookWidget {
               });
             },
             child: Text('运行 Aggregator (Offline)'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.grey, // background
+              onPrimary: Colors.white, // foreground
+            ),
+            onPressed: () {
+              navigateTo('/test/stream_list');
+            },
+            child: Text('StreamListTestScreen'),
           ),
         ],
       ),
