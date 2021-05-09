@@ -5,16 +5,11 @@ import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/planner.dart';
 import 'package:kanbasu/models/submission.dart';
 import 'package:kanbasu/models/brief_info.dart';
-import 'package:html/parser.dart' show parse;
 import 'package:kanbasu/utils/courses.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:kanbasu/utils/html.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:rxdart/rxdart.dart';
-
-String getPlainText(String htmlData) {
-  final bodyText = parse(htmlData).body?.text;
-  return bodyText ?? '';
-}
 
 Future<List<T>> getListDataFromApi<T>(
     List<Stream<T>> stream, bool useOnlineData) async {

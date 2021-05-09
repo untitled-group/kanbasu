@@ -1,11 +1,10 @@
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:kanbasu/models/discussion_entry.dart';
 import 'package:kanbasu/models/discussion_topic.dart';
 import 'package:kanbasu/models/model.dart';
-import 'package:kanbasu/router.dart';
+import 'package:kanbasu/utils/html.dart';
 import 'package:kanbasu/widgets/announcement.dart';
 import 'package:kanbasu/widgets/common/future.dart';
 import 'package:kanbasu/widgets/loading.dart';
@@ -45,7 +44,7 @@ class DiscussionContentWidget extends FutureWidget<List<DiscussionEntry>> {
               CircleAvatar(
                 backgroundImage: NetworkImage(entry.user.avatarImageUrl!),
               ),
-              SizedBox(height: 6),
+              SizedBox(height: 2),
               Text.rich(TextSpan(children: [
                 TextSpan(
                   text: entry.user.displayName ?? '',
@@ -61,24 +60,19 @@ class DiscussionContentWidget extends FutureWidget<List<DiscussionEntry>> {
         Flexible(
           child: Bubble(
             style: bubbleStyle,
-            child: Column(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  alignment: Alignment.topRight,
-                  child: Text(
-                    '#${floorNumber.toString()}',
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: theme.secondaryText,
-                    ),
-                  ),
+                Expanded(
+                  child: Text(getPlainText(entry.message)),
                 ),
-                Html(
-                  data: entry.message,
-                  shrinkWrap: true,
-                  onLinkTap: (url, _, __, ___) {
-                    if (url != null) navigateTo(url);
-                  },
+                SizedBox(width: 10),
+                Text(
+                  '#${floorNumber.toString()}',
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: theme.secondaryText,
+                  ),
                 ),
               ],
             ),
@@ -99,7 +93,7 @@ class DiscussionContentWidget extends FutureWidget<List<DiscussionEntry>> {
         if (data != null) ...[
           for (final entry in data.asMap().entries)
             Container(
-              padding: EdgeInsets.only(left: 16, right: 8),
+              padding: EdgeInsets.only(left: 16, right: 4, bottom: 4),
               child: _buildEntry(context, entry.value, entry.key + 1),
             ),
         ] else
