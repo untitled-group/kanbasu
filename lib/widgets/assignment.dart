@@ -23,7 +23,9 @@ class AssignmentWidget extends StatelessWidget {
     final bool lateSubmission;
     final bool waitForSubmission;
     final bool failedSubmission;
+    final bool graded;
     final TextStyle dueTimeStyle;
+    final String? grade;
     final theme = Provider.of<Model>(context).theme;
 
     if (item.dueAt != null) {
@@ -61,6 +63,11 @@ class AssignmentWidget extends StatelessWidget {
     lateSubmission = _late;
     waitForSubmission = !_passDue && !_submitted;
     successfulSubmission = _submitted && !_late;
+
+    if (successfulSubmission || lateSubmission) {
+      grade = item.submission!.grade;
+      graded = grade != null;
+    }
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
