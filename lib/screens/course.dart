@@ -176,7 +176,7 @@ class CourseScreen extends RefreshableListWidget<_CourseMeta> {
 
   @override
   List<Future<_CourseMeta>> getFutures(context) {
-    final canvas = Provider.of<Model>(context).canvas;
+    final canvas = context.read<Model>().canvas;
     return zip2(
       canvas.getCourse(courseId),
       canvas.getTabs(courseId).map((s) => s.toList()),

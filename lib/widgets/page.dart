@@ -52,7 +52,7 @@ class PageContentWidget extends FutureWidget<p.Page?> {
 
   @override
   List<Future<p.Page?>> getFutures(BuildContext context) =>
-      Provider.of<Model>(context).canvas.getPage(courseId, pageId);
+      context.read<Model>().canvas.getPage(courseId, pageId);
 
   @override
   Widget buildWidget(BuildContext context, p.Page? data) {

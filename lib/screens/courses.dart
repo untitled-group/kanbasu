@@ -13,7 +13,7 @@ import 'package:easy_localization/easy_localization.dart';
 class _CoursesView extends RefreshableStreamListWidget<Course> {
   @override
   List<Stream<Course>> getStreams(context) =>
-      Provider.of<Model>(context).canvas.getCourses().map((courseStream) {
+      context.read<Model>().canvas.getCourses().map((courseStream) {
         return () async* {
           final courseList = await courseStream.toList();
           final latestCourses = toLatestCourses(courseList);
