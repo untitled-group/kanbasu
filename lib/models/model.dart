@@ -79,6 +79,13 @@ class Model with ChangeNotifier {
   late KvStore _kvs;
   KvStore get kvs => _kvs;
 
+  bool _connected = true;
+  bool get connected => _connected;
+  set connected(value) {
+    _connected = value;
+    notifyListeners();
+  }
+
   Future<void> updateCanvasClient() async {
     final prefs = await SharedPreferences.getInstance();
 
