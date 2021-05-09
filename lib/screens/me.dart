@@ -25,7 +25,7 @@ class _MeView extends FutureWidget<User?> {
 
   @override
   List<Future<User?>> getFutures(context) =>
-      Provider.of<Model>(context).canvas.getCurrentUser();
+      context.read<Model>().canvas.getCurrentUser();
 }
 
 class MeScreen extends HookWidget {

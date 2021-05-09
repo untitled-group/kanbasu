@@ -14,7 +14,7 @@ class CourseDiscussionsScreen
 
   @override
   List<Stream<DiscussionTopic>> getStreams(context) =>
-      Provider.of<Model>(context).canvas.getDiscussionTopics(courseId);
+      context.read<Model>().canvas.getDiscussionTopics(courseId);
 
   @override
   Widget buildItem(context, DiscussionTopic item) {
