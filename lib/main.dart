@@ -2,13 +2,11 @@ import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:get/route_manager.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/models/resolver_model.dart';
 import 'package:kanbasu/router.dart';
-import 'package:kanbasu/utils/connectivity.dart';
 import 'package:kanbasu/utils/timeago_zh_cn.dart';
 import 'package:kanbasu/widgets/offline_mode.dart';
 import 'package:provider/provider.dart';
@@ -48,7 +46,7 @@ Future<void> main() async {
   ));
 }
 
-class MyApp extends HookWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final model = context.watch<Model>();
@@ -75,14 +73,6 @@ class MyApp extends HookWidget {
       indicatorColor: theme.primary,
     );
 
-    useEffect(() {
-      final timer = Timer.periodic(Duration(seconds: 5), (timer) async {
-        final newConnected = await checkConnectivity();
-        model.connected = newConnected;
-      });
-      return () => timer.cancel();
-    });
-
     return GetMaterialApp(
       title: 'Kanbasu',
       darkTheme: themeData,
@@ -93,12 +83,7 @@ class MyApp extends HookWidget {
       defaultTransition: Transition.fade,
       getPages: getPages,
       debugShowCheckedModeBanner: false,
-      builder: (_, child) => model.connected
-          ? child ?? Container()
-          : Scaffold(
-              appBar: OfflineModeWidget(),
-              body: child,
-            ),
+      builder: (_, child) => OfflineModeWrapper(child: child),
       home: Home(),
     );
   }
