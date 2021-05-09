@@ -7,12 +7,13 @@ import 'package:kanbasu/widgets/border.dart';
 import 'package:kanbasu/widgets/loading.dart';
 import 'package:kanbasu/widgets/snack.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:mutex/mutex.dart';
 
 /// [CommonListView] takes `List<T>` and display the items in view.
 /// This scaffold supports batch-update and on-demand-showing stream items.
 class CommonListView<T> extends StatelessWidget {
   final Widget Function(T payload) itemBuilder;
-  final List<T>? itemList;
+  final List<T> itemList;
 
   CommonListView({
     required this.itemBuilder,
@@ -21,7 +22,7 @@ class CommonListView<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final items = (itemList ?? []).where((i) => i != null).toList();
+    final items = itemList.where((i) => i != null).toList();
     final itemsLength = items.length;
 
     final buildItem = (BuildContext context, int index) {
@@ -123,13 +124,19 @@ class _RefreshableStreamListWidgetState<T>
     return completer;
   }
 
+  final _refreshMutex = Mutex();
+  
   Future<Completer> _requestRefresh({required bool mannually}) async {
+    await _refreshMutex.acquire();
+
     final streams = widget.getStreams(context);
     final stream = streams[min(streams.length - 1, _refreshCount)];
 
     if (mannually) setState(() => state.refreshing = true);
     final completer = await _subscribeToNewStream(stream);
     _refreshCount += 1;
+
+    _refreshMutex.release();
 
     return completer;
   }

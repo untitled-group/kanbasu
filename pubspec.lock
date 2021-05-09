@@ -525,6 +525,13 @@ packages:
       url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
     source: hosted
     version: "1.0.0"
+  mutex:
+    dependency: "direct main"
+    description:
+      name: mutex
+      url: "https://mirrors.sjtug.sjtu.edu.cn/dart-pub"
+    source: hosted
+    version: "3.0.0"
   native_pdf_renderer:
     dependency: transitive
     description:
