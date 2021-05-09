@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -6,6 +8,7 @@ import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/models/resolver_model.dart';
 import 'package:kanbasu/router.dart';
 import 'package:kanbasu/utils/timeago_zh_cn.dart';
+import 'package:kanbasu/widgets/offline_mode.dart';
 import 'package:provider/provider.dart';
 import 'home.dart';
 import 'buffer_api/kvstore.dart';
@@ -46,7 +49,7 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = Provider.of<Model>(context);
+    final model = context.watch<Model>();
     final theme = model.theme;
 
     final themeData = ThemeData(
@@ -80,6 +83,7 @@ class MyApp extends StatelessWidget {
       defaultTransition: Transition.fade,
       getPages: getPages,
       debugShowCheckedModeBanner: false,
+      builder: (_, child) => OfflineModeWrapper(child: child),
       home: Home(),
     );
   }
