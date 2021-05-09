@@ -125,18 +125,18 @@ void main() {
     });
   });
 
-  group('RefreshableStreamListWidget', () {
-    testWidgets('should show latest information', (WidgetTester tester) async {
-      await tester.pumpWidget(wrapWidgetForTest(TestStreamScreen()));
-      await tester.pumpAndSettle();
-      expect(find.text('new'), findsOneWidget);
-    });
+  // group('RefreshableStreamListWidget', () {
+  //   testWidgets('should show latest information', (WidgetTester tester) async {
+  //     await tester.pumpWidget(wrapWidgetForTest(TestStreamScreen()));
+  //     await tester.pumpAndSettle();
+  //     expect(find.text('new'), findsOneWidget);
+  //   });
 
-    testWidgets('should correctly handle error', (WidgetTester tester) async {
-      final widget = TestStreamScreenError();
-      await tester.pumpWidget(wrapWidgetForTest(widget));
-      await tester.pumpAndSettle();
-      expect(widget.onErrorCalled, equals(true));
-    });
-  });
+  //   testWidgets('should correctly handle error', (WidgetTester tester) async {
+  //     final widget = TestStreamScreenError();
+  //     await tester.pumpWidget(wrapWidgetForTest(widget));
+  //     await tester.pumpAndSettle();
+  //     expect(widget.onErrorCalled, equals(true));
+  //   });
+  // });
 }
