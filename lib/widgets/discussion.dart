@@ -160,13 +160,15 @@ class DiscussionEntriesWidget extends FutureWidget<List<DiscussionEntry>> {
 
     final controller = useScrollController();
     useEffect(() {
-      if (controller.hasClients) {
-        controller.animateTo(
-          controller.position.maxScrollExtent,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
+      Future.microtask(() {
+        if (controller.hasClients) {
+          controller.animateTo(
+            controller.position.maxScrollExtent,
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
     });
 
     return ListView(
