@@ -14,6 +14,7 @@ import 'package:kanbasu/widgets/border.dart';
 import 'package:kanbasu/widgets/common/future.dart';
 import 'package:kanbasu/widgets/loading.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class DiscussionWidget extends AnnouncementWidget {
   DiscussionWidget(DiscussionTopic item) : super(item);
@@ -46,7 +47,7 @@ class DiscussionPostWidget extends HookWidget {
         fontSize: 15,
       ),
       decoration: InputDecoration(
-        hintText: 'Post something',
+        hintText: 'discussion.post_something'.tr(),
       ),
     );
 

@@ -70,3 +70,5 @@ files:
   done_download: Done with {} files processed.
 preview:
   change_dir: Change scroll direction
+discussion:
+  post_something: Post something...
