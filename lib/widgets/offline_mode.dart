@@ -7,29 +7,27 @@ import 'package:kanbasu/utils/connectivity.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-class _OfflineModeWidget extends StatelessWidget
-    implements PreferredSizeWidget {
+class _OfflineModeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.watch<Model>().theme;
 
-    return Container(
-      color: theme.grayBackground,
-      child: Center(
-        child: Text(
-          'error.offline_mode'.tr(),
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-            color: theme.tertiaryText,
+    return Material(
+      child: SizedBox(
+        height: 22,
+        child: Center(
+          child: Text(
+            'error.offline_mode'.tr(),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              color: theme.tertiaryText,
+            ),
           ),
         ),
       ),
     );
   }
-
-  @override
-  Size get preferredSize => Size.fromHeight(20);
 }
 
 class OfflineModeWrapper extends HookWidget {
@@ -52,8 +50,8 @@ class OfflineModeWrapper extends HookWidget {
     return model.connected
         ? child ?? Container()
         : Scaffold(
-            appBar: _OfflineModeWidget(),
             body: child,
+            bottomNavigationBar: _OfflineModeWidget(),
           );
   }
 }
