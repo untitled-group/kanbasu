@@ -82,8 +82,10 @@ class Model with ChangeNotifier {
   bool _connected = true;
   bool get connected => _connected;
   set connected(value) {
-    _connected = value;
-    notifyListeners();
+    if (_connected != value) {
+      _connected = value;
+      notifyListeners();
+    }
   }
 
   Future<void> updateCanvasClient() async {
