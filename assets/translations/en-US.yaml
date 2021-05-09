@@ -65,7 +65,6 @@ assignment:
     waiting: Wating for Submission
     no_grading: Not graded yet
     score_prefix: 'Grade: '
-
 page: 
   no_details: No details
 files:
