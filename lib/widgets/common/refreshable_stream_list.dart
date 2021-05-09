@@ -22,7 +22,7 @@ class CommonListView<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final items = itemList.where((i) => i != null).toList();
+    final items = itemList;
     final itemsLength = items.length;
 
     final buildItem = (BuildContext context, int index) {
