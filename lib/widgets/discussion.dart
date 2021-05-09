@@ -145,7 +145,7 @@ class DiscussionEntriesWidget extends FutureWidget<List<DiscussionEntry>> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: Text(getPlainText(entry.message)),
+                      child: SelectableText(getPlainText(entry.message)),
                     ),
                     SizedBox(width: 10),
                     Text(
