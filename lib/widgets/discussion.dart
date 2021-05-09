@@ -110,7 +110,8 @@ class DiscussionContentWidget extends FutureWidget<List<DiscussionEntry>> {
 
   @override
   List<Future<List<DiscussionEntry>>> getFutures(BuildContext context) =>
-      Provider.of<Model>(context)
+      context
+          .read<Model>()
           .canvas
           .getDiscussionEntries(courseId, topic.id)
           .map((stream) => stream.toList())

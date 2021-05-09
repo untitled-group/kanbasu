@@ -63,7 +63,7 @@ abstract class RefreshableStreamListWidget<T> extends StatefulWidget {
 
   int atLeast() => 10;
 
-  bool showLoadingWidget() => true;
+  bool showRefreshingIndicator() => false;
 
   void dataPostProcess(List<T> data) {}
 
@@ -136,7 +136,7 @@ class _RefreshableStreamListWidgetState<T>
     () async {
       final completer = await _requestRefresh(mannually: false);
       await completer.future;
-      await _requestRefresh(mannually: false);
+      await _requestRefresh(mannually: widget.showRefreshingIndicator());
     }();
   }
 
@@ -150,9 +150,7 @@ class _RefreshableStreamListWidgetState<T>
       final data = state.data!;
       if (data.isEmpty) {
         child = state.maybeStale
-            ? widget.showLoadingWidget()
-                ? LoadingWidget(isMore: false)
-                : Container()
+            ? LoadingWidget(isMore: false)
             : Center(child: Text('error.nothing_here'.tr()));
       } else {
         widget.dataPostProcess(data);

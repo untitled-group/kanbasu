@@ -11,20 +11,13 @@ import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class _ActivitiesView extends RefreshableStreamListWidget<BriefInfo> {
-  Stream<BriefInfo> getAggregationStream(context, bool useOnlineData) async* {
-    final stream = aggregate(Provider.of<Model>(context, listen: false).canvas,
-        useOnlineData: useOnlineData);
-    if (useOnlineData) {
-      // TODO: do not buffer items, avoid unnecessary updates on ui part
-      final items = await stream.toList();
-      for (final item in items) {
-        yield item;
-      }
-    } else {
-      await for (final item in stream) {
-        yield item;
-      }
-    }
+  Stream<BriefInfo> getAggregationStream(
+      BuildContext context, bool useOnlineData) {
+    final stream = aggregate(
+      context.read<Model>().canvas,
+      useOnlineData: useOnlineData,
+    );
+    return stream;
   }
 
   @override
@@ -47,8 +40,12 @@ class _ActivitiesView extends RefreshableStreamListWidget<BriefInfo> {
 
   @override
   Widget buildItem(context, BriefInfo item) => Link(
-      path: '/course/${item.courseId}/${_typeToTabId[item.type] ?? ''}',
-      child: ActivityWidget(item));
+        path: '/course/${item.courseId}/${_typeToTabId[item.type] ?? ''}',
+        child: ActivityWidget(item),
+      );
+
+  @override
+  bool showRefreshingIndicator() => true;
 }
 
 class ActivitiesScreen extends StatelessWidget {
