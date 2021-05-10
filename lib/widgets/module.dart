@@ -172,11 +172,40 @@ class RefFileItemWidget extends FutureWidget<File?> {
   }
 }
 
-class RefAssignmentItemWidget extends FutureWidget<Assignment?> {
+class RefAssignmentItemWidget extends StatelessWidget {
   final int courseId;
   final int assignmentId;
   final ModuleItem item;
   RefAssignmentItemWidget(this.courseId, this.assignmentId, this.item);
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+        ),
+        isScrollControlled: true,
+        builder: (context) {
+          return ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height * 0.3,
+              maxHeight: MediaQuery.of(context).size.height * 0.9,
+            ),
+            child: RefAssignmentContentWidget(courseId, assignmentId, item),
+          );
+        },
+      ),
+      child: NormalModuleItemWidget(item),
+    );
+  }
+}
+
+class RefAssignmentContentWidget extends FutureWidget<Assignment?> {
+  final int courseId;
+  final int assignmentId;
+  final ModuleItem item;
+  RefAssignmentContentWidget(this.courseId, this.assignmentId, this.item);
 
   @override
   List<Future<Assignment?>> getFutures(BuildContext context) =>
@@ -187,7 +216,7 @@ class RefAssignmentItemWidget extends FutureWidget<Assignment?> {
     if (AssignmentItem == null) {
       return NormalModuleItemWidget(item);
     }
-    return AssignmentItemWidget(AssignmentItem);
+    return AssignmentContentWidget(AssignmentItem);
   }
 }
 
