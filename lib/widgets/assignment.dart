@@ -50,7 +50,9 @@ class AssignmentWidget extends StatelessWidget {
     final bool lateSubmission;
     final bool waitForSubmission;
     final bool failedSubmission;
+    final String grade;
     final TextStyle dueTimeStyle;
+    final secondLine = TextStyle(fontSize: 13);
     final theme = Provider.of<Model>(context).theme;
 
     if (item.dueAt != null) {
@@ -64,9 +66,9 @@ class AssignmentWidget extends StatelessWidget {
       _passDue = false;
     }
     if (_passDue) {
-      dueTimeStyle = TextStyle(fontSize: 14, color: theme.primary);
+      dueTimeStyle = TextStyle(fontSize: 13, color: theme.primary);
     } else {
-      dueTimeStyle = TextStyle(fontSize: 14, color: theme.succeed);
+      dueTimeStyle = TextStyle(fontSize: 13, color: theme.succeed);
     }
 
     if (item.submission == null) {
@@ -89,6 +91,17 @@ class AssignmentWidget extends StatelessWidget {
     waitForSubmission = !_passDue && !_submitted;
     successfulSubmission = _submitted && !_late;
 
+    if (successfulSubmission || lateSubmission) {
+      if (item.submission!.grade == null) {
+        grade = 'assignment.submission.no_grading'.tr();
+      } else {
+        grade =
+            'assignment.submission.score_prefix'.tr() + item.submission!.grade!;
+      }
+    } else {
+      grade = 'assignment.submission.no_grading'.tr();
+    }
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Column(
@@ -102,18 +115,24 @@ class AssignmentWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   separatorBuilder: (context, index) => SizedBox(height: 1),
                   children: [
-                    Text.rich(
-                      TextSpan(
-                          style: TextStyle(
-                            fontSize: 17,
-                            color: theme.text,
+                    Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text.rich(
+                            TextSpan(
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  color: theme.text,
+                                ),
+                                children: [
+                                  TextSpan(text: item.name?.trim()),
+                                ]),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                           ),
-                          children: [
-                            TextSpan(text: item.name?.trim()),
-                          ]),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    ),
+                          Spacer(),
+                          if (showDetails) Text(grade),
+                        ]),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -124,7 +143,7 @@ class AssignmentWidget extends StatelessWidget {
                               locale: context.locale.toStringWithSeparator(),
                             ),
                             style: TextStyle(
-                                fontSize: 14, color: theme.tertiaryText),
+                                fontSize: 13, color: theme.tertiaryText),
                           ),
                         SizedBox(
                           width: 5,
@@ -145,7 +164,8 @@ class AssignmentWidget extends StatelessWidget {
                             size: 15,
                           ),
                         if (successfulSubmission && showDetails)
-                          Text('assignment.submission.successful'.tr()),
+                          Text('assignment.submission.successful'.tr(),
+                              style: secondLine),
                         if (failedSubmission || lateSubmission)
                           Icon(
                             Icons.error,
@@ -153,9 +173,11 @@ class AssignmentWidget extends StatelessWidget {
                             size: 15,
                           ),
                         if (failedSubmission && showDetails)
-                          Text('assignment.submission.failed'.tr()),
+                          Text('assignment.submission.failed'.tr(),
+                              style: secondLine),
                         if (lateSubmission && showDetails)
-                          Text('assignment.submission.late'.tr()),
+                          Text('assignment.submission.late'.tr(),
+                              style: secondLine),
                         if (waitForSubmission)
                           Icon(
                             Icons.warning,
@@ -163,7 +185,8 @@ class AssignmentWidget extends StatelessWidget {
                             size: 15,
                           ),
                         if (waitForSubmission && showDetails)
-                          Text('assignment.submission.waiting'.tr()),
+                          Text('assignment.submission.waiting'.tr(),
+                              style: secondLine),
                       ],
                     ),
                   ],
