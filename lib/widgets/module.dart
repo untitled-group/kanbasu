@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/models/module.dart';
 import 'package:kanbasu/models/module_item.dart';
+import 'package:kanbasu/models/local_file.dart';
 import 'package:provider/provider.dart';
 import 'package:separated_column/separated_column.dart';
 import 'package:kanbasu/widgets/common/future.dart';
@@ -14,7 +15,7 @@ import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/widgets/assignment.dart';
 import 'package:kanbasu/models/assignment.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:kanbasu/models/resolver_model.dart';
 
 class ComposedModuleData {
   Module module;
@@ -220,9 +221,7 @@ class _TapState extends State<FileItemWidget> {
   _TapState(this.courseId, this.fileId, this.item);
   void _showRefFileWidget() {
     setState(() {
-      if (!tapped) {
-        tapped = true;
-      }
+      tapped = true;
     });
   }
 
@@ -232,9 +231,55 @@ class _TapState extends State<FileItemWidget> {
       onTap: () => _showRefFileWidget(),
       child: tapped
           ? RefFileWidget(courseId, fileId, item)
-          : NormalModuleItemWidget(item, true),
+          : offlineFileWidget(courseId, fileId, item),
     );
   }
+}
+
+class offlineFileWidget extends FutureWidget<LocalFile?> {
+  final int courseId;
+  final int fileId;
+  final ModuleItem item;
+  offlineFileWidget(this.courseId, this.fileId, this.item);
+
+  @override
+  Widget buildWidget(BuildContext context, LocalFile? data) {
+    final theme = Provider.of<Model>(context).theme;
+    final downloadIcon = Icon(
+      data == null ? Icons.cloud_download_outlined : Icons.cloud_done_outlined,
+      color: theme.tertiaryText,
+    );
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(item.title),
+            ],
+          ),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: SizedBox(
+                height: 24,
+                width: 24,
+                child: downloadIcon,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  List<Future<LocalFile?>> getFutures(BuildContext context) => [
+        Provider.of<ResolverModel>(context)
+            .fileResolver
+            .getDownloadedFileById(fileId.toString()),
+      ];
 }
 
 class RefPageContentWidget extends FutureWidget<p.Page?> {
