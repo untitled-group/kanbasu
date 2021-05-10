@@ -111,12 +111,12 @@ class ModuleItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (item.url == null) {
-      return NormalModuleItemWidget(item);
+      return NormalModuleItemWidget(item, false);
     } else {
       final stringMatch =
           RegExp(r'/[0-9]+/[a-z]+/[0-9]+').stringMatch(item.url!);
       if (stringMatch == null) {
-        return NormalModuleItemWidget(item);
+        return NormalModuleItemWidget(item, false);
       }
       final infoList = stringMatch.split('/');
       final courseId = int.parse(infoList[1]);
@@ -131,7 +131,7 @@ class ModuleItemWidget extends StatelessWidget {
         case 'assignments':
           return AssignmentItemWidget(courseId, tabId, item);
         default:
-          return NormalModuleItemWidget(item);
+          return NormalModuleItemWidget(item, false);
       }
     }
   }
@@ -166,7 +166,7 @@ class RefFileItemWidget extends FutureWidget<File?> {
   @override
   Widget buildWidget(BuildContext context, File? fileItem) {
     if (fileItem == null) {
-      return NormalModuleItemWidget(item);
+      return NormalModuleItemWidget(item, false);
     }
     return FileWidget(fileItem);
   }
@@ -196,7 +196,7 @@ class AssignmentItemWidget extends StatelessWidget {
           );
         },
       ),
-      child: NormalModuleItemWidget(item),
+      child: NormalModuleItemWidget(item, true),
     );
   }
 }
@@ -214,7 +214,7 @@ class RefAssignmentContentWidget extends FutureWidget<Assignment?> {
   @override
   Widget buildWidget(BuildContext context, Assignment? AssignmentItem) {
     if (AssignmentItem == null) {
-      return NormalModuleItemWidget(item);
+      return NormalModuleItemWidget(item, false);
     }
     return AssignmentContentWidget(AssignmentItem);
   }
@@ -222,7 +222,8 @@ class RefAssignmentContentWidget extends FutureWidget<Assignment?> {
 
 class NormalModuleItemWidget extends StatelessWidget {
   final ModuleItem item;
-  NormalModuleItemWidget(this.item);
+  final bool tappable;
+  NormalModuleItemWidget(this.item, this.tappable);
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<Model>(context).theme;
@@ -239,27 +240,29 @@ class NormalModuleItemWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   separatorBuilder: (context, index) => SizedBox(height: 1),
                   children: [
-                    Text.rich(
-                      TextSpan(
-                          style: TextStyle(
-                            fontSize: 17,
-                            color: theme.text,
-                          ),
-                          children: [
-                            TextSpan(text: item.title),
-                          ]),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    ),
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SizedBox(
-                          width: 5,
+                        Text.rich(
+                          TextSpan(
+                              style: TextStyle(
+                                fontSize: 17,
+                                color: theme.text,
+                              ),
+                              children: [
+                                TextSpan(text: item.title),
+                              ]),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
                         ),
                         Spacer(),
+                        if (tappable)
+                          Icon(
+                            Icons.arrow_forward,
+                            color: theme.tertiaryText,
+                            size: 18,
+                          ),
                       ],
-                    ),
+                    )
                   ],
                 ),
               ),
