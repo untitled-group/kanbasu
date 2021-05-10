@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:provider/provider.dart';
+import 'package:separated_column/separated_column.dart';
+import 'package:easy_localization/easy_localization.dart';
+
 import 'package:kanbasu/models/model.dart';
+import 'package:kanbasu/models/page.dart' as p;
+import 'package:kanbasu/models/assignment.dart';
+import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/module.dart';
 import 'package:kanbasu/models/module_item.dart';
 import 'package:kanbasu/models/local_file.dart';
-import 'package:provider/provider.dart';
-import 'package:separated_column/separated_column.dart';
+import 'package:kanbasu/models/resolver_model.dart';
+
 import 'package:kanbasu/widgets/common/future.dart';
 import 'package:kanbasu/widgets/page.dart';
-import 'package:kanbasu/models/page.dart' as p;
 import 'package:kanbasu/widgets/file.dart';
-import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/widgets/assignment.dart';
-import 'package:kanbasu/models/assignment.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:kanbasu/models/resolver_model.dart';
+
+
 
 class ComposedModuleData {
   Module module;
@@ -231,16 +235,15 @@ class _TapState extends State<FileItemWidget> {
       onTap: () => _showRefFileWidget(),
       child: tapped
           ? RefFileWidget(courseId, fileId, item)
-          : offlineFileWidget(courseId, fileId, item),
+          : offlineFileWidget(fileId, item),
     );
   }
 }
 
 class offlineFileWidget extends FutureWidget<LocalFile?> {
-  final int courseId;
   final int fileId;
   final ModuleItem item;
-  offlineFileWidget(this.courseId, this.fileId, this.item);
+  offlineFileWidget(this.fileId, this.item);
 
   @override
   Widget buildWidget(BuildContext context, LocalFile? data) {
