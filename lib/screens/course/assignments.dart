@@ -17,6 +17,6 @@ class CourseAssignmentsScreen extends RefreshableStreamListWidget<Assignment> {
 
   @override
   Widget buildItem(context, Assignment item) {
-    return AssignmentItemWidget(item);
+    return AssignmentWidget(item);
   }
 }

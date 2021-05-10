@@ -8,9 +8,9 @@ import 'package:separated_column/separated_column.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:easy_localization/easy_localization.dart';
 
-class AssignmentItemWidget extends StatelessWidget {
+class AssignmentWidget extends StatelessWidget {
   final Assignment item;
-  AssignmentItemWidget(this.item);
+  AssignmentWidget(this.item);
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -30,15 +30,15 @@ class AssignmentItemWidget extends StatelessWidget {
           );
         },
       ),
-      child: AssignmentWidget(item, false),
+      child: AssignmentInfoWidget(item, false),
     );
   }
 }
 
-class AssignmentWidget extends StatelessWidget {
+class AssignmentInfoWidget extends StatelessWidget {
   final Assignment item;
   final bool showDetails;
-  AssignmentWidget(this.item, this.showDetails);
+  AssignmentInfoWidget(this.item, this.showDetails);
 
   @override
   Widget build(BuildContext context) {
@@ -210,7 +210,7 @@ class AssignmentContentWidget extends StatelessWidget {
     return ListView(
       shrinkWrap: true,
       children: [
-        AssignmentWidget(item, true),
+        AssignmentInfoWidget(item, true),
         Html(
             data: item.description ??
                 '<h3> ${'assignment.no_details'.tr()} </h3>'),

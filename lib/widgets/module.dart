@@ -129,7 +129,7 @@ class ModuleItemWidget extends StatelessWidget {
         case 'files':
           return RefFileItemWidget(courseId, tabId, item);
         case 'assignments':
-          return RefAssignmentItemWidget(courseId, tabId, item);
+          return AssignmentItemWidget(courseId, tabId, item);
         default:
           return NormalModuleItemWidget(item);
       }
@@ -172,11 +172,11 @@ class RefFileItemWidget extends FutureWidget<File?> {
   }
 }
 
-class RefAssignmentItemWidget extends StatelessWidget {
+class AssignmentItemWidget extends StatelessWidget {
   final int courseId;
   final int assignmentId;
   final ModuleItem item;
-  RefAssignmentItemWidget(this.courseId, this.assignmentId, this.item);
+  AssignmentItemWidget(this.courseId, this.assignmentId, this.item);
   @override
   Widget build(BuildContext context) {
     return InkWell(
