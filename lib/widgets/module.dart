@@ -14,6 +14,7 @@ import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/widgets/assignment.dart';
 import 'package:kanbasu/models/assignment.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 class ComposedModuleData {
   Module module;
@@ -133,7 +134,7 @@ class ModuleItemWidget extends StatelessWidget {
         final tabId = int.parse(infoList[3]);
         switch (tabType) {
           case 'files':
-            return RefFileItemWidget(courseId, tabId, item);
+            return FileItemWidget(courseId, tabId, item);
           case 'assignments':
             return AssignmentItemWidget(courseId, tabId, item);
           default:
@@ -173,44 +174,6 @@ class PageItemWidget extends StatelessWidget {
   }
 }
 
-class RefPageContentWidget extends FutureWidget<p.Page?> {
-  final int courseId;
-  final String pageUrl;
-  final ModuleItem item;
-  RefPageContentWidget(this.courseId, this.pageUrl, this.item);
-
-  @override
-  List<Future<p.Page?>> getFutures(BuildContext context) =>
-      Provider.of<Model>(context).canvas.getPageByIdentifier(courseId, pageUrl);
-
-  @override
-  Widget buildWidget(BuildContext context, p.Page? pageItem) {
-    if (pageItem == null) {
-      return Text('page.no_details'.tr());
-    }
-    return PageContentWidget(courseId, pageItem.pageId);
-  }
-}
-
-class RefFileItemWidget extends FutureWidget<File?> {
-  final int courseId;
-  final int fileId;
-  final ModuleItem item;
-  RefFileItemWidget(this.courseId, this.fileId, this.item);
-
-  @override
-  List<Future<File?>> getFutures(BuildContext context) =>
-      Provider.of<Model>(context).canvas.getFile(courseId, fileId);
-
-  @override
-  Widget buildWidget(BuildContext context, File? fileItem) {
-    if (fileItem == null) {
-      return NormalModuleItemWidget(item, false);
-    }
-    return FileWidget(fileItem);
-  }
-}
-
 class AssignmentItemWidget extends StatelessWidget {
   final int courseId;
   final int assignmentId;
@@ -240,6 +203,59 @@ class AssignmentItemWidget extends StatelessWidget {
   }
 }
 
+class FileItemWidget extends StatefulWidget {
+  final int courseId;
+  final int fileId;
+  final ModuleItem item;
+  FileItemWidget(this.courseId, this.fileId, this.item);
+  @override
+  _TapState createState() => _TapState(courseId, fileId, item);
+}
+
+class _TapState extends State<FileItemWidget> {
+  final int courseId;
+  final int fileId;
+  final ModuleItem item;
+  var tapped = false;
+  _TapState(this.courseId, this.fileId, this.item);
+  void _showRefFileWidget() {
+    setState(() {
+      if (!tapped) {
+        tapped = true;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => _showRefFileWidget(),
+      child: tapped
+          ? RefFileWidget(courseId, fileId, item)
+          : NormalModuleItemWidget(item, true),
+    );
+  }
+}
+
+class RefPageContentWidget extends FutureWidget<p.Page?> {
+  final int courseId;
+  final String pageUrl;
+  final ModuleItem item;
+  RefPageContentWidget(this.courseId, this.pageUrl, this.item);
+
+  @override
+  List<Future<p.Page?>> getFutures(BuildContext context) =>
+      Provider.of<Model>(context).canvas.getPageByIdentifier(courseId, pageUrl);
+
+  @override
+  Widget buildWidget(BuildContext context, p.Page? pageItem) {
+    if (pageItem == null) {
+      return Text('page.no_details'.tr());
+    }
+    return PageContentWidget(courseId, pageItem.pageId);
+  }
+}
+
 class RefAssignmentContentWidget extends FutureWidget<Assignment?> {
   final int courseId;
   final int assignmentId;
@@ -256,6 +272,25 @@ class RefAssignmentContentWidget extends FutureWidget<Assignment?> {
       return Text('assignment.no_details'.tr());
     }
     return AssignmentContentWidget(AssignmentItem);
+  }
+}
+
+class RefFileWidget extends FutureWidget<File?> {
+  final int courseId;
+  final int fileId;
+  final ModuleItem item;
+  RefFileWidget(this.courseId, this.fileId, this.item);
+
+  @override
+  List<Future<File?>> getFutures(BuildContext context) =>
+      Provider.of<Model>(context).canvas.getFile(courseId, fileId);
+
+  @override
+  Widget buildWidget(BuildContext context, File? fileItem) {
+    if (fileItem == null) {
+      return NormalModuleItemWidget(item, false);
+    }
+    return FileWidget(fileItem);
   }
 }
 
