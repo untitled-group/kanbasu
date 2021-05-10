@@ -13,6 +13,7 @@ import 'package:kanbasu/widgets/file.dart';
 import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/widgets/assignment.dart';
 import 'package:kanbasu/models/assignment.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ComposedModuleData {
   Module module;
@@ -116,40 +117,78 @@ class ModuleItemWidget extends StatelessWidget {
       final stringMatch =
           RegExp(r'/[0-9]+/[a-z]+/[0-9]+').stringMatch(item.url!);
       if (stringMatch == null) {
-        return NormalModuleItemWidget(item, false);
-      }
-      final infoList = stringMatch.split('/');
-      final courseId = int.parse(infoList[1]);
-      final tabType = infoList[2];
-      final tabId = int.parse(infoList[3]);
-      switch (tabType) {
-        //FIXME: how to get pageId ?
-        // case 'pages':
-        //   return RefPageItemWidget(courseId, tabId);
-        case 'files':
-          return RefFileItemWidget(courseId, tabId, item);
-        case 'assignments':
-          return AssignmentItemWidget(courseId, tabId, item);
-        default:
+        final pageItemMatch =
+            RegExp(r'/[0-9]+/pages/.*').stringMatch(item.url!);
+        if (pageItemMatch == null) {
           return NormalModuleItemWidget(item, false);
+        }
+        final infoList = pageItemMatch.split('/');
+        final courseId = int.parse(infoList[1]);
+        final pageUrl = infoList[3];
+        return PageItemWidget(courseId, pageUrl, item);
+      } else {
+        final infoList = stringMatch.split('/');
+        final courseId = int.parse(infoList[1]);
+        final tabType = infoList[2];
+        final tabId = int.parse(infoList[3]);
+        switch (tabType) {
+          case 'files':
+            return RefFileItemWidget(courseId, tabId, item);
+          case 'assignments':
+            return AssignmentItemWidget(courseId, tabId, item);
+          default:
+            return NormalModuleItemWidget(item, false);
+        }
       }
     }
   }
 }
 
-class RefPageItemWidget extends FutureWidget<p.Page?> {
+class PageItemWidget extends StatelessWidget {
   final int courseId;
-  final int pageId;
+  final String pageUrl;
   final ModuleItem item;
-  RefPageItemWidget(this.courseId, this.pageId, this.item);
+  PageItemWidget(this.courseId, this.pageUrl, this.item);
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+        ),
+        isScrollControlled: true,
+        builder: (context) {
+          return ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height * 0.3,
+              maxHeight: MediaQuery.of(context).size.height * 0.9,
+            ),
+            child: RefPageContentWidget(courseId, pageUrl, item),
+          );
+        },
+      ),
+      child: NormalModuleItemWidget(item, true),
+    );
+  }
+}
+
+class RefPageContentWidget extends FutureWidget<p.Page?> {
+  final int courseId;
+  final String pageUrl;
+  final ModuleItem item;
+  RefPageContentWidget(this.courseId, this.pageUrl, this.item);
 
   @override
   List<Future<p.Page?>> getFutures(BuildContext context) =>
-      Provider.of<Model>(context).canvas.getPage(courseId, pageId);
+      Provider.of<Model>(context).canvas.getPageByIdentifier(courseId, pageUrl);
 
   @override
-  Widget buildWidget(BuildContext context, p.Page? item) {
-    return PageItemWidget(courseId, item!);
+  Widget buildWidget(BuildContext context, p.Page? pageItem) {
+    if (pageItem == null) {
+      return Text('page.no_details'.tr());
+    }
+    return PageContentWidget(courseId, pageItem.pageId);
   }
 }
 
@@ -214,7 +253,7 @@ class RefAssignmentContentWidget extends FutureWidget<Assignment?> {
   @override
   Widget buildWidget(BuildContext context, Assignment? AssignmentItem) {
     if (AssignmentItem == null) {
-      return NormalModuleItemWidget(item, false);
+      return Text('assignment.no_details'.tr());
     }
     return AssignmentContentWidget(AssignmentItem);
   }

@@ -16,6 +16,6 @@ class CoursePagesScreen extends RefreshableStreamListWidget<p.Page> {
 
   @override
   Widget buildItem(context, p.Page item) {
-    return PageItemWidget(courseId, item);
+    return PageWidget(courseId, item);
   }
 }

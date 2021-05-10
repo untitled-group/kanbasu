@@ -7,10 +7,10 @@ import 'package:provider/provider.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-class PageItemWidget extends StatelessWidget {
+class PageWidget extends StatelessWidget {
   final int courseId;
   final p.Page item;
-  PageItemWidget(this.courseId, this.item);
+  PageWidget(this.courseId, this.item);
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -30,14 +30,14 @@ class PageItemWidget extends StatelessWidget {
           );
         },
       ),
-      child: PageWidget(item),
+      child: PageInfoWidget(item),
     );
   }
 }
 
-class PageWidget extends StatelessWidget {
+class PageInfoWidget extends StatelessWidget {
   final p.Page item;
-  PageWidget(this.item);
+  PageInfoWidget(this.item);
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +93,7 @@ class PageContentWidget extends FutureWidget<p.Page?> {
     return ListView(
       shrinkWrap: true,
       children: [
-        if (data != null) PageWidget(data),
+        if (data != null) PageInfoWidget(data),
         Html(data: htmlData),
       ],
     );
