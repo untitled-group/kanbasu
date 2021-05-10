@@ -2,7 +2,7 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/BugenZhao/kanbasu/badge.svg?branch=main&t=JNOXuu)](https://coveralls.io/github/BugenZhao/kanbasu?branch=main)
 
-A mobile App for Canvas LMS.
+A cross-platform App for Canvas LMS.
 
 ## The Development Cycle
 
