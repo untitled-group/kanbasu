@@ -25,6 +25,7 @@ class AssignmentWidget extends StatelessWidget {
     final bool failedSubmission;
     final String grade;
     final TextStyle dueTimeStyle;
+    final secondLine = TextStyle(fontSize: 13);
     final theme = Provider.of<Model>(context).theme;
 
     if (item.dueAt != null) {
@@ -137,7 +138,7 @@ class AssignmentWidget extends StatelessWidget {
                           ),
                         if (successfulSubmission && showDetails)
                           Text('assignment.submission.successful'.tr(),
-                              style: TextStyle(fontSize: 13)),
+                              style: secondLine),
                         if (failedSubmission || lateSubmission)
                           Icon(
                             Icons.error,
@@ -146,10 +147,10 @@ class AssignmentWidget extends StatelessWidget {
                           ),
                         if (failedSubmission && showDetails)
                           Text('assignment.submission.failed'.tr(),
-                              style: TextStyle(fontSize: 13)),
+                              style: secondLine),
                         if (lateSubmission && showDetails)
                           Text('assignment.submission.late'.tr(),
-                              style: TextStyle(fontSize: 13)),
+                              style: secondLine),
                         if (waitForSubmission)
                           Icon(
                             Icons.warning,
@@ -158,7 +159,7 @@ class AssignmentWidget extends StatelessWidget {
                           ),
                         if (waitForSubmission && showDetails)
                           Text('assignment.submission.waiting'.tr(),
-                              style: TextStyle(fontSize: 13)),
+                              style: secondLine),
                       ],
                     ),
                   ],
