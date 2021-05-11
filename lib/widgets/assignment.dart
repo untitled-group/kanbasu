@@ -10,8 +10,35 @@ import 'package:easy_localization/easy_localization.dart';
 
 class AssignmentWidget extends StatelessWidget {
   final Assignment item;
+  AssignmentWidget(this.item);
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+        ),
+        isScrollControlled: true,
+        builder: (context) {
+          return ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height * 0.3,
+              maxHeight: MediaQuery.of(context).size.height * 0.9,
+            ),
+            child: AssignmentContentWidget(item),
+          );
+        },
+      ),
+      child: AssignmentInfoWidget(item, false),
+    );
+  }
+}
+
+class AssignmentInfoWidget extends StatelessWidget {
+  final Assignment item;
   final bool showDetails;
-  AssignmentWidget(this.item, this.showDetails);
+  AssignmentInfoWidget(this.item, this.showDetails);
 
   @override
   Widget build(BuildContext context) {
@@ -183,7 +210,7 @@ class AssignmentContentWidget extends StatelessWidget {
     return ListView(
       shrinkWrap: true,
       children: [
-        AssignmentWidget(item, true),
+        AssignmentInfoWidget(item, true),
         Html(
             data: item.description ??
                 '<h3> ${'assignment.no_details'.tr()} </h3>'),
