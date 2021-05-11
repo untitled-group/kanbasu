@@ -15,9 +15,11 @@ and is tailored for SJTU open Canvas system.
 * Chat-like discussion view
 * iOS, Android, macOS, Windows, Linux support
 
-<img src="https://user-images.githubusercontent.com/4198311/117810137-9b462680-b291-11eb-8cae-dbf40ec0c648.jpg" width="30%">
-<img src="https://user-images.githubusercontent.com/4198311/117810168-a13c0780-b291-11eb-94c7-5048b2f255ee.PNG" width="30%">
-<img src="https://user-images.githubusercontent.com/4198311/117810176-a305cb00-b291-11eb-81c9-340970657de3.PNG" width="30%">
+<p align="middle">
+  <img src="https://user-images.githubusercontent.com/4198311/117810137-9b462680-b291-11eb-8cae-dbf40ec0c648.jpg" width="32%" />
+  <img src="https://user-images.githubusercontent.com/4198311/117810168-a13c0780-b291-11eb-94c7-5048b2f255ee.PNG" width="32%" />
+  <img src="https://user-images.githubusercontent.com/4198311/117810176-a305cb00-b291-11eb-81c9-340970657de3.PNG" width="32%" />
+</p>
 
 ## The Development Cycle
 
