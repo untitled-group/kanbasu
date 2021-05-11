@@ -5,11 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'home.dart';
 
-final kHintTextStyle = TextStyle(
-  color: Colors.white54,
-  fontFamily: 'OpenSans',
-);
-
 class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
@@ -18,6 +13,56 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   bool _rememberMe = false;
 
+  TextStyle titleStyle(context) {
+    final theme = Provider.of<Model>(context).theme;
+    return TextStyle(
+      color: theme.primary,
+      fontFamily: 'OpenSans',
+      fontSize: 30.0,
+      fontWeight: FontWeight.bold,
+    );
+  }
+
+  TextStyle inputStyle(context) {
+    final theme = Provider.of<Model>(context).theme;
+    return TextStyle(
+      color: theme.background,
+      fontFamily: 'OpenSans',
+    );
+  }
+
+  TextStyle labelStyle(context) {
+    final theme = Provider.of<Model>(context).theme;
+    return TextStyle(
+      color: theme.text,
+      fontWeight: FontWeight.bold,
+      fontFamily: 'OpenSans',
+    );
+  }
+
+  TextStyle hintStyle(context) {
+    final theme = Provider.of<Model>(context).theme;
+    return TextStyle(
+      color: theme.tertiaryText,
+      fontFamily: 'OpenSans',
+    );
+  }
+
+  BoxDecoration inputBoxStyle(context) {
+    final theme = Provider.of<Model>(context).theme;
+    return BoxDecoration(
+      color: theme.text,
+      borderRadius: BorderRadius.circular(10.0),
+      boxShadow: [
+        BoxShadow(
+          color: theme.text,
+          blurRadius: 6.0,
+          offset: Offset(0, 2),
+        ),
+      ],
+    );
+  }
+
   Widget _buildApiTokenTF(context) {
     final theme = Provider.of<Model>(context).theme;
     return Column(
@@ -25,34 +70,17 @@ class _LoginState extends State<Login> {
       children: <Widget>[
         Text(
           'login.label.api_token'.tr(),
-          style: TextStyle(
-            color: theme.text,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'OpenSans',
-          ),
+          style: labelStyle(context),
         ),
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
-          decoration: BoxDecoration(
-            color: theme.secondaryText,
-            borderRadius: BorderRadius.circular(10.0),
-            boxShadow: [
-              BoxShadow(
-                color: theme.secondaryText,
-                blurRadius: 6.0,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
+          decoration: inputBoxStyle(context),
           height: 60.0,
           child: TextField(
             obscureText: true,
             keyboardType: TextInputType.text,
-            style: TextStyle(
-              color: theme.background,
-              fontFamily: 'OpenSans',
-            ),
+            style: inputStyle(context),
             decoration: InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(top: 14.0),
@@ -61,10 +89,7 @@ class _LoginState extends State<Login> {
                 color: theme.background,
               ),
               hintText: 'login.hint.api_token'.tr(),
-              hintStyle: TextStyle(
-                color: theme.tertiaryText,
-                fontFamily: 'OpenSans',
-              ),
+              hintStyle: hintStyle(context),
             ),
           ),
         ),
@@ -79,33 +104,16 @@ class _LoginState extends State<Login> {
       children: <Widget>[
         Text(
           'login.label.endpoint'.tr(),
-          style: TextStyle(
-            color: theme.text,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'OpenSans',
-          ),
+          style: labelStyle(context),
         ),
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
-          decoration: BoxDecoration(
-            color: theme.secondaryText,
-            borderRadius: BorderRadius.circular(10.0),
-            boxShadow: [
-              BoxShadow(
-                color: theme.secondaryText,
-                blurRadius: 6.0,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
+          decoration: inputBoxStyle(context),
           height: 60.0,
           child: TextFormField(
             initialValue: 'https://oc.sjtu.edu.cn/api/v1',
-            style: TextStyle(
-              color: theme.background,
-              fontFamily: 'OpenSans',
-            ),
+            style: inputStyle(context),
             decoration: InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(top: 14.0),
@@ -114,7 +122,7 @@ class _LoginState extends State<Login> {
                 color: theme.background,
               ),
               hintText: 'login.hint.endpoint'.tr(),
-              hintStyle: kHintTextStyle,
+              hintStyle: hintStyle(context),
             ),
           ),
         ),
@@ -129,7 +137,7 @@ class _LoginState extends State<Login> {
       child: Row(
         children: <Widget>[
           Theme(
-            data: ThemeData(unselectedWidgetColor: theme.tertiaryText),
+            data: ThemeData(unselectedWidgetColor: theme.text),
             child: Checkbox(
               value: _rememberMe,
               checkColor: theme.succeed,
@@ -141,12 +149,7 @@ class _LoginState extends State<Login> {
               },
             ),
           ),
-          Text('login.remember_me'.tr(),
-              style: TextStyle(
-                color: theme.tertiaryText,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'OpenSans',
-              )),
+          Text('login.remember_me'.tr(), style: labelStyle(context)),
         ],
       ),
     );
@@ -230,12 +233,7 @@ class _LoginState extends State<Login> {
               children: <Widget>[
                 Text(
                   'Kanbasu',
-                  style: TextStyle(
-                    color: theme.text,
-                    fontFamily: 'OpenSans',
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: titleStyle(context),
                 ),
                 SizedBox(height: 30.0),
                 _buildEndpointTF(context),
