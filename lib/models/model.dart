@@ -18,6 +18,8 @@ class Palette {
   final Color border;
   final Color succeed;
   final Color warning;
+  final Color loginBotton;
+  final Color loginBottonText;
 
   const Palette({
     required this.primary,
@@ -29,6 +31,8 @@ class Palette {
     required this.border,
     required this.succeed,
     required this.warning,
+    required this.loginBotton,
+    required this.loginBottonText,
   });
 }
 
@@ -43,6 +47,8 @@ class Model with ChangeNotifier {
     border: Colors.grey.shade300,
     succeed: Colors.green,
     warning: Colors.yellow,
+    loginBotton: Colors.black,
+    loginBottonText: Colors.white,
   );
 
   final _themeDark = Palette(
@@ -55,6 +61,8 @@ class Model with ChangeNotifier {
     border: Colors.grey.shade700,
     succeed: Colors.green,
     warning: Colors.yellow,
+    loginBotton: Colors.white,
+    loginBottonText: Colors.black,
   );
 
   var _brightness = Brightness.light;

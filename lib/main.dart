@@ -10,7 +10,7 @@ import 'package:kanbasu/router.dart';
 import 'package:kanbasu/utils/timeago_zh_cn.dart';
 import 'package:kanbasu/widgets/offline_mode.dart';
 import 'package:provider/provider.dart';
-import 'home.dart';
+import 'login.dart';
 import 'buffer_api/kvstore.dart';
 import 'package:easy_localization_loader/easy_localization_loader.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -84,7 +84,7 @@ class MyApp extends StatelessWidget {
       getPages: getPages,
       debugShowCheckedModeBanner: false,
       builder: (_, child) => OfflineModeWrapper(child: child),
-      home: Home(),
+      home: Login(),
     );
   }
 }
