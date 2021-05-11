@@ -26,7 +26,7 @@ class _LoginState extends State<Login> {
   TextStyle inputStyle(context) {
     final theme = Provider.of<Model>(context).theme;
     return TextStyle(
-      color: theme.background,
+      color: theme.text,
       fontFamily: 'OpenSans',
     );
   }
@@ -51,11 +51,11 @@ class _LoginState extends State<Login> {
   BoxDecoration inputBoxStyle(context) {
     final theme = Provider.of<Model>(context).theme;
     return BoxDecoration(
-      color: theme.text,
+      color: theme.background,
       borderRadius: BorderRadius.circular(10.0),
       boxShadow: [
         BoxShadow(
-          color: theme.text,
+          color: theme.secondaryText,
           blurRadius: 6.0,
           offset: Offset(0, 2),
         ),
@@ -86,7 +86,7 @@ class _LoginState extends State<Login> {
               contentPadding: EdgeInsets.only(top: 14.0),
               prefixIcon: Icon(
                 Icons.vpn_key_outlined,
-                color: theme.background,
+                color: theme.primary,
               ),
               hintText: 'login.hint.api_token'.tr(),
               hintStyle: hintStyle(context),
@@ -119,7 +119,7 @@ class _LoginState extends State<Login> {
               contentPadding: EdgeInsets.only(top: 14.0),
               prefixIcon: Icon(
                 Icons.vpn_lock_outlined,
-                color: theme.background,
+                color: theme.primary,
               ),
               hintText: 'login.hint.endpoint'.tr(),
               hintStyle: hintStyle(context),
