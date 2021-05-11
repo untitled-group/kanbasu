@@ -1,8 +1,23 @@
 # kanbasu
 
 [![Coverage Status](https://coveralls.io/repos/github/BugenZhao/kanbasu/badge.svg?branch=main&t=JNOXuu)](https://coveralls.io/github/BugenZhao/kanbasu?branch=main)
+[![Test](https://github.com/BugenZhao/kanbasu/actions/workflows/test.yaml/badge.svg)](https://github.com/BugenZhao/kanbasu/actions/workflows/test.yaml)
+[![Codemagic build status](https://api.codemagic.io/apps/609a54a122f9a9465c8f6ccf/609a54a122f9a9465c8f6cce/status_badge.svg)](https://codemagic.io/apps/609a54a122f9a9465c8f6ccf/609a54a122f9a9465c8f6cce/latest_build)
 
-A cross-platform App for Canvas LMS.
+Kanbasu is a third-party mobile App for Canvas LMS. It implements students' most-used functionalities,
+and is tailored for SJTU open Canvas system.
+
+## Key Features
+
+* Enhanced activities view
+* Full offline capability
+* Download all files in one click
+* Chat-like discussion view
+* iOS, Android, macOS, Windows, Linux support
+
+<img src="https://user-images.githubusercontent.com/4198311/117810137-9b462680-b291-11eb-8cae-dbf40ec0c648.jpg" width="30%">
+<img src="https://user-images.githubusercontent.com/4198311/117810168-a13c0780-b291-11eb-94c7-5048b2f255ee.PNG" width="30%">
+<img src="https://user-images.githubusercontent.com/4198311/117810176-a305cb00-b291-11eb-81c9-340970657de3.PNG" width="30%">
 
 ## The Development Cycle
 
