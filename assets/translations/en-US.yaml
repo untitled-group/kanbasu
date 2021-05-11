@@ -75,3 +75,13 @@ preview:
   change_dir: Change scroll direction
 discussion:
   post_something: Post something...
+login:
+  login: LOGIN
+  label:
+    endpoint: Endpoint
+    api_token: API Token
+  hint:
+    endpoint: Enter the endpoint
+    api_token: Enter the API token
+  remember_me: Remember me
+

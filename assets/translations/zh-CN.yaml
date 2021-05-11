@@ -75,3 +75,12 @@ preview:
   change_dir: 切换滚动方向
 discussion:
   post_something: 说点什么...
+login:
+  login: 登录
+  label:
+    endpoint: Endpoint
+    api_token: API Token
+  hint:
+    endpoint: 输入 endpoint
+    api_token: 输入 API token
+  remember_me: 记住我

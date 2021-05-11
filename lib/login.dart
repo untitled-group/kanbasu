@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'home.dart';
 
 final kHintTextStyle = TextStyle(
@@ -23,7 +24,7 @@ class _LoginState extends State<Login> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'API Token',
+          'login.label.api_token'.tr(),
           style: TextStyle(
             color: theme.text,
             fontWeight: FontWeight.bold,
@@ -59,7 +60,7 @@ class _LoginState extends State<Login> {
                 Icons.vpn_key_outlined,
                 color: theme.background,
               ),
-              hintText: 'Enter your API token',
+              hintText: 'login.hint.api_token'.tr(),
               hintStyle: TextStyle(
                 color: theme.tertiaryText,
                 fontFamily: 'OpenSans',
@@ -77,7 +78,7 @@ class _LoginState extends State<Login> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Endpoint',
+          'login.label.endpoint'.tr(),
           style: TextStyle(
             color: theme.text,
             fontWeight: FontWeight.bold,
@@ -112,7 +113,7 @@ class _LoginState extends State<Login> {
                 Icons.vpn_lock_outlined,
                 color: theme.background,
               ),
-              hintText: 'Enter your endpoint',
+              hintText: 'login.hint.endpoint'.tr(),
               hintStyle: kHintTextStyle,
             ),
           ),
@@ -140,7 +141,7 @@ class _LoginState extends State<Login> {
               },
             ),
           ),
-          Text('Remember me',
+          Text('login.remember_me'.tr(),
               style: TextStyle(
                 color: theme.tertiaryText,
                 fontWeight: FontWeight.bold,
@@ -172,7 +173,7 @@ class _LoginState extends State<Login> {
           elevation: MaterialStateProperty.all<double>(5.0),
         ),
         child: Text(
-          'LOGIN',
+          'login.login'.tr(),
           style: TextStyle(
             color: theme.loginBottonText,
             letterSpacing: 1.5,
