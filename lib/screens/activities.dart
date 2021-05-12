@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:kanbasu/aggregation.dart';
 import 'package:kanbasu/models/brief_info.dart';
+import 'package:kanbasu/utils/lifecycle.dart';
 import 'package:kanbasu/widgets/activity.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/link.dart';
@@ -57,26 +59,33 @@ class _ActivitiesView extends RefreshableStreamListWidget<BriefInfo> {
 class ActivitiesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<Model>();
-    final aggregatedAt = model.aggregatedAt;
+    final title = HookBuilder(builder: (context) {
+      final _ = useAppLifecycleStateAutoRefresh([AppLifecycleState.resumed]);
+      print('REFRESH');
 
-    final title = Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text('title.activities'.tr()),
-        if (aggregatedAt != null)
-          TimeagoWidget(
-            dateTime: aggregatedAt,
-            builder: (context, string) => Text(
-              string,
-              style: TextStyle(
-                fontSize: 12,
-                color: model.theme.tertiaryText,
+      final model = context.watch<Model>();
+      final aggregatedAt = model.aggregatedAt;
+      // FIXME: not latest value after background fetching
+      print(aggregatedAt);
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text('title.activities'.tr()),
+          if (aggregatedAt != null)
+            TimeagoWidget(
+              dateTime: aggregatedAt,
+              builder: (context, string) => Text(
+                string,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: model.theme.tertiaryText,
+                ),
               ),
-            ),
-          )
-      ],
-    );
+            )
+        ],
+      );
+    });
 
     return Scaffold(
       appBar: AppBar(

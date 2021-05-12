@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,10 @@ Future<void> main() async {
   await EasyLocalization.ensureInitialized();
   KvStore.initFfi();
   timeago.setLocaleMessages('zh_CN', KZhCnMessages());
-  await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+
+  if (Platform.isAndroid || Platform.isIOS) {
+    await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+  }
 
   final model = Model();
   await model.init();
