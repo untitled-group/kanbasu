@@ -28,6 +28,8 @@ PODS:
     - Flutter
   - webview_flutter (0.0.1):
     - Flutter
+  - workmanager (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - device_info (from `.symlinks/plugins/device_info/ios`)
@@ -43,6 +45,7 @@ DEPENDENCIES:
   - video_player (from `.symlinks/plugins/video_player/ios`)
   - wakelock (from `.symlinks/plugins/wakelock/ios`)
   - webview_flutter (from `.symlinks/plugins/webview_flutter/ios`)
+  - workmanager (from `.symlinks/plugins/workmanager/ios`)
 
 SPEC REPOS:
   trunk:
@@ -75,6 +78,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/wakelock/ios"
   webview_flutter:
     :path: ".symlinks/plugins/webview_flutter/ios"
+  workmanager:
+    :path: ".symlinks/plugins/workmanager/ios"
 
 SPEC CHECKSUMS:
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
@@ -91,7 +96,8 @@ SPEC CHECKSUMS:
   video_player: 9cc823b1d9da7e8427ee591e8438bfbcde500e6e
   wakelock: b0843b2479edbf6504d8d262c2959446f35373aa
   webview_flutter: 9f491a9b5a66f2573946a389b2677987b0ff8c0b
+  workmanager: 0afdcf5628bbde6924c21af7836fed07b42e30e6
 
-PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+PODFILE CHECKSUM: fe0e1ee7f3d1f7d00b11b474b62dd62134535aea
 
 COCOAPODS: 1.10.1
