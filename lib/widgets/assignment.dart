@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:kanbasu/models/assignment.dart';
 import 'package:kanbasu/models/model.dart';
+import 'package:kanbasu/utils/timeago.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:separated_column/separated_column.dart';
-import 'package:timeago/timeago.dart' as timeago;
 import 'package:easy_localization/easy_localization.dart';
 
 class AssignmentWidget extends StatelessWidget {
@@ -138,10 +138,7 @@ class AssignmentInfoWidget extends StatelessWidget {
                       children: [
                         if (item.createdAt != null)
                           Text(
-                            timeago.format(
-                              item.createdAt!,
-                              locale: context.locale.toStringWithSeparator(),
-                            ),
+                            timeagoFormat(context, item.createdAt!),
                             style: TextStyle(
                                 fontSize: 13, color: theme.tertiaryText),
                           ),

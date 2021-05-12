@@ -8,10 +8,10 @@ import 'package:kanbasu/widgets/activity.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/widgets/link.dart';
 import 'package:kanbasu/widgets/common/refreshable_stream_list.dart';
+import 'package:kanbasu/widgets/timeago.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 class _ActivitiesView extends RefreshableStreamListWidget<BriefInfo> {
   Stream<BriefInfo> getAggregationStream(
@@ -38,9 +38,9 @@ class _ActivitiesView extends RefreshableStreamListWidget<BriefInfo> {
   @override
   List<Stream<BriefInfo>> getStreams(context) => [
         getAggregationStream(context, false),
-        getAggregationStream(context, true).doOnDone(() {
+        getAggregationStream(context, true).doOnDone(() async {
           final model = context.read<Model>();
-          model.setAggregatedNow();
+          await model.setAggregatedNow();
         }),
       ];
 
@@ -64,15 +64,17 @@ class ActivitiesScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text('title.activities'.tr()),
-        Text(
-          aggregatedAt != null
-              ? timeago.format(
-                  aggregatedAt,
-                  locale: context.locale.toStringWithSeparator(),
-                )
-              : '',
-          style: TextStyle(fontSize: 12, color: model.theme.tertiaryText),
-        )
+        if (aggregatedAt != null)
+          TimeagoWidget(
+            dateTime: aggregatedAt,
+            builder: (context, string) => Text(
+              string,
+              style: TextStyle(
+                fontSize: 12,
+                color: model.theme.tertiaryText,
+              ),
+            ),
+          )
       ],
     );
 

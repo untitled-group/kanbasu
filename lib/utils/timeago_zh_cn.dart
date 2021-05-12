@@ -11,7 +11,7 @@ class KZhCnMessages implements LookupMessages {
   @override
   String suffixFromNow() => '后';
   @override
-  String lessThanOneMinute(int seconds) => '少于一分钟';
+  String lessThanOneMinute(int seconds) => '少于 1 分钟';
   @override
   String aboutAMinute(int minutes) => '1 分钟';
   @override

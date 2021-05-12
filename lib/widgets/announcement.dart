@@ -3,11 +3,10 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:kanbasu/models/discussion_topic.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/router.dart';
+import 'package:kanbasu/utils/timeago.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:separated_column/separated_column.dart';
-import 'package:timeago/timeago.dart' as timeago;
-import 'package:easy_localization/easy_localization.dart';
 
 class AnnouncementWidget extends StatelessWidget {
   final DiscussionTopic item;
@@ -56,10 +55,7 @@ class AnnouncementWidget extends StatelessWidget {
                       children: [
                         if (item.postedAt != null)
                           Text(
-                            timeago.format(
-                              item.postedAt!,
-                              locale: context.locale.toStringWithSeparator(),
-                            ),
+                            timeagoFormat(context, item.postedAt!),
                             style: TextStyle(
                                 fontSize: 14, color: theme.tertiaryText),
                           ),

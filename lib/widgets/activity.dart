@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:kanbasu/models/brief_info.dart';
 import 'package:kanbasu/models/model.dart';
+import 'package:kanbasu/utils/timeago.dart';
 import 'package:provider/provider.dart';
-import 'package:timeago/timeago.dart' as timeago;
 import 'package:separated_column/separated_column.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class ActivityWidget extends StatelessWidget {
   final BriefInfo item;
@@ -67,11 +66,7 @@ class ActivityWidget extends StatelessWidget {
                             width: 5,
                           ),
                           Text(
-                            timeago.format(
-                              item.createdAt,
-                              locale: context.locale.toStringWithSeparator(),
-                              allowFromNow: true,
-                            ),
+                            timeagoFormat(context, item.createdAt),
                             style: TextStyle(
                               fontSize: 14,
                               color: theme.tertiaryText,
