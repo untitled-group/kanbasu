@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:kanbasu/aggregation.dart';
 import 'package:kanbasu/buffer_api/canvas.dart';
 import 'package:kanbasu/models/model.dart';
+import 'package:kanbasu/utils/stream_op.dart';
 import 'package:kanbasu/widgets/module.dart';
 import 'package:kanbasu/widgets/common/refreshable_stream_list.dart';
 import 'package:provider/provider.dart';
@@ -26,8 +26,7 @@ class CourseModulesScreen
 
   @override
   List<Stream<ComposedModuleData>> getStreams(context) => [
-        getModuleListStream(
-            context.read<Model>().canvas, courseId, false),
+        getModuleListStream(context.read<Model>().canvas, courseId, false),
         getModuleListStream(context.read<Model>().canvas, courseId, true),
       ];
 

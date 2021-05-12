@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:kanbasu/aggregation.dart';
 import 'package:kanbasu/models/brief_info.dart';
 import 'package:kanbasu/widgets/activity.dart';
@@ -9,6 +10,8 @@ import 'package:kanbasu/widgets/link.dart';
 import 'package:kanbasu/widgets/common/refreshable_stream_list.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class _ActivitiesView extends RefreshableStreamListWidget<BriefInfo> {
   Stream<BriefInfo> getAggregationStream(
@@ -35,7 +38,10 @@ class _ActivitiesView extends RefreshableStreamListWidget<BriefInfo> {
   @override
   List<Stream<BriefInfo>> getStreams(context) => [
         getAggregationStream(context, false),
-        getAggregationStream(context, true),
+        getAggregationStream(context, true).doOnDone(() {
+          final model = context.read<Model>();
+          model.setAggregatedNow();
+        }),
       ];
 
   @override
@@ -51,9 +57,28 @@ class _ActivitiesView extends RefreshableStreamListWidget<BriefInfo> {
 class ActivitiesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final model = context.watch<Model>();
+    final aggregatedAt = model.aggregatedAt;
+
+    final title = Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text('title.activities'.tr()),
+        Text(
+          aggregatedAt != null
+              ? timeago.format(
+                  aggregatedAt,
+                  locale: context.locale.toStringWithSeparator(),
+                )
+              : '',
+          style: TextStyle(fontSize: 12, color: model.theme.tertiaryText),
+        )
+      ],
+    );
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('title.activities'.tr()),
+        title: title,
       ),
       body: _ActivitiesView(),
     );

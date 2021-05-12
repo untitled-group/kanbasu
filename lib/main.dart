@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:get/route_manager.dart';
+import 'package:kanbasu/aggregation.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/models/resolver_model.dart';
 import 'package:kanbasu/router.dart';
@@ -15,22 +16,6 @@ import 'home.dart';
 import 'buffer_api/kvstore.dart';
 import 'package:easy_localization_loader/easy_localization_loader.dart';
 import 'package:timeago/timeago.dart' as timeago;
-
-void callbackDispatcher() {
-  Workmanager().executeTask((taskName, inputData) async {
-    print('$taskName, $inputData');
-
-    KvStore.initFfi();
-    final model = Model();
-    await model.init();
-    final resolverModel = ResolverModel();
-    resolverModel.updateModel(model);
-
-    await resolverModel.requestFullSync();
-
-    return true;
-  });
-}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -105,4 +90,27 @@ class MyApp extends StatelessWidget {
       home: Home(),
     );
   }
+}
+
+void callbackDispatcher() {
+  Workmanager().executeTask((taskName, inputData) async {
+    switch (taskName) {
+      case Workmanager.iOSBackgroundTask:
+        {
+          KvStore.initFfi();
+          final model = Model();
+          await model.init();
+
+          await aggregate(
+            model.canvas,
+            useOnlineData: true,
+            dryRun: true,
+          ).toList();
+          await model.setAggregatedNow();
+
+          break;
+        }
+    }
+    return true;
+  });
 }

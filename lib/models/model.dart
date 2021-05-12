@@ -79,6 +79,8 @@ class Model with ChangeNotifier {
   late KvStore _kvs;
   KvStore get kvs => _kvs;
 
+  late SharedPreferences _prefs;
+
   bool _connected = true;
   bool get connected => _connected;
   set connected(value) {
@@ -88,11 +90,16 @@ class Model with ChangeNotifier {
     }
   }
 
-  Future<void> updateCanvasClient() async {
-    final prefs = await SharedPreferences.getInstance();
+  DateTime? get aggregatedAt => getAggregatedAt(_prefs);
 
-    final api_key = getApiKey(prefs);
-    final api_endpoint = getApiEndpoint(prefs);
+  Future<void> setAggregatedNow() async {
+    await setAggregatedAt(_prefs, DateTime.now());
+    notifyListeners();
+  }
+
+  Future<void> updateCanvasClient() async {
+    final api_key = getApiKey(_prefs);
+    final api_endpoint = getApiEndpoint(_prefs);
 
     final restCanvas = CanvasRestClient(
       Dio(BaseOptions(
@@ -114,6 +121,7 @@ class Model with ChangeNotifier {
   }
 
   Future<void> init() async {
+    _prefs = await SharedPreferences.getInstance();
     await updateCanvasClient();
   }
 }

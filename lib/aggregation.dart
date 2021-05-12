@@ -8,29 +8,15 @@ import 'package:kanbasu/models/brief_info.dart';
 import 'package:kanbasu/utils/courses.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:kanbasu/utils/html.dart';
+import 'package:kanbasu/utils/stream_op.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:rxdart/rxdart.dart';
 
-Future<List<T>> getListDataFromApi<T>(
-    List<Stream<T>> stream, bool useOnlineData) async {
-  if (useOnlineData) {
-    return await stream.last.toList();
-  } else {
-    return await stream.first.toList();
-  }
-}
-
-Future<T> getItemDataFromApi<T>(
-    List<Future<T>> stream, bool useOnlineData) async {
-  if (useOnlineData) {
-    return (await stream.last);
-  } else {
-    return (await stream.first);
-  }
-}
-
-Stream<BriefInfo> aggregate(CanvasBufferClient api,
-    {bool useOnlineData = false}) async* {
+Stream<BriefInfo> aggregate(
+  CanvasBufferClient api, {
+  bool useOnlineData = false,
+  bool dryRun = false,
+}) async* {
   final latestCourses = toLatestCourses(
       await getListDataFromApi(api.getCourses(), useOnlineData));
   final idToCourse = {
@@ -41,28 +27,40 @@ Stream<BriefInfo> aggregate(CanvasBufferClient api,
   Future<List<BriefInfo>> processCourse(Course course) async {
     final aggregations = <BriefInfo?>[];
 
-    final assignments =
-        await getListDataFromApi(api.getAssignments(course.id), useOnlineData);
-    for (final assignment in assignments) {
-      final newAgg = aggregateFromAssignment(assignment, course);
-      aggregations.add(newAgg);
+    final assignments = await getListDataFromApi(
+      api.getAssignments(course.id),
+      useOnlineData,
+    );
+    if (!dryRun) {
+      for (final assignment in assignments) {
+        final newAgg = aggregateFromAssignment(assignment, course);
+        aggregations.add(newAgg);
 
-      final newAgg2 = aggregateFromAssignmentDue(assignment, course);
-      aggregations.add(newAgg2);
+        final newAgg2 = aggregateFromAssignmentDue(assignment, course);
+        aggregations.add(newAgg2);
+      }
     }
 
-    final submissions =
-        await getListDataFromApi(api.getSubmissions(course.id), useOnlineData);
-    for (final submission in submissions) {
-      final newAgg = aggregateFromSubmission(submission, course);
-      aggregations.add(newAgg);
+    final submissions = await getListDataFromApi(
+      api.getSubmissions(course.id),
+      useOnlineData,
+    );
+    if (!dryRun) {
+      for (final submission in submissions) {
+        final newAgg = aggregateFromSubmission(submission, course);
+        aggregations.add(newAgg);
+      }
     }
 
-    final files =
-        await getListDataFromApi(api.getFiles(course.id), useOnlineData);
-    for (final file in files) {
-      final newAgg = aggregateFromFile(file, course);
-      aggregations.add(newAgg);
+    final files = await getListDataFromApi(
+      api.getFiles(course.id),
+      useOnlineData,
+    );
+    if (!dryRun) {
+      for (final file in files) {
+        final newAgg = aggregateFromFile(file, course);
+        aggregations.add(newAgg);
+      }
     }
 
     return aggregations.whereType<BriefInfo>().toList();
@@ -72,13 +70,18 @@ Stream<BriefInfo> aggregate(CanvasBufferClient api,
   Future<List<BriefInfo>> processAnnouncements() async {
     final aggregations = <BriefInfo?>[];
 
-    final planners = await getListDataFromApi(api.getPlanners(), useOnlineData);
-    for (final planner in planners) {
-      if (planner.plannableType != 'announcement') continue;
-      final course = idToCourse[planner.courseId];
-      if (course != null) {
-        final newAgg = aggregateFromPlanner(planner, course);
-        aggregations.add(newAgg);
+    final planners = await getListDataFromApi(
+      api.getPlanners(),
+      useOnlineData,
+    );
+    if (!dryRun) {
+      for (final planner in planners) {
+        if (planner.plannableType != 'announcement') continue;
+        final course = idToCourse[planner.courseId];
+        if (course != null) {
+          final newAgg = aggregateFromPlanner(planner, course);
+          aggregations.add(newAgg);
+        }
       }
     }
 
@@ -87,17 +90,18 @@ Stream<BriefInfo> aggregate(CanvasBufferClient api,
 
   final subject = PublishSubject<List<BriefInfo>>();
 
-  unawaited(Future.wait(
-    [
+  unawaited(() async {
+    await Future.wait([
       for (final course in latestCourses)
         processCourse(course).then((d) => subject.add(d)),
       processAnnouncements().then((d) => subject.add(d)),
-    ],
-  ).then((_) => subject.close()));
+    ]);
+    await subject.close();
+  }());
 
   final stream = subject.stream.flatMap((value) => Stream.fromIterable(value));
-  await for (final items in stream) {
-    yield items;
+  await for (final item in stream) {
+    yield item;
   }
 }
 

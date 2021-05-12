@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 void showErrorSnack(BuildContext context, dynamic e) {
   final String error;
   final logger = createLogger();
-  final model = context.watch<Model>();
+  final model = context.read<Model>();
 
   if (e is DioError) {
     error = e.error.toString();

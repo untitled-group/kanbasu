@@ -95,60 +95,59 @@ class Home extends HookWidget {
     model.brightness = MediaQuery.of(context).platformBrightness;
     final theme = model.theme;
 
-    return HookBuilder(builder: (context) {
-      final activeTab = useState(0);
+    final activeTab = useState(0);
 
-      final stack = useMemoized(() {
-        final screens = _navigationItems.keys.map(_buildScreen).toList();
-        return IndexedStack(
-          index: activeTab.value,
-          children: screens,
-        );
-      }, [activeTab.value]);
+    final screens = useMemoized(
+      () => _navigationItems.keys.map(_buildScreen).toList(),
+    );
 
-      if (Device.get().isPhone) {
-        final navigationItems =
-            _navigationItems.keys.map(_buildNavigationItem).toList();
+    final stack = IndexedStack(
+      index: activeTab.value,
+      children: screens,
+    );
 
-        return Scaffold(
-          body: stack,
-          bottomNavigationBar: BottomNavigationBar(
-            selectedItemColor: theme.primary,
-            items: navigationItems,
-            currentIndex: activeTab.value,
-            type: BottomNavigationBarType.fixed,
-            onTap: (int index) {
-              HapticFeedback.mediumImpact();
-              activeTab.value = index;
-            },
-          ),
-        );
-      } else {
-        final sideTiles = _navigationItems.keys
-            .map((s) => _buildSideTile(s, activeTab))
-            .toList();
+    if (Device.get().isPhone) {
+      final navigationItems =
+          _navigationItems.keys.map(_buildNavigationItem).toList();
 
-        return Row(
-          children: [
-            Drawer(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        DrawerHeaderWidget(),
-                        ...sideTiles,
-                      ],
-                    ),
+      return Scaffold(
+        body: stack,
+        bottomNavigationBar: BottomNavigationBar(
+          selectedItemColor: theme.primary,
+          items: navigationItems,
+          currentIndex: activeTab.value,
+          type: BottomNavigationBarType.fixed,
+          onTap: (int index) {
+            HapticFeedback.mediumImpact();
+            activeTab.value = index;
+          },
+        ),
+      );
+    } else {
+      final sideTiles = _navigationItems.keys
+          .map((s) => _buildSideTile(s, activeTab))
+          .toList();
+
+      return Row(
+        children: [
+          Drawer(
+            child: Row(
+              children: [
+                Expanded(
+                  child: ListView(
+                    children: [
+                      DrawerHeaderWidget(),
+                      ...sideTiles,
+                    ],
                   ),
-                  VerticalDivider(width: 1),
-                ],
-              ),
+                ),
+                VerticalDivider(width: 1),
+              ],
             ),
-            Expanded(child: stack)
-          ],
-        );
-      }
-    });
+          ),
+          Expanded(child: stack)
+        ],
+      );
+    }
   }
 }

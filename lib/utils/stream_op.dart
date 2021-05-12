@@ -39,3 +39,21 @@ Iterable<Future<C>> zip2<A, B, C>(
     }(ita.current, itb.current);
   }
 }
+
+Future<List<T>> getListDataFromApi<T>(
+    List<Stream<T>> stream, bool useOnlineData) async {
+  if (useOnlineData) {
+    return await stream.last.toList();
+  } else {
+    return await stream.first.toList();
+  }
+}
+
+Future<T> getItemDataFromApi<T>(
+    List<Future<T>> stream, bool useOnlineData) async {
+  if (useOnlineData) {
+    return (await stream.last);
+  } else {
+    return (await stream.first);
+  }
+}
