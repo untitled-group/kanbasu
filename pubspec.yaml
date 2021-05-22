@@ -36,7 +36,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_device_type: ^0.4.0
-  flutter_hooks: ^0.16.0
+  flutter_hooks: ^0.17.0
   flutter_localizations:
     sdk: flutter
   flutter_phoenix: ^1.0.0
@@ -55,7 +55,7 @@ dependencies:
   pedantic: ^1.11.0
   provider: ^5.0.0
   retrofit: ^2.0.0-beta1
-  rxdart: ^0.26.0
+  rxdart: ^0.27.0
   separated_column: ^2.0.0
   share: ^2.0.1
   shared_preferences: ^2.0.5

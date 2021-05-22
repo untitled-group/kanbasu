@@ -15,7 +15,7 @@ jobs:
           java-version: "1.8"
       - uses: subosito/flutter-action@v1
         with:
-          flutter-version: "2.0.x"
+          flutter-version: "2.2.x"
       - name: Install prereqs
         run: sudo apt install clang cmake ninja-build pkg-config libgtk-3-dev libblkid-dev liblzma-dev libgcrypt20-dev
       - name: Install dependencies
