@@ -36,7 +36,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_device_type: ^0.4.0
-  flutter_hooks: ^0.17.0
+  flutter_hooks: ^0.18.0
   flutter_localizations:
     sdk: flutter
   flutter_phoenix: ^1.0.0
@@ -53,7 +53,7 @@ dependencies:
   path_provider: any
   pdf_render: ^1.0.10
   pedantic: ^1.11.0
-  provider: ^5.0.0
+  provider: ^6.0.1
   retrofit: ^2.0.0-beta1
   rxdart: ^0.27.0
   separated_column: ^2.0.0
@@ -71,7 +71,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   json_annotation: ^4.0.0
-  json_serializable: ^4.0.0
+  json_serializable: ^5.0.2
   lint: ^1.0.0
   test: ^1.16.5
   retrofit_generator: ^2.0.0-beta1
