@@ -56,9 +56,7 @@ class MyApp extends StatelessWidget {
       brightness: model.brightness,
       primarySwatch: Colors.red,
       primaryColor: theme.primary,
-      accentColor: theme.primary,
       scaffoldBackgroundColor: theme.background,
-      buttonColor: theme.primary,
       primaryTextTheme: TextTheme(
         headline6: TextStyle(color: theme.text),
       ),

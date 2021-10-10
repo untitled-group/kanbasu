@@ -55,7 +55,7 @@ abstract class Submission implements Built<Submission, SubmissionBuilder> {
   @BuiltValueField(wireName: 'preview_url')
   String? get previewUrl;
   @BuiltValueField(wireName: 'submission_comments')
-  BuiltList<BuiltMap<String, JsonObject>>? get submissionComments;
+  BuiltList<JsonObject>? get submissionComments;
   @BuiltValueField(wireName: 'assignment')
   Assignment? get assignment;
 

@@ -1,6 +1,5 @@
 library planner;
 
-import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/json_object.dart';
 import 'package:built_value/serializer.dart';
@@ -21,7 +20,7 @@ abstract class Planner implements Built<Planner, PlannerBuilder> {
   @BuiltValueField(wireName: 'plannable_id')
   int get plannableId;
   @BuiltValueField(wireName: 'planner_override')
-  BuiltMap<String, JsonObject>? get plannerOverride;
+  JsonObject? get plannerOverride;
   @BuiltValueField(wireName: 'new_activity')
   bool get newActivity;
   @BuiltValueField(wireName: 'plannable_date')

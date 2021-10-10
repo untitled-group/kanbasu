@@ -4,7 +4,7 @@ import 'package:kanbasu/models/file.dart';
 import 'package:kanbasu/models/model.dart';
 import 'package:kanbasu/models/resolver_model.dart';
 import 'package:provider/provider.dart';
-import 'package:file_sizes/file_sizes.dart';
+import 'package:filesize/filesize.dart';
 import 'package:open_file/open_file.dart';
 
 enum FileStatus { Downloaded, Downloading, Remote }
@@ -76,7 +76,7 @@ class FileWidget extends HookWidget {
                 Text(_item.displayName),
                 SizedBox(height: 2),
                 Text(
-                  FileSize().getSize(_item.size),
+                  filesize(_item.size),
                   style: TextStyle(
                     fontSize: 12,
                     color: theme.tertiaryText,

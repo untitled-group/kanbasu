@@ -201,7 +201,7 @@ BriefInfo? aggregateFromSubmission(Submission submission, Course course) {
 
   if (submission.submissionComments != null &&
       submission.submissionComments!.isNotEmpty) {
-    var comment = submission.submissionComments![0]['comments'];
+    var comment = submission.submissionComments![0].asMap['comments'];
     if (comment != null) {
       description = '${'aggregate.score'.tr()}: ${submission.grade}\n'
           '${'aggregate.comment'.tr()}: $comment';

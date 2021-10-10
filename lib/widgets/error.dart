@@ -14,7 +14,7 @@ class KErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<Model>(context).theme;
+    final theme = Provider.of<Model>(context, listen: false).theme;
 
     return Container(
       padding: EdgeInsets.all(20),
